@@ -10,6 +10,10 @@
         max-height: 200px; /* Limite à environ 5 éléments (ajustez si nécessaire) */
         overflow-y: auto;
     }
+    /* Masquer le menu déroulant par défaut */
+    #forfaits-dropdown {
+        display: none;
+    }
 </style>
 
 
@@ -31,19 +35,23 @@
                 break; // Sortir de la boucle une fois la condition satisfaite
             }
         }
+        $disabled = '';
+        if($ticket->cloture == 1){
+            $disabled = 'disabled';
+        }
     @endphp
     <!-- Your Page Content Here -->
     <h1 class="text-2xl font-semibold">
         <div>
             <div class="{{ $bgColor }} p-2 border-2 rounded-lg border-gray-500">
-                N° {{ $ticket->id_ticket }}, Titre : {{ $ticket->titre }}
+                N° {{ $ticket->id_ticket }}, {{ $ticket->titre }}
             </div>
             <div class="flex justify-end">
                 Crée le  {{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m H:i') }}
             </div>
         </div>
     </h1>
-    <form action="{{ route('ticket.edit.post', ['id' => $ticket->id_ticket]) }}" method="POST">
+    <form id="editTicket" action="{{ route('ticket.edit.post', ['id' => $ticket->id_ticket]) }}" method="POST">
         @csrf
         <div class="flex">
             <!-- Gauche -->
@@ -114,7 +122,7 @@
                 <!-- statut -->
                 <div class="max-w-sm mx-auto">
                     <label for="statut" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Statut</label>
-                    <select id="statut" name="statut" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="statut" name="statut" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         @foreach ($status as $statut)
                         @if($statut->masquer != 1)
                         <option value="{{ $statut->id_statut }}" {{ ($ticket->id_statut==$statut->id_statut)?'selected':'' }}>{{ $statut->libelle }}</option>
@@ -125,17 +133,31 @@
                     </select>
                 </div>
 
-                <!-- cri -->
-                <div class="flex items-center ps-2 border border-gray-200 rounded dark:border-gray-700 mt-2">
-                    <input id="bordered-checkbox-1" type="checkbox" value="1" {{ ($ticket->cri==1)?'checked':'' }} name="cri" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="bordered-checkbox-1" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">CRI</label>
-                </div>
-
                 <!-- duree -->
                 <div class="max-w-[8rem]">
                     <label for="time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Durée</label>
                     <div class="relative">
-                        <input type="time" id="time" name="duree" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ ($ticket->duree!= 0)? $ticket->formatted_duree :'00:00' }}" required />
+                        <input type="time" id="time" name="duree" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ ($ticket->duree!= 0)? $ticket->formatted_duree :'00:00' }}" {{ $disabled }} />
+                    </div>
+                </div>
+
+                <!-- cri -->
+                <div class="flex items-center ps-2 border border-gray-200 rounded dark:border-gray-700 mt-2">
+                    <input id="cri" type="checkbox" value="1" {{ ($ticket->cri==1)?'checked':'' }} name="cri" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" {{ $disabled }}>
+                    <label for="cri" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">CRI</label>
+                </div>
+                <div>
+                    <!-- Menu déroulant pour les forfaits -->
+                    <div class="max-w-sm mx-auto" id="forfaits-dropdown">
+                        <label for="forfait" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Forfaits</label>
+                        <select id="forfait" name="forfait" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  {{ $disabled }}>
+                            <option selected value="">Choisir un forfait...</option>
+                            @foreach ($forfaits as $forfait)
+                                @if ($forfait->id_client == $ticket->id_client)
+                                    <option {{ ($forfait->id_forfait == $ticket->id_forfait)? 'selected' : '' }} value="{{ $forfait->id_forfait }}">{{ $forfait->id_forfait }}-{{ $forfait->type->libelle }} ({{ $forfait->restant() }} crédit)</option>
+                                @endif
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -175,7 +197,7 @@
                                 @else
                                 <div class="mb-4 w-full max-w-sm">
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">({{ $ligne->ct_num }}) {{ $ligne->ct_nom }} {{ $ligne->ct_prenom }}</span>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $ticket->id_client }}</span>
                                         <span class="text-sm font-medium text-gray-900 dark:text-white">
                                             {{ \Carbon\Carbon::parse($ligne->created_at)->format('d/m H:i') }}
                                         </span>
@@ -189,9 +211,11 @@
                         </ul>
                     </div>
                 </div>
-                <button data-modal-target="static-modal" data-modal-toggle="static-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-                    Toggle modal
+                @if($ticket->cloture == 0)
+                <button data-modal-target="static-modal" data-modal-toggle="static-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-full mt-2" type="button">
+                    Répondre
                 </button>
+                @endif
             </div>
 
 
@@ -205,7 +229,7 @@
                         <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
                     </svg>
                 </span>
-                <input type="text" id="client" name="client" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="isociel" value="{{ ($ticket->id_client != null)? $ticket->id_client :'' }}" autocomplete="off">
+                <input type="text" id="client" name="client" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="isociel" value="{{ ($ticket->id_client != null)? $ticket->id_client :'' }}" autocomplete="off" {{ $disabled }}>
                 </div>
                 <div id="dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
 
@@ -219,9 +243,11 @@
                         });
                     </script>
                 @endif
+
                 <div class="max-w-sm mx-auto">
+
                     <label for="contact" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact</label>
-                    <select id="contact" name="contact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="contact" name="contact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="{{ $ticket->lignes->first()->id_contact }}">{{ $ticket->lignes->first()->ct_nom }} {{ $ticket->lignes->first()->ct_prenom }}</option>
                     </select>
                 </div>
@@ -229,7 +255,7 @@
                 <!-- technicien -->
                 <div class="max-w-sm mx-auto">
                     <label for="technicien" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Technicien</label>
-                    <select id="technicien" name="technicien" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="technicien" name="technicien" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="">Choix du technicien...</option>
                         @foreach ($techniciens as $technicien)
                         @if($technicien->masquer != 1)
@@ -244,7 +270,7 @@
                 <!-- service -->
                 <div class="max-w-sm mx-auto">
                     <label for="service" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Service</label>
-                    <select id="service" name="service" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="service" name="service" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="">Choix du service...</option>
                         @foreach ($services as $service)
                         <option value="{{ $service->id_service }}" {{ ($ticket->id_service==$service->id_service)?'selected':'' }}>{{ $service->libelle }}</option>
@@ -255,7 +281,7 @@
                 <!-- categorie -->
                 <div class="max-w-sm mx-auto">
                     <label for="categorie" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Categorie</label>
-                    <select id="categorie" name="categorie" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="categorie" name="categorie" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="">Choix de la categorie...</option>
 
                     </select>
@@ -264,7 +290,7 @@
                 <!-- fonction -->
                 <div class="max-w-sm mx-auto">
                     <label for="fonction" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fonction</label>
-                    <select id="fonction" name="fonction" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="fonction" name="fonction" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="">Choix de la fonction...</option>
 
                     </select>
@@ -273,7 +299,7 @@
                 <!-- priorite -->
                 <div class="max-w-sm mx-auto">
                     <label for="priorite" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Priorité</label>
-                    <select id="priorite" name="priorite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="priorite" name="priorite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="">Choix de la priorite...</option>
                         @foreach ($priorites as $priorite)
                         <option value="{{ $priorite->id_priorite }}" {{ ($ticket->id_priorite==$priorite->id_priorite)?'selected':'' }}>{{ $priorite->libelle }}</option>
@@ -284,7 +310,7 @@
                 <!-- impact -->
                 <div class="max-w-sm mx-auto">
                     <label for="impact" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Impact</label>
-                    <select id="impact" name="impact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select id="impact" name="impact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
                         <option selected value="">Choix de l'impact...</option>
                         @foreach ($impacts as $impact)
                         <option value="{{ $impact->id_impact }}" {{ ($ticket->id_impact==$impact->id_impact)?'selected':'' }}>{{ $impact->libelle }}</option>
@@ -298,58 +324,93 @@
 
     <!-- Section d'entrée de réponse -->
     @if($ticket->cloture == 0)
-    <div class="bg-gray-100">
-        <form action="{{ route('ticket.newMessage', ['id' => $ticket->id_ticket]) }}" method="POST">
-            @csrf
-            <div class="flex flex-col lg:flex-row items-start lg:items-center"> <!-- Utilisation de flex-col pour une disposition en colonne sur mobile et flex-row pour une disposition en ligne sur desktop -->
-                <textarea id="message" name="message" rows="1" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Écrire une réponse ..."></textarea>
-                <div class="flex flex-row lg:flex-row items-start lg:items-center mt-4 lg:mt-0 lg:ml-4"> <!-- Utilisation de flex-col pour une disposition en colonne sur mobile et flex-row pour une disposition en ligne sur desktop -->
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-2 lg:mb-0 lg:mr-2">Envoyer</button> <!-- mb-2 pour une marge en bas sur mobile, lg:mb-0 pour aucune marge en bas sur desktop, lg:mr-2 pour une marge à droite sur desktop -->
-                    <div class="border border-gray-200 rounded dark:border-gray-700 flex px-4 py-2">
-                        <input id="masquer" type="checkbox" value="1" name="masquer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="masquer" class="text-sm font-medium text-gray-900 dark:text-gray-300 ml-2">Masquer</label> <!-- ml-2 pour une marge à gauche -->
+        <!-- Main modal -->
+        <div id="static-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-2xl max-h-full">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Répondre au ticket {{ $ticket->id_ticket }}
+                        </h3>
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="static-modal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span class="sr-only">Fermer</span>
+                        </button>
                     </div>
+                    <!-- Modal body -->
+                    <form action="{{ route('ticket.newMessage', ['id' => $ticket->id_ticket]) }}" method="POST">
+                        @csrf
+                        <div class="p-4 md:p-5 space-y-4">
+                            <div class="flex flex-col lg:flex-row items-start lg:items-center"> <!-- Utilisation de flex-col pour une disposition en colonne sur mobile et flex-row pour une disposition en ligne sur desktop -->
+                                <textarea id="message" name="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Écrire une réponse ..."></textarea>
+
+                            </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-2 lg:mb-0 lg:mr-2">Envoyer</button> <!-- mb-2 pour une marge en bas sur mobile, lg:mb-0 pour aucune marge en bas sur desktop, lg:mr-2 pour une marge à droite sur desktop -->
+                            <div class="border border-gray-200 rounded dark:border-gray-700 flex px-4 py-2">
+                                <input id="masquer" type="checkbox" value="1" name="masquer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="masquer" class="text-sm font-medium text-gray-900 dark:text-gray-300 ml-2">Masquer</label> <!-- ml-2 pour une marge à gauche -->
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
     @endif
+    <!-- Bouton pour ouvrir le modal -->
+    <button data-modal-target="credit-insufficient-modal" data-modal-toggle="credit-insufficient-modal" class="hidden" id="modal-trigger"></button>
 
-    <!-- Main modal -->
-    <div id="static-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-2xl max-h-full">
-            <!-- Modal content -->
+     <!-- popup forfait HTML -->
+    <div  id="credit-insufficient-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Static modal
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="static-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
+
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Le client {{ $ticket->id_client }} n'a plus de crédit dans son forfait sélectionné.</h3>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Liste des forfaits du client</h2>
+                    <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-center">ID</th>
+                                    <th class="py-3 px-6 text-left">Type</th>
+                                    <th class="py-3 px-6 text-left">Crédit</th>
+                                    <th class="py-3 px-6 text-left">Restant</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light">
+                                @foreach ($forfaits as $forfait)
+                                    @if ($forfait->id_client == $ticket->id_client && $forfait->masquer != 1)
+                                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                            <td class="py-3 px-6 text-center">{{ $forfait->id_forfait }}</td>
+                                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $forfait->type->libelle }}</td>
+                                            <td class="py-3 px-6 text-left">{{ $forfait->credit }}</td>
+                                            <td class="py-3 px-6 text-left">{{ $forfait->restant() }}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                        Attention à la durée du ticket.
+                    </div>
+                    <button data-modal-hide="credit-insufficient-modal" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                        Compris
                     </button>
-                </div>
-                <!-- Modal body -->
-                <div class="p-4 md:p-5 space-y-4">
-                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.
-                    </p>
-                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.
-                    </p>
-                </div>
-                <!-- Modal footer -->
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button data-modal-hide="static-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I accept</button>
-                    <button data-modal-hide="static-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Decline</button>
                 </div>
             </div>
         </div>
     </div>
-
 
 
     <script>
@@ -404,7 +465,7 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Erreur lors du chargement des contacts:', error);
+                    console.error('Erreur lors du chargement des contacts');
                 });
         }
 
@@ -501,6 +562,193 @@
             // Mise à jour initiale de select2 si une catégorie est déjà sélectionnée
             if (selectcategorie.value) {
                 selectFonction(selectcategorie.value);
+            }
+        });
+
+        // Fonction pour afficher/masquer le menu déroulant
+        document.getElementById('cri').addEventListener('change', function () {
+            var dropdown = document.getElementById('forfaits-dropdown');
+            if (this.checked) {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        //check forfait restant
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const criCheckbox = document.getElementById('cri');
+            const forfaitsDropdown = document.getElementById('forfaits-dropdown');
+            const selectElement = document.getElementById('forfait');
+            const ticketDuree = document.getElementById('time');
+
+            function showModal() {
+                const modal = document.getElementById('credit-insufficient-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function hideModal() {
+                const modal = document.getElementById('credit-insufficient-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            // Attacher l'événement de fermeture à tous les boutons de fermeture de modal
+            document.querySelectorAll('[data-modal-hide]').forEach(button => {
+                button.addEventListener('click', hideModal);
+            });
+
+            // Fonction pour convertir la durée en format HH:MM en minutes totales
+            function convertDureeToMinutes(duree) {
+                // Séparer les heures et les minutes en utilisant le séparateur ":"
+                const [hours, minutes] = duree.split(':');
+
+                // Convertir les heures et les minutes en nombres entiers
+                const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
+
+                return totalMinutes;
+            }
+
+            // Fonction pour vérifier le crédit restant via une requête Axios
+            function checkCredit() {
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                const forfaitId = selectedOption.value;
+
+                if (forfaitId) {
+                    axios.get(`/ticket/forfait/${forfaitId}/credit`)
+                        .then(response => {
+                            const remainingCredit = response.data.remainingCredit;
+                            if (remainingCredit < 0 || remainingCredit - convertDureeToMinutes(ticketDuree.value) < 0) {
+                                showModal();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la vérification du crédit');
+                        });
+                }
+            }
+
+            // Fonction pour initialiser l'affichage du dropdown en fonction de l'état de la case à cocher "CRI"
+            function initializeDropdown() {
+                if (criCheckbox.checked) {
+                    forfaitsDropdown.style.display = 'block';
+                } else {
+                    forfaitsDropdown.style.display = 'none';
+                }
+            }
+
+            // Initialiser l'affichage du dropdown au chargement de la page
+            initializeDropdown();
+
+            // Ajouter un écouteur d'événement à la case à cocher "CRI" pour afficher ou masquer le dropdown
+            criCheckbox.addEventListener('change', initializeDropdown);
+
+            // Vérifier le crédit lors du changement de sélection
+            selectElement.addEventListener('change', checkCredit);
+
+            // Vérifier le crédit lors du changement de la durée
+            ticketDuree.addEventListener('input', checkCredit);
+
+            // Vérifier le crédit au chargement si une option est déjà sélectionnée
+            if (selectElement.value) {
+                checkCredit();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formulaire = document.getElementById('editTicket');
+
+            formulaire.addEventListener('submit', function(event) {
+                // Annuler la soumission par défaut du formulaire
+                event.preventDefault();
+
+                // Vérifier ici si tous les champs sont valides
+                const validationMessage = validateForm();
+
+                if (validationMessage === '') {
+                    // Soumettre le formulaire si la validation passe
+                    formulaire.submit();
+                } else {
+                    // Afficher le message d'erreur à l'utilisateur
+                    alert(validationMessage);
+                }
+            });
+
+            // Fonction pour convertir la durée en format HH:MM en minutes totales
+            function convertDureeToMinutes(duree) {
+                // Séparer les heures et les minutes en utilisant le séparateur ":"
+                const [hours, minutes] = duree.split(':');
+
+                // Convertir les heures et les minutes en nombres entiers
+                const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
+
+                return totalMinutes;
+            }
+
+            function validateForm() {
+                // Vérifier ici chaque champ du formulaire
+                const client = document.getElementById('client').value.trim();
+                const contact = document.getElementById('contact').value.trim();
+                const technicien = document.getElementById('technicien').value.trim();
+                const cri = document.getElementById('cri');
+                const forfait = document.getElementById('forfait').value.trim();
+                const time = document.getElementById('time').value.trim();
+                const statut = document.getElementById('statut').value.trim();
+                const service = document.getElementById('service').value.trim();
+                const categorie = document.getElementById('categorie').value.trim();
+                const fonction = document.getElementById('fonction').value.trim();
+                const priorite = document.getElementById('priorite').value.trim();
+                const impact = document.getElementById('impact').value.trim();
+
+                // Initialiser un message d'erreur vide
+                let errorMessage = '';
+
+                // Exemple de validation simple (vérifie que les champs ne sont pas vides)
+                if (client === ''){
+                    errorMessage += 'Le champ Client est requis.\n';
+                }
+                if(contact === ''){
+                    errorMessage += 'Le champ Contact est requis.\n';
+                }
+                if(technicien === '') {
+                    errorMessage += 'Le champ Technicien est requis.\n';
+                }
+
+                if(cri.checked){
+                    if(convertDureeToMinutes(time) < 1){
+                        errorMessage += 'Une durée minimale est requise.\n';
+                    }
+                    if(forfait == ''){
+                        errorMessage += 'Le choix du forfait est requis.\n';
+                    }
+                }
+
+                if(statut == 4){
+                    if(convertDureeToMinutes(time) < 1){
+                        errorMessage += 'Une durée minimale est requise.\n';
+                    }
+                }
+                if(statut === ''){
+                    errorMessage += 'Le champ Statut est requis.\n';
+                }
+                if(service === ''){
+                    errorMessage += 'Le champ Service est requis.\n';
+                }
+                if(categorie === ''){
+                    errorMessage += 'Le champ Categorie est requis.\n';
+                }
+                if(fonction === ''){
+                    errorMessage += 'Le champ Fonction est requis.\n';
+                }
+                if(priorite === ''){
+                    errorMessage += 'Le champ Priorité est requis.\n';
+                }
+                if(impact === ''){
+                    errorMessage += 'Le champ Impact est requis.\n';
+                }
+
+                return errorMessage; // Retourner le message d'erreur
             }
         });
 

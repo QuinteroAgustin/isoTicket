@@ -4,6 +4,7 @@ export default {
       "./resources/**/*.blade.php",
       "./resources/**/*.js",
       "./resources/**/*.vue",
+      "./node_modules/flowbite/**/*.js",
     ],
     safelist: [
         'bg-inherit',
@@ -257,5 +258,9 @@ export default {
     theme: {
       extend: {},
     },
-    plugins: [],
+    plugins: [
+        require('flowbite/plugin')({
+            charts: true,
+        }),
+    ],
   }

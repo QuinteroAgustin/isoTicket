@@ -91,7 +91,7 @@ class TicketController extends Controller
             $ticket->created_at = Carbon::now();
             $ticket->updated_at = Carbon::now();
             $ticket->closed_at = ($request->statut==4)?Carbon::now():null;
-            $ticket->cri = (isset($request->cri))?$request->cri:0;
+            $ticket->cri = 0;
             $ticket->cloture = ($request->statut==4)?1:0;
             list($hours, $minutes) = explode(':', $request->duree);
             $ticket->duree = (float)($hours . '.' . $minutes);
@@ -161,8 +161,9 @@ class TicketController extends Controller
         $categories = Categorie::all();
         $services = Service::all();
         $risques = Risque::all();
+        $forfaits = Forfait::all();
 
-        return view('ticket.edit', compact('ticket', 'clients', 'techniciens', 'priorites', 'impacts', 'status', 'fonctions', 'categories', 'services', 'risques'));
+        return view('ticket.edit', compact('ticket', 'clients', 'techniciens', 'priorites', 'impacts', 'status', 'fonctions', 'categories', 'services', 'risques', 'forfaits'));
     }
 
     public function newMessage(Request $request){
@@ -226,8 +227,10 @@ class TicketController extends Controller
                 $ticket->duree = (float)($hours . '.' . $minutes);
                 $ticket->date_rappel = (isset($request->date_rappel))?$request->date_rappel:null;
                 $ticket->action_cours = (isset($request->action_cours))?$request->action_cours:null;
-                if(isset($request->forfait)){
+                if(isset($request->forfait) && $request->cri == 1){
                     $ticket->id_forfait = $request->forfait;
+                }else{
+                    $ticket->id_forfait = null;
                 }
                 $ticket->id_client = $request->client;
                 $ticket->id_technicien = $request->technicien;
@@ -243,6 +246,18 @@ class TicketController extends Controller
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
             return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
+        }
+    }
+
+    public function getRemainingCredit($forfaitId)
+    {
+        $forfait = Forfait::find($forfaitId);
+
+        if ($forfait) {
+            $remainingCredit = $forfait->restant();
+            return response()->json(['remainingCredit' => $remainingCredit]);
+        } else {
+            return response()->json(['error' => 'Forfait non trouvé'], 404);
         }
     }
 }

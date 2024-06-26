@@ -83,7 +83,7 @@
 
                                     <td class="py-3 px-6 text-center">
                                         <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                            Éditer
+                                            Voir
                                         </a>
                                     </td>
                                 </tr>

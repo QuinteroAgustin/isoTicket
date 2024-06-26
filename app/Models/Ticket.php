@@ -14,7 +14,7 @@ class Ticket extends Model
 
     public function forfait()
     {
-        return $this->hasOne(Forfait::class, 'id_forfait', 'id_forfait');
+        return $this->belongsTo(Forfait::class, 'id_forfait', 'id_forfait');
     }
 
     public function client()

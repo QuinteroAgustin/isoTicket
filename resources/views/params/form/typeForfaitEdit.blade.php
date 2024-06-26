@@ -14,6 +14,7 @@
                             <label for="libelle" class="block text-sm font-medium text-gray-700">Libellé</label>
                             <input type="text" name="libelle" id="libelle" value="{{ $typeForfait->libelle }}" class="px-4 py-2 border rounded-md">
                         </div>
+                        
                         <div>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Modifier</button>
                         </div>

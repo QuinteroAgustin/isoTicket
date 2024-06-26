@@ -42,6 +42,11 @@
                                 @endforeach
                             </select>
                         </div>
+                        <!-- masquer -->
+                        <div class="flex items-center ps-2 mt-2">
+                            <input id="bordered-checkbox-1" type="checkbox" value="1" {{ ($technicien->masquer==1)?'checked':'' }} name="masquer" class="w-4 h-4 text-blue-600 bg-gray-100 rounded focus:ring-blue-500 focus:ring-2">
+                            <label for="bordered-checkbox-1" class="w-full py-4 ms-2 text-sm font-medium text-gray-900">Masquer ?</label>
+                        </div>
                         <div>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Modifier</button>
                         </div>

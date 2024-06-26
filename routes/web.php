@@ -21,6 +21,8 @@ Route::get('/ticket', [TicketController::class, 'ticket'])->name('ticket')->midd
 Route::get('/ticket/{id}/edit', [TicketController::class, 'edit'])->name('ticket.edit')->middleware(Authenticate::class);
 Route::post('/ticket/{id}/newmessage', [TicketController::class, 'newMessage'])->name('ticket.newMessage')->middleware(Authenticate::class);
 Route::post('/ticket/{id}/edit', [TicketController::class, 'editPost'])->name('ticket.edit.post')->middleware(Authenticate::class);
+Route::get('/ticket/forfait/{id}/credit', [TicketController::class, 'getRemainingCredit'])->middleware(Authenticate::class);
+
 
 Route::get('/ticket/cloture', [TicketController::class, 'ticket_clots'])->name('ticket.clots')->middleware(Authenticate::class);
 Route::get('/create', [TicketController::class, 'createVue'])->name('create')->middleware(Authenticate::class);

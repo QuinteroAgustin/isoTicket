@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ISOCIEL - @yield('title')</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/isociel-logo_ic-blanc-png.png') }}">
     @vite('resources/css/app.css')
     <!-- Include stylesheet -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.snow.css" rel="stylesheet" />
@@ -15,14 +16,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body class="bg-gray-100 h-screen overflow"><!-- overflow-hidden -->
-
     <div class="flex flex-col h-screen">
 
         <div class="container flex flex-col flex-wrap items-center justify-between py-2 mx-auto md:flex-row max-w-7xl">
-            <a href="{{ route('home') }}" class="relative z-10 flex items-center w-auto text-2xl font-extrabold leading-none text-black select-none">ISOCIEL</a>
+            <a href="{{ route('home') }}" class="relative z-10 flex items-center w-auto text-2xl font-extrabold leading-none text-black select-none"><img width="100" src="{{ asset('images/Logo-couleur-Transparent.png')}}" alt="ISOCIEL"></a>
             <div>@yield('page_title')</div>
             <!-- Bouton d'avatar avec nom et menu déroulant -->
             <div class="relative z-10 flex items-center space-x-3 md:ml-5 lg:justify-end">
@@ -188,6 +189,7 @@
             }
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     </body>
 
 </html>

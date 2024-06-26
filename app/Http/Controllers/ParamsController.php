@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Role;
+use App\Models\Client;
 use App\Models\Impact;
 use App\Models\Risque;
 use App\Models\Status;
@@ -70,7 +71,7 @@ class ParamsController extends Controller
             'libelle' => 'required|string|max:50',
             // Autres règles de validation si nécessaire
         ]);
-
+        $status->masquer = $request->masquer;
         // Mettre à jour les attributs du statut avec les données du formulaire
         $status->update($validatedData);
 
@@ -134,7 +135,7 @@ class ParamsController extends Controller
             'libelle' => 'required|string|max:50',
             // Autres règles de validation si nécessaire
         ]);
-
+        $priorite->masquer = $request->masquer;
         // Mettre à jour les attributs du statut avec les données du formulaire
         $priorite->update($validatedData);
 
@@ -199,7 +200,7 @@ class ParamsController extends Controller
             'libelle' => 'required|string|max:50',
             // Autres règles de validation si nécessaire
         ]);
-
+        $impact->masquer = $request->masquer;
         // Mettre à jour les attributs du statut avec les données du formulaire
         $impact->update($validatedData);
 
@@ -265,6 +266,7 @@ class ParamsController extends Controller
         ]);
 
         // Mettre à jour les attributs du statut avec les données du formulaire
+        $service->masquer = $request->masquer;
         $service->update($validatedData);
 
         // Rediriger avec un message de succès
@@ -332,6 +334,7 @@ class ParamsController extends Controller
         $categorie->libelle = $request->input('libelle');
         // Assigner l'ID du service à la catégorie
         $categorie->id_service = $service->id_service;
+        $categorie->masquer = $request->masquer;
         // Sauvegarder la catégorie mise à jour
         $categorie->save();
 
@@ -398,6 +401,7 @@ class ParamsController extends Controller
 
             // Mettre à jour les autres attributs de la catégorie
             $fonction->libelle = $request->input('libelle');
+            $fonction->masquer = $request->input('masquer');
             // Assigner l'ID du service à la catégorie
             $fonction->id_categorie = $categorie->id_categorie;
             // Sauvegarder la catégorie mise à jour
@@ -668,7 +672,8 @@ class ParamsController extends Controller
     {
         $forfaits = Forfait::all(); // Récupérer tous les status depuis la base de données
         $types = TypeForfait::all();
-        return view('params.form.forfait', compact('forfaits', 'types'));
+        $clients = Client::all();
+        return view('params.form.forfait', compact('forfaits', 'types', 'clients'));
     }
 
     public function addForfait(Request $request)
@@ -676,7 +681,7 @@ class ParamsController extends Controller
         try {
             // Validez les données du formulaire
             $validatedData = $request->validate([
-                //'id_client' => 'required|string',
+                'client' => 'required|exists:sqlsrv2.F_COMPTET,CT_Num',
                 'created_at' => 'required|date',
                 'valid_to' => 'required|date|after:created_at',
                 'credit' => 'required|integer',
@@ -685,7 +690,7 @@ class ParamsController extends Controller
 
             // Créez un nouvel objet Forfait avec les données validées
             $forfait = new Forfait();
-            //$forfait->id_client = $validatedData['id_client'];
+            $forfait->id_client = $validatedData['client'];
             $forfait->created_at = $validatedData['created_at'];
             $forfait->valid_to = $validatedData['valid_to'];
             $forfait->credit = $validatedData['credit'];
@@ -698,7 +703,7 @@ class ParamsController extends Controller
             return redirect()->back()->with('success', 'Nouveau forfait ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du forfait.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du forfait.'.$e);
         }
     }
 
@@ -706,15 +711,15 @@ class ParamsController extends Controller
     {
         $forfait = Forfait::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
         $types = TypeForfait::all();
-        $impacts = Impact::all();
-        return view('params.form.ForfaitEdit', compact('forfait', 'types'));
+        $clients = Client::all();
+        return view('params.form.ForfaitEdit', compact('forfait', 'types', 'clients'));
     }
 
     public function updateForfait(Request $request, $id)
     {
         try{
             $request->validate([
-                'id_client' => 'required',
+                'client' => 'required|exists:sqlsrv2.F_COMPTET,CT_Num',
                 'created_at' => 'required|date',
                 'valid_to' => 'required|date|after:created_at',
                 'credit' => 'required|integer',
@@ -722,11 +727,12 @@ class ParamsController extends Controller
             ]);
 
             $forfait = Forfait::findOrFail($id);
-            //$forfait->id_client = $request->input('id_client');
+            $forfait->id_client = $request->input('client');
             $forfait->created_at = $request->input('created_at');
             $forfait->valid_to = $request->input('valid_to');
             $forfait->credit = $request->input('credit');
             $forfait->id_type = $request->input('id_type');
+            $forfait->masquer = $request->input('masquer');
             $forfait->save();
 
             // Rediriger avec un message de succès
@@ -819,6 +825,7 @@ class ParamsController extends Controller
             //$technicien->email = $request->email;
             $technicien->id_role = $request->id_role;
             $technicien->id_service = $request->id_service;
+            $technicien->masquer = $request->masquer;
             if(!empty($request->password)){
                 $technicien->password = Hash::make($request->password);
             }

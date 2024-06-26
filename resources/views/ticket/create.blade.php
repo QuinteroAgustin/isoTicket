@@ -22,10 +22,9 @@
             </ul>
         </div>
     @endif
-
     <!-- Your Page Content Here -->
     <h1 class="text-2xl font-semibold">Création d'un nouveau ticket</h1>
-    <form action="{{ route('createPost') }}" method="POST">
+    <form id="create" action="{{ route('createPost') }}" method="POST">
         @csrf
         <div class="flex">
             <div class="flex-none w-30 h-full p-4 ml-1">
@@ -82,11 +81,6 @@
                     </select>
                 </div>
 
-                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 mt-5">
-                    <input id="bordered-checkbox-1" type="checkbox" value="1" name="cri" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="bordered-checkbox-1" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">CRI</label>
-                </div>
-
                 <div class="max-w-[8rem] mt-5">
                     <label for="time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Durée</label>
                     <div class="relative">
@@ -114,7 +108,7 @@
                 <input type="text" id="titre" name="titre" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Problème connexion Sage">
                 </div>
                 <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description de la problèmatique</label>
-                <textarea id="message" name="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ecrire la description du problème ..."></textarea>
+                <textarea id="message" name="message" rows="10" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ecrire la description du problème ..."></textarea>
 
             </div>
             <div class="flex-none w-30 h-full p-4">
@@ -251,7 +245,7 @@
             .catch(error => {
                 console.error('Erreur lors du chargement des contacts:', error);
             });
-    }
+        }
 
 
         document.addEventListener('click', function(event) {
@@ -323,6 +317,92 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const formulaire = document.getElementById('create');
+
+            formulaire.addEventListener('submit', function(event) {
+                // Annuler la soumission par défaut du formulaire
+                event.preventDefault();
+
+                // Vérifier ici si tous les champs sont valides
+                const validationMessage = validateForm();
+
+                if (validationMessage === '') {
+                    // Soumettre le formulaire si la validation passe
+                    formulaire.submit();
+                } else {
+                    // Afficher le message d'erreur à l'utilisateur
+                    alert(validationMessage);
+                }
+            });
+
+            // Fonction pour convertir la durée en format HH:MM en minutes totales
+            function convertDureeToMinutes(duree) {
+                // Séparer les heures et les minutes en utilisant le séparateur ":"
+                const [hours, minutes] = duree.split(':');
+
+                // Convertir les heures et les minutes en nombres entiers
+                const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
+
+                return totalMinutes;
+            }
+
+            function validateForm() {
+                // Vérifier ici chaque champ du formulaire
+                const client = document.getElementById('client').value.trim();
+                const titre = document.getElementById('titre').value.trim();
+                const message = document.getElementById('message').value.trim();
+                const contact = document.getElementById('contact').value.trim();
+                const technicien = document.getElementById('technicien').value.trim();
+                const statut = document.getElementById('statut').value.trim();
+                const service = document.getElementById('service').value.trim();
+                const categorie = document.getElementById('categorie').value.trim();
+                const fonction = document.getElementById('fonction').value.trim();
+                const priorite = document.getElementById('priorite').value.trim();
+                const impact = document.getElementById('impact').value.trim();
+
+
+                // Initialiser un message d'erreur vide
+                let errorMessage = '';
+
+                // Exemple de validation simple (vérifie que les champs ne sont pas vides)
+                if (client === ''){
+                    errorMessage += 'Le champ Client est requis.\n';
+                }
+                if (titre === ''){
+                    errorMessage += 'Le champ Titre est requis.\n';
+                }
+                if (message === ''){
+                    errorMessage += 'Le champ Message est requis.\n';
+                }
+                if(contact === ''){
+                    errorMessage += 'Le champ Contact est requis.\n';
+                }
+                if(technicien === '') {
+                    errorMessage += 'Le champ Technicien est requis.\n';
+                }
+                if(statut === ''){
+                    errorMessage += 'Le champ Statut est requis.\n';
+                }
+                if(service === ''){
+                    errorMessage += 'Le champ Service est requis.\n';
+                }
+                if(categorie === ''){
+                    errorMessage += 'Le champ Categorie est requis.\n';
+                }
+                if(fonction === ''){
+                    errorMessage += 'Le champ Fonction est requis.\n';
+                }
+                if(priorite === ''){
+                    errorMessage += 'Le champ Priorité est requis.\n';
+                }
+                if(impact === ''){
+                    errorMessage += 'Le champ Impact est requis.\n';
+                }
+
+                return errorMessage; // Retourner le message d'erreur
+            }
+        });
 
     </script>
 
