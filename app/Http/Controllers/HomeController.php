@@ -39,7 +39,7 @@ class HomeController extends Controller
         // Calcul de la différence en pourcentage entre aujourd'hui et hier
         $countJour = $ticketsJour->count();
         $countHier = $ticketsHier->count();
-        if ($countHier > 0) {
+        if ($countHier > 0 && $countJour > 0) {
             $pourcentageDifference = (($countJour - $countHier) / $countJour) * 100;
         } else {
             $pourcentageDifference = $countJour > 0 ? 100 : 0; // Si aucun ticket hier, le pourcentage est de 100% si des tickets aujourd'hui, sinon 0%

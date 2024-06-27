@@ -16,9 +16,11 @@ use App\Models\Priorite;
 use App\Models\Categorie;
 use App\Models\Technicien;
 use App\Helpers\TimeHelper;
+use App\Mail\PostMail;
+use App\Mail\PostMailTicket;
 use App\Models\TicketLigne;
 use Illuminate\Http\Request;
-use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
@@ -125,6 +127,9 @@ class TicketController extends Controller
                 $ticketLigne->id_contact = $request->contact ?? null;
                 $ticketLigne->save();
             }
+
+            Mail::to("agustin.quintero@isociel.fr")->send(new PostMail(['titre' => $ticket->titre, 't_nom' => $ticket->technicien->nom, 't_prenom' => $ticket->technicien->prenom, 'client' => $ticket->client->CT_Intitule]));
+            Mail::to("agustin.quintero@isociel.fr")->send(new PostMailTicket(['titre' => $ticket->titre, 't_nom' => $ticket->technicien->nom, 't_prenom' => $ticket->technicien->prenom, 'client' => $ticket->client->CT_Intitule]));
 
             // Retournez une réponse de succès
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');

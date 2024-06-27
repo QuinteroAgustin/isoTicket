@@ -9,18 +9,16 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NotificationEmail extends Mailable
+class PostMailTicket extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $messageContent;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($messageContent)
+    public function __construct(public array $data)
     {
-        $this->messageContent = $messageContent;
+        //
     }
 
     /**
@@ -29,7 +27,7 @@ class NotificationEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Notification Email',
+            subject: 'Post Mail Ticket',
         );
     }
 
@@ -39,7 +37,7 @@ class NotificationEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.notification',
+            markdown: 'emails.postTicket',
         );
     }
 
