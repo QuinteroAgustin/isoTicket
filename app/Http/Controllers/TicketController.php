@@ -260,4 +260,13 @@ class TicketController extends Controller
             return response()->json(['error' => 'Forfait non trouvé'], 404);
         }
     }
+
+    public function getContactsTab($client_id)
+    {
+        // Récupérer les contacts du client avec l'ID spécifié
+        $contacts = Contact::where('CT_Num', $client_id)->get();
+
+        // Retourner les contacts sous forme de réponse JSON
+        return response()->json(['contacts' => $contacts]);
+    }
 }

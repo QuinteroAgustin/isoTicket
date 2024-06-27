@@ -36,7 +36,6 @@
                             </svg>
                         </span>
                         <h3 class="font-medium leading-tight">Choix du client</h3>
-                        <p class="text-sm">Societe client</p>
                     </li>
                     <li class="mb-10 ms-6">
                         <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700">
@@ -112,22 +111,31 @@
 
             </div>
             <div class="flex-none w-30 h-full p-4">
-                <label for="client" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
-                <div class="flex">
-                <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
-                    </svg>
-                </span>
-                <input type="text" id="client" name="client" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="isociel" autocomplete="off">
+                <div class="max-w-sm mx-auto">
+                    <label for="client" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
+                    <div class="flex">
+                        <button data-modal-target="tabSociete" data-modal-toggle="tabSociete" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600" type="button">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 7H7M6 10H7M11 10H12M11 13H12M6 13H7M11 7H12M7 21V18C7 16.8954 7.89543 16 9 16C10.1046 16 11 16.8954 11 18V21H7ZM7 21H3V4.6C3 4.03995 3 3.75992 3.10899 3.54601C3.20487 3.35785 3.35785 3.20487 3.54601 3.10899C3.75992 3 4.03995 3 4.6 3H13.4C13.9601 3 14.2401 3 14.454 3.10899C14.6422 3.20487 14.7951 3.35785 14.891 3.54601C15 3.75992 15 4.03995 15 4.6V9M19.7 13.5C19.7 14.3284 19.0284 15 18.2 15C17.3716 15 16.7 14.3284 16.7 13.5C16.7 12.6716 17.3716 12 18.2 12C19.0284 12 19.7 12.6716 19.7 13.5ZM21.5 21V20.5C21.5 19.1193 20.3807 18 19 18H17.5C16.1193 18 15 19.1193 15 20.5V21H21.5Z" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <input type="text" id="client" name="client" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="isociel" autocomplete="off">
+                    </div>
+                    <div id="dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
                 </div>
-                <div id="dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
 
                 <div class="max-w-sm mx-auto">
                     <label for="contact" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contact</label>
-                    <select id="contact" name="contact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option selected value="">Choix du contact...</option>
-                    </select>
+                    <div class="flex">
+                        <button data-modal-target="tabContact" data-modal-toggle="tabContact" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600" type="button">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
+                            </svg>
+                        </button>
+                        <select id="contact" name="contact" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected value="">Choix du contact...</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="max-w-sm mx-auto">
@@ -198,6 +206,11 @@
         </div>
     </form>
 
+    <!-- Inclure le composant des tab contact -->
+    @include('components.contact')
+    <!-- Inclure le composant des info societe -->
+    @include('components.societe')
+
     <script>
         document.getElementById('client').addEventListener('input', function() {
             let search = this.value.trim();
@@ -215,6 +228,7 @@
                                 div.addEventListener('click', function() {
                                     document.getElementById('client').value = client.CT_Num;
                                     loadContacts(client.CT_Num);// Charger les contacts pour ce client
+                                    fetchAndDisplayContacts(client.CT_Num);//generer le tableau des contacts
                                     dropdown.classList.add('hidden');
                                 });
                                 dropdown.appendChild(div);
@@ -254,6 +268,40 @@
                 dropdown.classList.add('hidden');
             }
         });
+
+        const contactsTable = document.getElementById('contacts-table');
+
+        function fetchAndDisplayContacts(clientId) {
+            if (clientId) {
+                console.log(clientId);
+                axios.get(`/create/client/${clientId}/tableau`)
+                    .then(response => {
+                        const contacts = response.data.contacts;
+                        contactsTable.innerHTML = ''; // Clear previous content
+
+                        contacts.forEach(contact => {
+                            const row = document.createElement('tr');
+                            row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+
+                            row.innerHTML = `
+                                <td class="py-3 px-6 text-center">${contact.cbMarq}</td>
+                                <td class="py-3 px-6 text-left">${contact.CT_Nom}</td>
+                                <td class="py-3 px-6 text-left">${contact.CT_Prenom}</td>
+                                <td class="py-3 px-6 text-left">${contact.CT_Fonction}</td>
+                                <td class="py-3 px-6 text-left">${contact.CT_Telephone}</td>
+                                <td class="py-3 px-6 text-left">${contact.CT_TelPortable}</td>
+                                <td class="py-3 px-6 text-left">${contact.CT_EMail}</td>
+                                <td class="py-3 px-6 text-left"></td>
+                            `;
+
+                            contactsTable.appendChild(row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des contacts:', error);
+                    });
+            }
+        }
 
 
         // Attendre que le DOM soit chargé

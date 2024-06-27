@@ -11,6 +11,7 @@ class HomeController extends Controller
 {
     public function home()
     {
+        //$user = Technicien::findOrFail(Technicien::getTechId());
         // Récupère tous les tickets
         $tickets = Ticket::All();
 
@@ -44,8 +45,13 @@ class HomeController extends Controller
             $pourcentageDifference = $countJour > 0 ? 100 : 0; // Si aucun ticket hier, le pourcentage est de 100% si des tickets aujourd'hui, sinon 0%
         }
 
-            return view('home.index', compact('tickets', 'ticketsJour', 'ticketsHier', 'ticketsMoisEnCours', 'pourcentageDifference', 'ticketsClots', 'ticketsClotsJour'));
-        }
+        $techniciens = Technicien::all();
+
+        // Formater la date du jour
+        $dateFormatted = Carbon::now()->translatedFormat('l d F Y');
+
+        return view('home.index', compact('tickets', 'ticketsJour', 'ticketsHier', 'ticketsMoisEnCours', 'pourcentageDifference', 'ticketsClots', 'ticketsClotsJour', 'techniciens', 'dateFormatted'));
+    }
 
     public function notFound()
     {
@@ -70,7 +76,7 @@ class HomeController extends Controller
         }
     }
 
-    public function logoutPost(Request $request)
+    public function logoutPost()
     {
         Technicien::logout();
         return redirect('/login');

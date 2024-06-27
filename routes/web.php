@@ -12,7 +12,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 Route::get('/', [HomeController::class, 'home'])->name('home')->middleware(Authenticate::class);
 Route::get('/login', [HomeController::class, 'login'])->name('login')->middleware(RedirectIfAuthenticated::class);
 Route::post('/login', [HomeController::class, 'loginPost'])->name('loginPost')->middleware(RedirectIfAuthenticated::class);
-Route::post('/logout', [HomeController::class, 'logoutPost'])->name('logout')->middleware(Authenticate::class);
+Route::get('/logout', [HomeController::class, 'logoutPost'])->name('logout')->middleware(Authenticate::class);
 Route::get('/404', [HomeController::class, 'notFound'])->name('404');
 
 //tickets
@@ -27,8 +27,11 @@ Route::get('/ticket/forfait/{id}/credit', [TicketController::class, 'getRemainin
 Route::get('/ticket/cloture', [TicketController::class, 'ticket_clots'])->name('ticket.clots')->middleware(Authenticate::class);
 Route::get('/create', [TicketController::class, 'createVue'])->name('create')->middleware(Authenticate::class);
 Route::post('/create', [TicketController::class, 'create'])->name('createPost')->middleware(Authenticate::class);
+
+
 Route::get('/create/search-clients', [TicketController::class, 'searchClients'])->name('search.clients')->middleware(Authenticate::class);
 Route::get('/create/client/{client_id}', [TicketController::class, 'getContacts'])->name('client.contacts')->middleware(Authenticate::class);
+Route::get('/create/client/{client_id}/tableau', [TicketController::class, 'getContactsTab'])->name('client.contacts.tab')->middleware(Authenticate::class);;
 
 
 

@@ -25,6 +25,16 @@ class Technicien extends Model
         return $this->hasOne(Role::class, 'id_role', 'id_role');
     }
 
+    public function lignes()
+    {
+        return $this->hasMany(TicketLigne::class, 'id_technicien', 'id_technicien');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'id_technicien', 'id_technicien');
+    }
+
     /**
      * Attempt to log in the user.
      *

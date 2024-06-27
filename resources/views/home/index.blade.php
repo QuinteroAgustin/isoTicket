@@ -3,6 +3,7 @@
 @section('title', 'Tableau de bord')
 
 @section('content')
+<h1 class="text-2xl font-semibold">Statistiques</h1>
 <div class="grid grid-cols-3 gap-3 mb-2">
     <div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
         <div class="flex justify-between mb-3">
@@ -10,7 +11,9 @@
                 <div class="flex justify-center items-center">
                     <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">Tickets Global</h5>
                 </div>
+
             </div>
+            <h6>{{ $dateFormatted }}</h6>
         </div>
         <div class="flex justify-between border-gray-200 border-b dark:border-gray-700 pb-3">
             <dl>
@@ -53,7 +56,6 @@
         </div>
     </div>
 
-
     <div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
         <div class="flex justify-between mb-3">
             <div class="flex items-center">
@@ -77,12 +79,21 @@
                 <dd class="text-blue-600 dark:text-blue-300 text-sm font-medium">Cloturé</dd>
                 </dl>
             </div>
-
         </div>
     </div>
 
+    <div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+        <div class="flex justify-between mb-3">
+            <div class="flex items-center">
+                <div class="flex justify-center items-center">
+                    <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">Techniciens</h5>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
 
-
+        </div>
+    </div>
 </div>
 
 
