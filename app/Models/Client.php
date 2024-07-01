@@ -26,4 +26,9 @@ class Client extends Model
     {
         return $this->hasMany(Contact::class, 'CT_Num');
     }
+
+    public function collaborateur()
+    {
+        return $this->hasOne(Collaborateur::class, 'CO_No', 'CO_No');
+    }
 }

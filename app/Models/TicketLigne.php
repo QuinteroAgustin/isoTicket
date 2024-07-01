@@ -21,6 +21,10 @@ class TicketLigne extends Model
     {
         return $this->hasOne(Client::class, 'CT_Num', 'id_client');
     }
+    public function contactCbmarq()
+    {
+        return $this->belongsTo(Contact::class, 'id_contact', 'cbMarq');
+    }
 
     public function contact_ctnom()
     {
@@ -40,5 +44,10 @@ class TicketLigne extends Model
     public function categorie()
     {
         return $this->hasOne(Categorie::class, 'id_categorie', 'id_categorie');
+    }
+
+    public function ticket()
+    {
+        return $this->belongsTo(Ticket::class, 'id_ticket', 'id_ticket');
     }
 }

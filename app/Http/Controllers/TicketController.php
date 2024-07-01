@@ -17,7 +17,11 @@ use App\Models\Categorie;
 use App\Models\Technicien;
 use App\Helpers\TimeHelper;
 use App\Mail\PostMail;
+use App\Mail\PostMailClose;
+use App\Mail\PostMailContact;
+use App\Mail\PostMailOpen;
 use App\Mail\PostMailTicket;
+use App\Mail\PostMailUpdate;
 use App\Models\TicketLigne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -64,7 +68,7 @@ class TicketController extends Controller
         $techniciens = Technicien::all();
         $priorites = Priorite::all();
         $impacts = Impact::all();
-        $status = Status::all();
+        $status = Status::where('id_statut', 1)->get();
         $fonctions = Fonction::all();
         $categories = Categorie::all();
         $services = Service::all();
@@ -90,9 +94,9 @@ class TicketController extends Controller
             // Créez un nouvel objet Forfait avec les données validées
             $ticket = new Ticket();
             $ticket->titre = $request->titre;
-            $ticket->created_at = Carbon::now();
-            $ticket->updated_at = Carbon::now();
-            $ticket->closed_at = ($request->statut==4)?Carbon::now():null;
+            $ticket->created_at = Carbon::now()->timezone('Europe/Paris');
+            $ticket->updated_at = Carbon::now()->timezone('Europe/Paris');
+            $ticket->closed_at = ($request->statut==4)?Carbon::now()->timezone('Europe/Paris'):null;
             $ticket->cri = 0;
             $ticket->cloture = ($request->statut==4)?1:0;
             list($hours, $minutes) = explode(':', $request->duree);
@@ -118,8 +122,8 @@ class TicketController extends Controller
                 $ticketLigne = new TicketLigne();
                 $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
                 $ticketLigne->text = $request->message;
-                $ticketLigne->created_at = Carbon::now();
-                $ticketLigne->updated_at = Carbon::now();
+                $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
+                $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->type_user = 1;
                 $ticketLigne->id_technicien = Technicien::getTechId();
 
@@ -127,15 +131,29 @@ class TicketController extends Controller
                 $ticketLigne->id_contact = $request->contact ?? null;
                 $ticketLigne->save();
             }
+            $data = [
+                'titre' => $ticket->titre,
+                'message' => $ticket->message,
+                'statut' => $ticket->statut->libelle,
+                't_nom' => $ticket->technicien->nom,
+                't_prenom' => $ticket->technicien->prenom,
+                'client' => $ticket->client->CT_Intitule,
+                'contact' => $ticket->client->CT_Intitule,
+                'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i:s'),
+                'service' => $ticket->service->libelle,
+                'categorie' => $ticket->categorie->libelle,
+                'fonction' => $ticket->fonction->libelle,
+                'id' => $ticket->id_ticket
+            ];
 
-            Mail::to("agustin.quintero@isociel.fr")->send(new PostMail(['titre' => $ticket->titre, 't_nom' => $ticket->technicien->nom, 't_prenom' => $ticket->technicien->prenom, 'client' => $ticket->client->CT_Intitule]));
-            Mail::to("agustin.quintero@isociel.fr")->send(new PostMailTicket(['titre' => $ticket->titre, 't_nom' => $ticket->technicien->nom, 't_prenom' => $ticket->technicien->prenom, 'client' => $ticket->client->CT_Intitule]));
+            Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailOpen($data));
+
 
             // Retournez une réponse de succès
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'. $e);
         }
     }
 
@@ -183,8 +201,8 @@ class TicketController extends Controller
                 $ticketLigne = new TicketLigne();
                 $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
                 $ticketLigne->text = $request->message;
-                $ticketLigne->created_at = Carbon::now();
-                $ticketLigne->updated_at = Carbon::now();
+                $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
+                $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
                 if($request->masquer == 1){
                     $type_user = 2;
                 }else{
@@ -224,8 +242,9 @@ class TicketController extends Controller
             ]);
             $ticket = Ticket::findOrFail($request->id);
             if ($ticket->exists) {
-                $ticket->updated_at = Carbon::now();
-                $ticket->closed_at = ($request->statut==4)?Carbon::now():null;
+                $old_statut = $ticket->id_statut;
+                $ticket->updated_at = Carbon::now()->timezone('Europe/Paris');
+                $ticket->closed_at = ($request->statut==4)?Carbon::now()->timezone('Europe/Paris'):null;
                 $ticket->cri = (isset($request->cri))?$request->cri:0;
                 $ticket->cloture = ($request->statut==4)?1:0;
                 list($hours, $minutes) = explode(':', $request->duree);
@@ -247,10 +266,34 @@ class TicketController extends Controller
                 $ticket->id_priorite = $request->priorite;
                 $ticket->save();
             }
+            $ticketLigne = $ticket->lignes->first();
+            $data = [
+                'titre' => $ticket->titre,
+                'statut' => $ticket->statut->libelle,
+                't_nom' => $ticket->technicien->nom,
+                't_prenom' => $ticket->technicien->prenom,
+                'contact' => $ticket->client->CT_Intitule,
+                'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i'),
+                'service' => $ticket->service->libelle,
+                'categorie' => $ticket->categorie->libelle,
+                'fonction' => $ticket->fonction->libelle,
+                'id' => $ticket->id_ticket
+            ];
+            if($ticket->cloture == 1){
+                Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailClose($data));
+            }else{
+                if($ticket->cloture != 1 && $ticket->id_statut != 1){
+                    if($request->statut != $old_statut){
+                        Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailUpdate($data));
+                    }
+
+                }
+            }
+
             return redirect()->back()->with('success', 'Edition du ticket '.$ticket->id_ticket.' avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'. $e);
         }
     }
 
@@ -270,8 +313,76 @@ class TicketController extends Controller
     {
         // Récupérer les contacts du client avec l'ID spécifié
         $contacts = Contact::where('CT_Num', $client_id)->get();
-
+        // Encoder toutes les données en UTF-8
+        $contacts = $contacts->map(function ($contact) {
+            return collect($contact)->map(function ($value) {
+                return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            });
+        });
         // Retourner les contacts sous forme de réponse JSON
         return response()->json(['contacts' => $contacts]);
     }
+
+    public function getClientTab($client_id)
+    {
+        // Récupérer les client du client avec l'ID spécifié
+        $client = Client::with('collaborateur')->findOrFail($client_id);
+        // Encoder manuellement chaque champ du client et du collaborateur en UTF-8
+        $clientData = collect($client)->map(function ($value) {
+            return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+        })->toArray();
+
+        // Si le client a un collaborateur, encoder également ses champs
+        if ($client->collaborateur) {
+            $clientData['collaborateur'] = collect($client->collaborateur)->map(function ($value) {
+                return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            })->toArray();
+        }
+        // Retourner les client sous forme de réponse JSON
+        return response()->json(['client' => $clientData]);
+    }
+
+    public function callClient($id)
+    {
+        try{
+            $ticket = Ticket::findOrFail($id);
+            // Vérifiez si le ticket a été créé avec succès
+            if ($ticket->exists) {
+                // Créez une nouvelle ligne de ticket
+                $ticketLigne = new TicketLigne();
+                $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
+                $ticketLigne->text = "Nos équipes ont tenté de prendre contact avec vous.";
+                $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
+                $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
+                $ticketLigne->type_user = 1;
+                $ticketLigne->id_technicien = Technicien::getTechId();
+                $ticketLigne->ct_num = $ticket->id_client;
+                $ticketLigne->save();
+            }
+            $ticketLigne = $ticket->lignes()->orderBy('created_at', 'asc')->first();
+            $data = [
+                'titre' => $ticket->titre,
+                'statut' => $ticket->statut->libelle,
+                't_nom' => technicien::find(Technicien::getTechId())->nom,
+                't_prenom' => technicien::find(Technicien::getTechId())->prenom,
+                'client' => $ticket->client->CT_Intitule,
+                'contact' => $ticket->client->CT_Intitule,
+                'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i'),
+                'date_ticket' => Carbon::parse($ticket->created_at)->translatedFormat('l d F Y H:i'),
+                'service' => $ticket->service->libelle,
+                'categorie' => $ticket->categorie->libelle,
+                'fonction' => $ticket->fonction->libelle,
+                'id' => $ticket->id_ticket
+            ];
+            Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailContact($data));
+
+
+            return redirect()->back()->with('success', 'Tentative de contact avec succès!');
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.'. $e);
+        }
+    }
+
+
 }

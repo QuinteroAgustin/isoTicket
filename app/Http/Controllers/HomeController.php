@@ -48,7 +48,7 @@ class HomeController extends Controller
         $techniciens = Technicien::all();
 
         // Formater la date du jour
-        $dateFormatted = Carbon::now()->translatedFormat('l d F Y');
+        $dateFormatted = Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i:s');
 
         return view('home.index', compact('tickets', 'ticketsJour', 'ticketsHier', 'ticketsMoisEnCours', 'pourcentageDifference', 'ticketsClots', 'ticketsClotsJour', 'techniciens', 'dateFormatted'));
     }

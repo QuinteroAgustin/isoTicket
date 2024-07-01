@@ -171,7 +171,7 @@
             <div class="grow h-full p-4">
                 <div class="flex flex-col max-h-[65vh]">
                     <!-- Section de discussion -->
-                    <div class="flex-1 overflow-y-auto p-4">
+                    <div id="ticket-container" class="flex-1 overflow-y-auto p-4">
                         <ul>
                             @foreach ($ticket->lignes as $ligne)
                                 @if ($ligne->type_user >= 1)
@@ -221,6 +221,9 @@
 
             <!-- droite -->
             <div class="flex-none w-30 h-full p-4">
+                @if($ticket->cloture == 0)
+                <a href="{{ route('call.client', ['id' => $ticket->id_ticket]) }}" class="block text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full mt-2">Tentative de contact</a>
+                @endif
                 <!-- client -->
                 <div class="max-w-sm mx-auto">
                     <label for="client" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
@@ -243,6 +246,7 @@
                             var ctNum = "{{ $ticket->id_client }}";
                             loadContacts(ctNum);//charger les contacts
                             fetchAndDisplayContacts(ctNum);//charger le tableau de contact
+                            fetchAndDisplayClient(ctNum);//charger le tableau de societe
                         });
                     </script>
                 @endif
@@ -444,6 +448,7 @@
                                     document.getElementById('client').value = client.CT_Num;
                                     loadContacts(client.CT_Num);// Charger les contacts pour ce client
                                     fetchAndDisplayContacts(client.CT_Num);//charger le tableau de contact
+                                    fetchAndDisplayClient(client.CT_Num);//charger le tableau de societe
                                     dropdown.classList.add('hidden');
                                 });
                                 dropdown.appendChild(div);
@@ -492,12 +497,12 @@
             }
         });
 
+        //Generer le tableau info contact
         const contactsTable = document.getElementById('contacts-table');
 
         function fetchAndDisplayContacts(clientId) {
             if (clientId) {
-                console.log(clientId);
-                axios.get(`/create/client/${clientId}/tableau`)
+                axios.get(`/create/client/${clientId}/contacttableau`)
                     .then(response => {
                         const contacts = response.data.contacts;
                         contactsTable.innerHTML = ''; // Clear previous content
@@ -523,6 +528,41 @@
                     .catch(error => {
                         console.error('Erreur lors de la récupération des contacts:', error);
                     });
+            }
+        }
+
+        //generer le tableau info cient
+        const societeTable = document.getElementById('societe-table');
+
+        function fetchAndDisplayClient(clientId) {
+            if (clientId) {
+                axios.get(`/create/client/${clientId}/societetableau`)
+                    .then(response => {
+                        const client = response.data.client;
+                        societeTable.innerHTML = ''; // Clear previous content
+
+                        const row = document.createElement('tr');
+                        row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+
+                        const collaborateur = client.collaborateur ? `${client.collaborateur.CO_Nom} ${client.collaborateur.CO_Prenom}` : 'Aucun commercial';
+
+                        row.innerHTML = `
+                            <td class="py-3 px-6 text-center">${client.CT_Num}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Intitule}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Telephone}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Telecopie}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Adresse}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Ville}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Complement}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_EMail}</td>
+                            <td class="py-3 px-6 text-left">${collaborateur}</td>
+                        `;
+
+                        societeTable.appendChild(row);
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération du Client:', error);
+                });
             }
         }
 
@@ -798,6 +838,11 @@
 
                 return errorMessage; // Retourner le message d'erreur
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('ticket-container');
+            container.scrollTop = container.scrollHeight;
         });
 
     </script>

@@ -21,12 +21,14 @@
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-center">ID</th>
-                                <th class="py-3 px-6 text-left">aaaa</th>
-                                <th class="py-3 px-6 text-left">Prénom</th>
-                                <th class="py-3 px-6 text-left">Fonction</th>
+                                <th class="py-3 px-6 text-left">Nom</th>
                                 <th class="py-3 px-6 text-left">Téléphone</th>
-                                <th class="py-3 px-6 text-left">Portable</th>
+                                <th class="py-3 px-6 text-left">Télécopie</th>
+                                <th class="py-3 px-6 text-left">Adresse</th>
+                                <th class="py-3 px-6 text-left">Ville</th>
+                                <th class="py-3 px-6 text-left">Complément</th>
                                 <th class="py-3 px-6 text-left">E-Mail</th>
+                                <th class="py-3 px-6 text-left">Commercial Agréé</th>
                             </tr>
                         </thead>
                         <tbody id="societe-table" class="text-gray-600 text-sm font-light">

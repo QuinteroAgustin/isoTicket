@@ -59,7 +59,7 @@ class Ticket extends Model
 
     public function lignes()
     {
-        return $this->hasMany(TicketLigne::class, 'id_ticket', 'id_ticket')->orderBy('created_at', 'desc');;
+        return $this->hasMany(TicketLigne::class, 'id_ticket', 'id_ticket');
     }
 
 }

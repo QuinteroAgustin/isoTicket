@@ -229,6 +229,7 @@
                                     document.getElementById('client').value = client.CT_Num;
                                     loadContacts(client.CT_Num);// Charger les contacts pour ce client
                                     fetchAndDisplayContacts(client.CT_Num);//generer le tableau des contacts
+                                    fetchAndDisplayClient(client.CT_Num);//generer le tableau du client
                                     dropdown.classList.add('hidden');
                                 });
                                 dropdown.appendChild(div);
@@ -269,12 +270,13 @@
             }
         });
 
+
+        //Generer le tableau info contact
         const contactsTable = document.getElementById('contacts-table');
 
         function fetchAndDisplayContacts(clientId) {
             if (clientId) {
-                console.log(clientId);
-                axios.get(`/create/client/${clientId}/tableau`)
+                axios.get(`/create/client/${clientId}/contacttableau`)
                     .then(response => {
                         const contacts = response.data.contacts;
                         contactsTable.innerHTML = ''; // Clear previous content
@@ -299,7 +301,42 @@
                     })
                     .catch(error => {
                         console.error('Erreur lors de la récupération des contacts:', error);
-                    });
+                });
+            }
+        }
+
+        //generer le tableau info cient
+        const societeTable = document.getElementById('societe-table');
+
+        function fetchAndDisplayClient(clientId) {
+            if (clientId) {
+                axios.get(`/create/client/${clientId}/societetableau`)
+                    .then(response => {
+                        const client = response.data.client;
+                        societeTable.innerHTML = ''; // Clear previous content
+
+                        const row = document.createElement('tr');
+                        row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+
+                        const collaborateur = client.collaborateur ? `${client.collaborateur.CO_Nom} ${client.collaborateur.CO_Prenom}` : 'Aucun commercial';
+
+                        row.innerHTML = `
+                            <td class="py-3 px-6 text-center">${client.CT_Num}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Intitule}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Telephone}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Telecopie}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Adresse}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Ville}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_Complement}</td>
+                            <td class="py-3 px-6 text-left">${client.CT_EMail}</td>
+                            <td class="py-3 px-6 text-left">${collaborateur}</td>
+                        `;
+
+                        societeTable.appendChild(row);
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération du Client:', error);
+                });
             }
         }
 

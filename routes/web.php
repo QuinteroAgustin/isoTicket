@@ -22,7 +22,7 @@ Route::get('/ticket/{id}/edit', [TicketController::class, 'edit'])->name('ticket
 Route::post('/ticket/{id}/newmessage', [TicketController::class, 'newMessage'])->name('ticket.newMessage')->middleware(Authenticate::class);
 Route::post('/ticket/{id}/edit', [TicketController::class, 'editPost'])->name('ticket.edit.post')->middleware(Authenticate::class);
 Route::get('/ticket/forfait/{id}/credit', [TicketController::class, 'getRemainingCredit'])->middleware(Authenticate::class);
-
+Route::get('/ticket/{id}/call', [TicketController::class, 'callClient'])->name('call.client')->middleware(Authenticate::class);
 
 Route::get('/ticket/cloture', [TicketController::class, 'ticket_clots'])->name('ticket.clots')->middleware(Authenticate::class);
 Route::get('/create', [TicketController::class, 'createVue'])->name('create')->middleware(Authenticate::class);
@@ -31,7 +31,9 @@ Route::post('/create', [TicketController::class, 'create'])->name('createPost')-
 
 Route::get('/create/search-clients', [TicketController::class, 'searchClients'])->name('search.clients')->middleware(Authenticate::class);
 Route::get('/create/client/{client_id}', [TicketController::class, 'getContacts'])->name('client.contacts')->middleware(Authenticate::class);
-Route::get('/create/client/{client_id}/tableau', [TicketController::class, 'getContactsTab'])->name('client.contacts.tab')->middleware(Authenticate::class);;
+Route::get('/create/client/{client_id}/contacttableau', [TicketController::class, 'getContactsTab'])->name('client.contacts.tab')->middleware(Authenticate::class);
+Route::get('/create/client/{client_id}/societetableau', [TicketController::class, 'getClientTab'])->name('client.client.tab')->middleware(Authenticate::class);
+
 
 
 

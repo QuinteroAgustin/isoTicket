@@ -9,16 +9,17 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PostMailTicket extends Mailable
+class PostMailOpen extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $data;
     /**
      * Create a new message instance.
      */
-    public function __construct(public array $data)
+    public function __construct($data)
     {
-        //
+        $this->data = $data;
     }
 
     /**
@@ -27,7 +28,7 @@ class PostMailTicket extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Post Mail Ticket',
+            subject: 'Ouverture de Ticket chez Isociel',
         );
     }
 
@@ -37,7 +38,8 @@ class PostMailTicket extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.postTicket',
+            view: 'emails.PostMailOpen',
+            with: ['data' => $this->data]
         );
     }
 
