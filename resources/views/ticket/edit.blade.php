@@ -164,7 +164,7 @@
 
                 <!-- btn enregister -->
                 @if($ticket->cloture != 1)
-                <input class="w-full h-8 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800 mt-1" type="submit" value="Enregister">
+                <input class="w-full h-8 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800 mt-1" type="submit" value="Enregister" id="submit-button">
                 @endif
             </div>
 
@@ -671,6 +671,8 @@
                 const validationMessage = validateForm();
 
                 if (validationMessage === '') {
+                    // Désactivez le bouton de soumission
+                    document.getElementById('submit-button').disabled = true;
                     // Soumettre le formulaire si la validation passe
                     formulaire.submit();
                 } else {

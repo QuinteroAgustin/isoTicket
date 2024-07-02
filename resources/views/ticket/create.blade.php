@@ -11,6 +11,7 @@
 
 <style>
     /* Custom CSS for Summernote lists */
+    .note-editable { background-color: white; color: black; }
     .note-editor .note-editable ul,
     .note-editor .note-editable ol {
         margin-left: 20px; /* Adjust the margin as needed */
@@ -143,7 +144,7 @@
                     </div>
                 </div>
 
-                <input class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800 mt-5" type="submit" value="Créer">
+                <input class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800 mt-5" type="submit" value="Créer" id="submit-button">
             </div>
 
 
@@ -156,10 +157,10 @@
                         <path d="M12 6V19M6 6H18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </span>
-                <input type="text" id="titre" name="titre" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Problème connexion Sage">
+                <input type="text" id="titre" name="titre" class="rounded-none rounded-e-lg bg-white border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Problème connexion Sage">
                 </div>
                 <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description de la problèmatique</label>
-                <textarea class="max-w-96" id="message" name="message" rows="10" placeholder="Ecrire la description du problème ..."></textarea>
+                <textarea class="max-w-96 bg-white" id="message" name="message" rows="10" placeholder="Ecrire la description du problème ..."></textarea>
             </div>
 
             <!-- droite -->
@@ -466,6 +467,8 @@
                 const validationMessage = validateForm();
 
                 if (validationMessage === '') {
+                    // Désactivez le bouton de soumission
+                    document.getElementById('submit-button').disabled = true;
                     // Soumettre le formulaire si la validation passe
                     formulaire.submit();
                 } else {
@@ -548,7 +551,7 @@
           $('#message').summernote({
             placeholder: 'Ecrire la description du problème ...',
             tabsize: 5,
-            height: 400,
+            height: 300,
             toolbar: [
               ['style', ['style']],
               ['font', ['bold', 'underline', 'clear']],

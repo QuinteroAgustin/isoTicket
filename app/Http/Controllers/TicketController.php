@@ -145,15 +145,17 @@ class TicketController extends Controller
                 'fonction' => $ticket->fonction->libelle,
                 'id' => $ticket->id_ticket
             ];
-
-            Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailOpen($data));
-
+            if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
+                Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailOpen($data));
+            }else{
+                return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
+            }
 
             // Retournez une réponse de succès
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'. $e);
         }
     }
 
@@ -279,21 +281,25 @@ class TicketController extends Controller
                 'fonction' => $ticket->fonction->libelle,
                 'id' => $ticket->id_ticket
             ];
-            if($ticket->cloture == 1){
-                Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailClose($data));
-            }else{
-                if($ticket->cloture != 1 && $ticket->id_statut != 1){
-                    if($request->statut != $old_statut){
-                        Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailUpdate($data));
-                    }
+            if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
+                if($ticket->cloture == 1){
+                    Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailClose($data));
+                }else{
+                    if($ticket->cloture != 1 && $ticket->id_statut != 1){
+                        if($request->statut != $old_statut){
+                            Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailUpdate($data));
+                        }
 
+                    }
                 }
+            }else{
+                return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
             }
 
             return redirect()->back()->with('success', 'Edition du ticket '.$ticket->id_ticket.' avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'. $e);
         }
     }
 
@@ -348,34 +354,39 @@ class TicketController extends Controller
             $ticket = Ticket::findOrFail($id);
             // Vérifiez si le ticket a été créé avec succès
             if ($ticket->exists) {
-                // Créez une nouvelle ligne de ticket
-                $ticketLigne = new TicketLigne();
-                $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
-                $ticketLigne->text = "Nos équipes ont tenté de prendre contact avec vous.";
-                $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
-                $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
-                $ticketLigne->type_user = 1;
-                $ticketLigne->id_technicien = Technicien::getTechId();
-                $ticketLigne->ct_num = $ticket->id_client;
-                $ticketLigne->save();
-            }
-            $ticketLigne = $ticket->lignes()->orderBy('created_at', 'asc')->first();
-            $data = [
-                'titre' => $ticket->titre,
-                'statut' => $ticket->statut->libelle,
-                't_nom' => technicien::find(Technicien::getTechId())->nom,
-                't_prenom' => technicien::find(Technicien::getTechId())->prenom,
-                'client' => $ticket->client->CT_Intitule,
-                'contact' => $ticket->client->CT_Intitule,
-                'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i'),
-                'date_ticket' => Carbon::parse($ticket->created_at)->translatedFormat('l d F Y H:i'),
-                'service' => $ticket->service->libelle,
-                'categorie' => $ticket->categorie->libelle,
-                'fonction' => $ticket->fonction->libelle,
-                'id' => $ticket->id_ticket
-            ];
-            Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailContact($data));
+                $ticketLigne = $ticket->lignes()->orderBy('created_at', 'asc')->first();
+                if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
+                    // Créez une nouvelle ligne de ticket
+                    $ticketLigne = new TicketLigne();
+                    $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
+                    $ticketLigne->text = "Nos équipes ont tenté de prendre contact avec vous.";
+                    $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
+                    $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
+                    $ticketLigne->type_user = 1;
+                    $ticketLigne->id_technicien = Technicien::getTechId();
+                    $ticketLigne->ct_num = $ticket->id_client;
+                    $ticketLigne->save();
 
+                    $data = [
+                        'titre' => $ticket->titre,
+                        'statut' => $ticket->statut->libelle,
+                        't_nom' => technicien::find(Technicien::getTechId())->nom,
+                        't_prenom' => technicien::find(Technicien::getTechId())->prenom,
+                        'client' => $ticket->client->CT_Intitule,
+                        'contact' => $ticket->client->CT_Intitule,
+                        'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i'),
+                        'date_ticket' => Carbon::parse($ticket->created_at)->translatedFormat('l d F Y H:i'),
+                        'service' => $ticket->service->libelle,
+                        'categorie' => $ticket->categorie->libelle,
+                        'fonction' => $ticket->fonction->libelle,
+                        'id' => $ticket->id_ticket
+                    ];
+                    Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailContact($data));
+                }else{
+                    return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
+                }
+
+            }
 
             return redirect()->back()->with('success', 'Tentative de contact avec succès!');
         } catch (\Exception $e) {

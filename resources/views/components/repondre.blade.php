@@ -67,7 +67,7 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="{{ route('ticket.newMessage', ['id' => $ticket->id_ticket]) }}" method="POST">
+            <form id="newFormReponse" action="{{ route('ticket.newMessage', ['id' => $ticket->id_ticket]) }}" method="POST">
                 @csrf
                 <div class="p-4 md:p-5 space-y-4">
                     <div class="flex flex-col lg:flex-row items-start lg:items-center"> <!-- Utilisation de flex-col pour une disposition en colonne sur mobile et flex-row pour une disposition en ligne sur desktop -->
@@ -77,7 +77,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-2 lg:mb-0 lg:mr-2">Envoyer</button> <!-- mb-2 pour une marge en bas sur mobile, lg:mb-0 pour aucune marge en bas sur desktop, lg:mr-2 pour une marge à droite sur desktop -->
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-2 lg:mb-0 lg:mr-2" id="newSubmitReponse">Envoyer</button> <!-- mb-2 pour une marge en bas sur mobile, lg:mb-0 pour aucune marge en bas sur desktop, lg:mr-2 pour une marge à droite sur desktop -->
                     <div class="border border-gray-200 rounded dark:border-gray-700 flex px-4 py-2">
                         <input id="masquer" type="checkbox" value="1" name="masquer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="masquer" class="text-sm font-medium text-gray-900 dark:text-gray-300 ml-2">Masquer</label> <!-- ml-2 pour une marge à gauche -->
@@ -88,6 +88,12 @@
     </div>
 </div>
 @endif
+<script>
+    document.getElementById('newFormReponse').addEventListener('submit', function(event) {
+        // Désactivez le bouton de soumission
+        document.getElementById('newSubmitReponse').disabled = true;
+    });
+</script>
 <script>
     $(document).ready(function() {
       $('#message').summernote({
