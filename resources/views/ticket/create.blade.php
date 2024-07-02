@@ -4,7 +4,56 @@
 
 @section('content')
 
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+
 <style>
+    /* Custom CSS for Summernote lists */
+    .note-editor .note-editable ul,
+    .note-editor .note-editable ol {
+        margin-left: 20px; /* Adjust the margin as needed */
+        padding-left: 20px; /* Ensure padding is applied */
+    }
+
+    .note-editor .note-editable ul {
+        list-style-type: disc; /* Adjust list style for unordered lists */
+    }
+
+    .note-editor .note-editable ol {
+        list-style-type: decimal; /* Adjust list style for ordered lists */
+    }
+
+    .note-editor .note-editable li {
+        margin-bottom: 5px; /* Adjust the margin between list items */
+    }
+
+    /* Custom CSS for Summernote headings */
+    .note-editor .note-editable h1,
+    .note-editor .note-editable h2,
+    .note-editor .note-editable h3,
+    .note-editor .note-editable h4,
+    .note-editor .note-editable h5,
+    .note-editor .note-editable h6 {
+        margin: 10px 0; /* Adjust the margin for headings */
+        font-weight: bold; /* Ensure headings are bold */
+    }
+
+    /* Custom CSS for Summernote styles */
+    .note-editor .note-editable strong {
+        font-weight: bold; /* Ensure strong text is bold */
+    }
+
+    .note-editor .note-editable em {
+        font-style: italic; /* Ensure emphasized text is italic */
+    }
+
+    .note-editor .note-editable u {
+        text-decoration: underline; /* Ensure underlined text is underlined */
+    }
+
+
     /* Ajoutez cette classe pour limiter la hauteur du dropdown et permettre le défilement */
     .dropdown-scroll {
         max-height: 200px; /* Limite à environ 5 éléments (ajustez si nécessaire) */
@@ -27,6 +76,8 @@
     <form id="create" action="{{ route('createPost') }}" method="POST">
         @csrf
         <div class="flex">
+
+            <!-- Gauche -->
             <div class="flex-none w-30 h-full p-4 ml-1">
                 <ol class="relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
                     <li class="mb-10 ms-6">
@@ -93,9 +144,10 @@
                 </div>
 
                 <input class="w-full h-12 px-6 text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800 mt-5" type="submit" value="Créer">
-
-
             </div>
+
+
+            <!-- centre -->
             <div class="grow h-full p-4">
                 <label for="titre" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Titre du ticket</label>
                 <div class="flex">
@@ -107,9 +159,10 @@
                 <input type="text" id="titre" name="titre" class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Problème connexion Sage">
                 </div>
                 <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description de la problèmatique</label>
-                <textarea id="message" name="message" rows="10" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ecrire la description du problème ..."></textarea>
-
+                <textarea class="max-w-96" id="message" name="message" rows="10" placeholder="Ecrire la description du problème ..."></textarea>
             </div>
+
+            <!-- droite -->
             <div class="flex-none w-30 h-full p-4">
                 <div class="max-w-sm mx-auto">
                     <label for="client" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
@@ -490,5 +543,24 @@
         });
 
     </script>
+    <script>
+        $(document).ready(function() {
+          $('#message').summernote({
+            placeholder: 'Ecrire la description du problème ...',
+            tabsize: 5,
+            height: 400,
+            toolbar: [
+              ['style', ['style']],
+              ['font', ['bold', 'underline', 'clear']],
+              ['color', ['color']],
+              ['para', ['ul', 'ol', 'paragraph']],
+              ['table', ['table']],
+              ['insert', ['link', 'picture']],
+              ['view', ['codeview']]
+            ]
+          });
+        });
+    </script>
+
 
 @endsection

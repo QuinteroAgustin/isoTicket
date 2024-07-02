@@ -45,14 +45,6 @@
             </dd>
             @endif
             </dl>
-            <dl class="flex items-center justify-between">
-            <dt class="text-gray-500 dark:text-gray-400 text-sm font-normal">Days until sprint ends:</dt>
-            <dd class="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-gray-600 dark:text-gray-300">13 days</dd>
-            </dl>
-            <dl class="flex items-center justify-between">
-            <dt class="text-gray-500 dark:text-gray-400 text-sm font-normal">Next meeting:</dt>
-            <dd class="bg-gray-100 text-gray-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-gray-600 dark:text-gray-300">Thursday</dd>
-            </dl>
         </div>
     </div>
 

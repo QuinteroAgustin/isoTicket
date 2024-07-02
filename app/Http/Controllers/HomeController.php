@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Ticket;
 use App\Models\Technicien;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class HomeController extends Controller
 {
@@ -68,6 +69,17 @@ class HomeController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Technicien::login($credentials['email'], $credentials['password'])) {
+            // Gérer les cookies "remember_me"
+            $remember = $request->has('remember_me');
+            $cookieTime = 60 * 24 * 30; // 30 jours
+
+            if ($remember) {
+                Cookie::queue('email', $credentials['email'], $cookieTime);
+                Cookie::queue('remember_me', 'true', $cookieTime);
+            } else {
+                Cookie::queue(Cookie::forget('email'));
+                Cookie::queue(Cookie::forget('remember_me'));
+            }
             // Rediriger l'utilisateur vers une autre vue après la connexion réussie
             return redirect()->route('home');
         } else {
@@ -79,6 +91,8 @@ class HomeController extends Controller
     public function logoutPost()
     {
         Technicien::logout();
+        Cookie::queue(Cookie::forget('email'));
+        Cookie::queue(Cookie::forget('remember_me'));
         return redirect('/login');
     }
 }

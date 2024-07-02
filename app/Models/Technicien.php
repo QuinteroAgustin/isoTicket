@@ -56,6 +56,26 @@ class Technicien extends Model
     }
 
     /**
+     * Attempt to log in the user.
+     *
+     * @param  string  $email
+     * @param  string  $password
+     * @return bool
+     */
+    public static function loginCookie($email, $variable)
+    {
+        $technicien = static::where('email', $email)->first();
+        //dd($technicien);
+        if ($technicien && $variable == true) {
+            session()->put('id_technicien', $technicien->id_technicien);
+            session()->put('technicien', $technicien);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Log out the currently authenticated user.
      *
      * @return void

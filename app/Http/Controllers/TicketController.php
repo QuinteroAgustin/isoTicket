@@ -153,7 +153,7 @@ class TicketController extends Controller
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
         }
     }
 
@@ -293,7 +293,7 @@ class TicketController extends Controller
             return redirect()->back()->with('success', 'Edition du ticket '.$ticket->id_ticket.' avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
         }
     }
 
@@ -380,9 +380,116 @@ class TicketController extends Controller
             return redirect()->back()->with('success', 'Tentative de contact avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.');
         }
     }
 
+    public function editContact($idticket, $idcontact)
+    {
+        $ticket = Ticket::findOrFail($idticket);
+        $contact = Contact::where('cbMarq', $idcontact)->firstOrFail();
+
+
+        return view('ticket.contact.editContact', compact('ticket', 'contact'));
+    }
+
+    public function editContactPost(Request $request)
+    {
+        try{
+            $ticket = Ticket::findOrFail($request->id);
+            $contact = Contact::where('cbMarq', $request->id_contact)->firstOrFail();
+
+            $contact->CT_Nom = $request->nom;
+            $contact->CT_Prenom = $request->prenom;
+            $contact->CT_Fonction = $request->fonction;
+            $contact->CT_Telephone = $request->telephone;
+            $contact->CT_TelPortable = $request->portable;
+            $contact->CT_EMail = $request->email;
+            $contact->save();
+
+            return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Edition du contact '. $request->nom .' '. $request->prenom .' avec succès!');
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de l\'édition du contact.');
+        }
+    }
+
+    public function createContact($idticket)
+    {
+        $ticket = Ticket::findOrFail($idticket);
+
+        return view('ticket.contact.createContact', compact('ticket'));
+    }
+
+    public function createContactNoId()
+    {
+        return view('ticket.contact.createContactNoId');
+    }
+
+    public function createContactPost(Request $request)
+    {
+        try{
+            // Validation des données
+            $validatedData = $request->validate([
+                'nom' => 'required|string',
+                'prenom' => 'required|string',
+                'fonction' => 'nullable|string',
+                'telephone' => 'nullable',
+                'portable' => 'nullable',
+                'email' => 'nullable|email',
+            ]);
+            $ticket = Ticket::findOrFail($request->id);
+            $maxCbMarq = Contact::max('cbMarq');
+
+            $contact = new Contact();
+            $contact->CT_Num = $ticket->id_client;
+            $contact->CT_Nom = $validatedData['nom'];
+            $contact->CT_Prenom = $validatedData['prenom'];
+            $contact->CT_Fonction = $validatedData['fonction'];
+            $contact->CT_Telephone = $validatedData['telephone'];
+            $contact->CT_TelPortable = $validatedData['portable'];
+            $contact->CT_EMail = $validatedData['email'];
+
+            $contact->save();
+
+            return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Création du contact '. $request->nom .' '. $request->prenom .' avec succès!');
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la création du contact.');
+        }
+    }
+
+    public function createContactPostNoId(Request $request)
+    {
+        try{
+            // Validation des données
+            $validatedData = $request->validate([
+                'client' => 'required|exists:sqlsrv2.F_COMPTET,CT_Num',
+                'nom' => 'required|string',
+                'prenom' => 'required|string',
+                'fonction' => 'nullable|string',
+                'telephone' => 'nullable',
+                'portable' => 'nullable',
+                'email' => 'nullable|email',
+            ]);
+            $maxCbMarq = Contact::max('cbMarq');
+
+            $contact = new Contact();
+            $contact->CT_Num = $validatedData['client'];
+            $contact->CT_Nom = $validatedData['nom'];
+            $contact->CT_Prenom = $validatedData['prenom'];
+            $contact->CT_Fonction = $validatedData['fonction'];
+            $contact->CT_Telephone = $validatedData['telephone'];
+            $contact->CT_TelPortable = $validatedData['portable'];
+            $contact->CT_EMail = $validatedData['email'];
+
+            $contact->save();
+
+            return redirect()->route('create')->with('success', 'Création du contact '. $request->nom .' '. $request->prenom .' avec succès!');
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la création du contact.');
+        }
+    }
 
 }

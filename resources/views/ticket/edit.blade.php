@@ -4,6 +4,7 @@
 
 @section('content')
 
+
 <style>
     /* Ajoutez cette classe pour limiter la hauteur du dropdown et permettre le défilement */
     .dropdown-scroll {
@@ -169,7 +170,7 @@
 
             <!-- Centre -->
             <div class="grow h-full p-4">
-                <div class="flex flex-col max-h-[65vh]">
+                <div class="flex flex-col min-h-[65vh] max-h-[65vh]">
                     <!-- Section de discussion -->
                     <div id="ticket-container" class="flex-1 overflow-y-auto p-4">
                         <ul>
@@ -185,11 +186,11 @@
                                         </div>
                                         @if ($ligne->type_user == 2)
                                             <div class="p-6 bg-yellow-100 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">{{ $ligne->text }}</p>
+                                                <p class="font-normal text-gray-700 dark:text-gray-400">{!! $ligne->text !!}</p>
                                             </div>
                                         @else
                                             <div class="p-6 bg-green-100 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">{{ $ligne->text }}</p>
+                                                <p class="font-normal text-gray-700 dark:text-gray-400">{!! $ligne->text !!}</p>
                                             </div>
                                         @endif
                                     </div>
@@ -203,7 +204,7 @@
                                         </span>
                                     </div>
                                     <div  class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">{{ $ligne->text }}</p>
+                                        <p class="font-normal text-gray-700 dark:text-gray-400">{!! $ligne->text !!}</p>
                                     </div>
                                 </div>
                                 @endif
@@ -334,97 +335,10 @@
         </div>
     </form>
 
-
-    <!-- Section d'entrée de réponse -->
-    @if($ticket->cloture == 0)
-        <!-- Main modal -->
-        <div id="static-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-2xl max-h-full">
-                <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Répondre au ticket {{ $ticket->id_ticket }}
-                        </h3>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="static-modal">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span class="sr-only">Fermer</span>
-                        </button>
-                    </div>
-                    <!-- Modal body -->
-                    <form action="{{ route('ticket.newMessage', ['id' => $ticket->id_ticket]) }}" method="POST">
-                        @csrf
-                        <div class="p-4 md:p-5 space-y-4">
-                            <div class="flex flex-col lg:flex-row items-start lg:items-center"> <!-- Utilisation de flex-col pour une disposition en colonne sur mobile et flex-row pour une disposition en ligne sur desktop -->
-                                <textarea id="message" name="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Écrire une réponse ..."></textarea>
-
-                            </div>
-                        </div>
-                        <!-- Modal footer -->
-                        <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-2 lg:mb-0 lg:mr-2">Envoyer</button> <!-- mb-2 pour une marge en bas sur mobile, lg:mb-0 pour aucune marge en bas sur desktop, lg:mr-2 pour une marge à droite sur desktop -->
-                            <div class="border border-gray-200 rounded dark:border-gray-700 flex px-4 py-2">
-                                <input id="masquer" type="checkbox" value="1" name="masquer" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="masquer" class="text-sm font-medium text-gray-900 dark:text-gray-300 ml-2">Masquer</label> <!-- ml-2 pour une marge à gauche -->
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endif
-    <!-- Bouton pour ouvrir le modal -->
-    <button data-modal-target="credit-insufficient-modal" data-modal-toggle="credit-insufficient-modal" class="hidden" id="modal-trigger"></button>
-
-     <!-- popup forfait HTML -->
-    <div  id="credit-insufficient-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-
-                <div class="p-4 md:p-5 text-center">
-                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                    </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Le client {{ $ticket->id_client }} n'a plus de crédit dans son forfait sélectionné.</h3>
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Liste des forfaits du client</h2>
-                    <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
-                        <table class="min-w-full table-auto">
-                            <thead>
-                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                    <th class="py-3 px-6 text-center">ID</th>
-                                    <th class="py-3 px-6 text-left">Type</th>
-                                    <th class="py-3 px-6 text-left">Crédit</th>
-                                    <th class="py-3 px-6 text-left">Restant</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 text-sm font-light">
-                                @foreach ($forfaits as $forfait)
-                                    @if ($forfait->id_client == $ticket->id_client && $forfait->masquer != 1)
-                                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                            <td class="py-3 px-6 text-center">{{ $forfait->id_forfait }}</td>
-                                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $forfait->type->libelle }}</td>
-                                            <td class="py-3 px-6 text-left">{{ $forfait->credit }}</td>
-                                            <td class="py-3 px-6 text-left">{{ $forfait->restant() }}</td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                        Attention à la durée du ticket.
-                    </div>
-                    <button data-modal-hide="credit-insufficient-modal" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                        Compris
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Inclure le composant pour la reponse du message -->
+    @include('components.repondre')
+    <!-- Inclure le composant des credit -->
+    @include('components.credit')
     <!-- Inclure le composant des tab contact -->
     @include('components.contact')
     <!-- Inclure le composant des info societe -->
@@ -511,6 +425,8 @@
                             const row = document.createElement('tr');
                             row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
 
+                            const editUrl = `/ticket/{{ $ticket->id_ticket }}/edit/${contact.cbMarq}/contact`;
+
                             row.innerHTML = `
                                 <td class="py-3 px-6 text-center">${contact.cbMarq}</td>
                                 <td class="py-3 px-6 text-left">${contact.CT_Nom}</td>
@@ -519,7 +435,7 @@
                                 <td class="py-3 px-6 text-left">${contact.CT_Telephone}</td>
                                 <td class="py-3 px-6 text-left">${contact.CT_TelPortable}</td>
                                 <td class="py-3 px-6 text-left">${contact.CT_EMail}</td>
-                                <td class="py-3 px-6 text-left"></td>
+                                <td class="py-3 px-6 text-left"><a href="${editUrl}" class="text-indigo-600 hover:text-indigo-900">Modifier</a></td>
                             `;
 
                             contactsTable.appendChild(row);

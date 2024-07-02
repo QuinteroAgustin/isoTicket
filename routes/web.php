@@ -1,17 +1,21 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ParamsController;
 use App\Http\Controllers\TicketController;
-use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\RememberMeMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
 
 Route::get('/', [HomeController::class, 'home'])->name('home')->middleware(Authenticate::class);
+
+Route::middleware([RememberMeMiddleware::class])->group(function () {
 Route::get('/login', [HomeController::class, 'login'])->name('login')->middleware(RedirectIfAuthenticated::class);
 Route::post('/login', [HomeController::class, 'loginPost'])->name('loginPost')->middleware(RedirectIfAuthenticated::class);
+});
 Route::get('/logout', [HomeController::class, 'logoutPost'])->name('logout')->middleware(Authenticate::class);
 Route::get('/404', [HomeController::class, 'notFound'])->name('404');
 
@@ -19,10 +23,18 @@ Route::get('/404', [HomeController::class, 'notFound'])->name('404');
 Route::get('/ticket', [TicketController::class, 'ticket'])->name('ticket')->middleware(Authenticate::class);
 
 Route::get('/ticket/{id}/edit', [TicketController::class, 'edit'])->name('ticket.edit')->middleware(Authenticate::class);
+
 Route::post('/ticket/{id}/newmessage', [TicketController::class, 'newMessage'])->name('ticket.newMessage')->middleware(Authenticate::class);
 Route::post('/ticket/{id}/edit', [TicketController::class, 'editPost'])->name('ticket.edit.post')->middleware(Authenticate::class);
 Route::get('/ticket/forfait/{id}/credit', [TicketController::class, 'getRemainingCredit'])->middleware(Authenticate::class);
 Route::get('/ticket/{id}/call', [TicketController::class, 'callClient'])->name('call.client')->middleware(Authenticate::class);
+
+Route::get('/ticket/{id}/edit/{id_contact}/contact', [TicketController::class, 'editContact'])->name('ticket.edit.contact')->middleware(Authenticate::class);
+Route::post('/ticket/{id}/edit/{id_contact}/contact', [TicketController::class, 'editContactPost'])->name('ticket.edit.contact.post')->middleware(Authenticate::class);
+Route::get('/ticket/{id}/edit/contact', [TicketController::class, 'createContact'])->name('ticket.create.contact')->middleware(Authenticate::class);
+Route::get('/ticket/edit/contact', [TicketController::class, 'createContactNoId'])->name('ticket.create.contact.noid')->middleware(Authenticate::class);
+Route::post('/ticket/{id}/edit/contact', [TicketController::class, 'createContactPost'])->name('ticket.create.contact.post')->middleware(Authenticate::class);
+Route::post('/ticket/edit/contact', [TicketController::class, 'createContactPostNoId'])->name('ticket.create.contactnoid.post')->middleware(Authenticate::class);
 
 Route::get('/ticket/cloture', [TicketController::class, 'ticket_clots'])->name('ticket.clots')->middleware(Authenticate::class);
 Route::get('/create', [TicketController::class, 'createVue'])->name('create')->middleware(Authenticate::class);
@@ -34,13 +46,9 @@ Route::get('/create/client/{client_id}', [TicketController::class, 'getContacts'
 Route::get('/create/client/{client_id}/contacttableau', [TicketController::class, 'getContactsTab'])->name('client.contacts.tab')->middleware(Authenticate::class);
 Route::get('/create/client/{client_id}/societetableau', [TicketController::class, 'getClientTab'])->name('client.client.tab')->middleware(Authenticate::class);
 
-
-
-
 // Clients
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.index')->middleware(Authenticate::class);
 Route::get('/clients/filter', [ClientController::class, 'filter'])->name('clients.filter')->middleware(Authenticate::class);
-
 
 //params
 Route::get('/params', [ParamsController::class, 'home'])->name('params')->middleware(Authenticate::class);
@@ -121,6 +129,3 @@ Route::post('/params/technicien/ajouter', [ParamsController::class, 'addTechnici
 Route::get('/params/technicien/modifier/{id}', [ParamsController::class, 'modifierTechnicien'])->name('params.technicien.modifier')->middleware(Authenticate::class);
 Route::post('/params/technicien/modifier/{id}', [ParamsController::class, 'updateTechnicien'])->name('params.technicien.update')->middleware(Authenticate::class);
 Route::delete('/params/technicien/supprimer/{id}', [ParamsController::class, 'supprimerTechnicien'])->name('params.technicien.supprimer')->middleware(Authenticate::class);
-
-// Mail
-Route::post('/send-email', [ParamsController::class, 'sendEmail'])->name('send.email')->middleware(Authenticate::class);

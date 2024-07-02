@@ -30,14 +30,14 @@
                     <form action="{{ route('loginPost') }}" method="POST">
                         @csrf
                         <h3 class="mb-6 text-2xl font-medium text-center">Connexion</h3>
-                        <input type="text" name="email" id="email" class="block w-full px-4 py-3 mb-4 border border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Identifiant">
-                        <input type="password" name="password" id="password" class="block w-full px-4 py-3 mb-4 border border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Mot de passe">
+                        <input type="text" name="email" id="email" class="block w-full px-4 py-3 mb-4 border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Identifiant" value="{{ old('email', Cookie::get('email')) }}">
+                        <input type="password" name="password" id="password" class="block w-full px-4 py-3 mb-4 border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Mot de passe">
                         <div class="block">
                             <input class="w-full px-3 py-4 font-medium text-white bg-blue-600 rounded-lg" data-primary="blue-600" data-rounded="rounded-lg" type="submit" value="Se connecter">
                         </div>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center">
-                                <input id="remember-me" name="remember_me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <input id="remember-me" name="remember_me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" {{ Cookie::get('remember_me') ? 'checked' : '' }}>
                                 <label for="remember-me" class="ml-2 block text-sm text-gray-900">
                                     Se souvenir de moi
                                 </label>
