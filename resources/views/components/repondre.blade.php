@@ -96,20 +96,30 @@
 </script>
 <script>
     $(document).ready(function() {
-      $('#message').summernote({
-        placeholder: 'Ecrire la description du problème ...',
-        tabsize: 5,
-        height: 400,
-        width: 600,
-        toolbar: [
-          ['style', ['style']],
-          ['font', ['bold', 'underline', 'clear']],
-          ['color', ['color']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['table', ['table']],
-          ['insert', ['link', 'picture']],
-          ['view', ['codeview']]
-        ]
-      });
+        $('#message').summernote({
+            placeholder: 'Hello stand alone ui',
+            tabsize: 2,
+            height: 400,
+            width: 600,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['codeview']]
+            ],
+            callbacks: {
+                onInit: function() {
+                    // Autoriser les balises <u>, <td>, <li> et les styles <h1> dans Summernote
+                    $('.note-editable').find('*').each(function() {
+                        if (this.nodeName.toLowerCase() === 'u' || this.nodeName.toLowerCase() === 'td' || this.nodeName.toLowerCase() === 'li') {
+                            $(this).addClass('note-editable');
+                        }
+                    });
+                }
+            }
+        });
     });
 </script>

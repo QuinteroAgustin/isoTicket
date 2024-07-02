@@ -179,18 +179,18 @@
                                 <div class="flex justify-end mb-4">
                                     <div class="w-full max-w-sm">
                                         <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $ligne->technicien->nom }} {{ $ligne->technicien->prenom }}</span>
-                                            <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                            <span class="text-sm font-medium text-gray-900">{{ $ligne->technicien->nom }} {{ $ligne->technicien->prenom }}</span>
+                                            <span class="text-sm font-medium text-gray-900">
                                                 {{ \Carbon\Carbon::parse($ligne->created_at)->format('d/m H:i') }}
                                             </span>
                                         </div>
                                         @if ($ligne->type_user == 2)
-                                            <div class="p-6 bg-yellow-100 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">{!! $ligne->text !!}</p>
+                                            <div class="p-6 bg-yellow-100 border border-gray-200 rounded-lg shadow">
+                                                <p>{!! $ligne->text !!}</p>
                                             </div>
                                         @else
-                                            <div class="p-6 bg-green-100 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">{!! $ligne->text !!}</p>
+                                            <div class="p-6 bg-green-100 border border-gray-200 rounded-lg shadow ">
+                                                <p>{!! $ligne->text !!}</p>
                                             </div>
                                         @endif
                                     </div>
@@ -198,13 +198,13 @@
                                 @else
                                 <div class="mb-4 w-full max-w-sm">
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $ticket->id_client }}</span>
-                                        <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <span class="text-sm font-medium text-gray-900">{{ $ticket->id_client }}</span>
+                                        <span class="text-sm font-medium text-gray-900">
                                             {{ \Carbon\Carbon::parse($ligne->created_at)->format('d/m H:i') }}
                                         </span>
                                     </div>
-                                    <div  class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">{!! $ligne->text !!}</p>
+                                    <div  class="p-6 bg-white border border-gray-200 rounded-lg shadow">
+                                        <p>{!! $ligne->text !!}</p>
                                     </div>
                                 </div>
                                 @endif
