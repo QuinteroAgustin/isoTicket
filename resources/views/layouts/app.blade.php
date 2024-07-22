@@ -24,13 +24,13 @@
 </head>
 
 <body class="bg-gray-100"><!-- overflow-hidden -->
-    <div class="flex flex-col">
+    <div class="flex flex-col h-screen">
         <!-- Inclure le composant de navbar -->
         @include('components.navbar')
         <!-- Main Content -->
         <div class="flex-1 flex pt-16">
             <!-- Inclure le composant de slidebar -->
-            <div class="w-1/10 bg-gray-800 text-white h-screen">
+            <div class="w-1/10 bg-gray-800 text-white">
                 @include('components.slidebar')
             </div>
             <!-- Main Content -->
@@ -38,7 +38,7 @@
                 <!-- Inclure le composant des messages flash -->
                 @include('components.messages')
 
-                <div class="overflow-y-auto">
+                <div class="">
                     <!-- Page Content -->
                     <main class="">
                         @yield('content')
