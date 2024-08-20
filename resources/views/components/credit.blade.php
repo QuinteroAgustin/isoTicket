@@ -29,7 +29,7 @@
                                        <td class="py-3 px-6 text-center">{{ $forfait->id_forfait }}</td>
                                        <td class="py-3 px-6 text-left whitespace-nowrap">{{ $forfait->type->libelle }}</td>
                                        <td class="py-3 px-6 text-left">{{ $forfait->credit }}</td>
-                                       <td class="py-3 px-6 text-left">{{ $forfait->restant() }}</td>
+                                       <td class="py-3 px-6 text-left">{{ $forfait->restantEnHeures() }}</td>
                                    </tr>
                                @endif
                            @endforeach

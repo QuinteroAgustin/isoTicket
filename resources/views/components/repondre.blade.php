@@ -102,13 +102,10 @@
             height: 400,
             width: 600,
             toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'underline', 'clear']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['codeview']]
+              ['font', ['bold', 'underline', 'clear']],
+              ['color', ['color']],
+              ['table', ['table']],
+              ['view', ['codeview']]
             ],
             callbacks: {
                 onInit: function() {

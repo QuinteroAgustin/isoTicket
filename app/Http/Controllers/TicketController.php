@@ -162,12 +162,15 @@ class TicketController extends Controller
     public function searchClients(Request $request)
     {
         $search = $request->input('search');
-        $clients = Client::where('CT_Num', 'LIKE', "%{$search}%")->get(['CT_Num','CT_Intitule']);
+        // $clients = Client::where('CT_Num', 'LIKE', "%{$search}%")->get(['CT_Num','CT_Intitule']);
+        $clients = Client::where('CT_Num', 'LIKE', "%{$search}%")
+                     ->orWhere('CT_Intitule', 'LIKE', "%{$search}%")
+                     ->get(['CT_Num', 'CT_Intitule']);
 
         return response()->json($clients);
     }
 
-    public function getContacts(Request $request, $client_id)
+    public function getContacts($client_id)
     {
         $contacts = Contact::where('CT_Num', $client_id)->get(['CT_Num', 'CT_Nom', 'CT_Prenom', 'cbMarq']);
         return response()->json($contacts);
@@ -483,7 +486,6 @@ class TicketController extends Controller
                 'portable' => 'nullable',
                 'email' => 'nullable|email',
             ]);
-            $maxCbMarq = Contact::max('cbMarq');
 
             $contact = new Contact();
             $contact->CT_Num = $validatedData['client'];

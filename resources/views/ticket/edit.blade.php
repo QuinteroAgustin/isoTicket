@@ -155,7 +155,7 @@
                             <option selected value="">Choisir un forfait...</option>
                             @foreach ($forfaits as $forfait)
                                 @if ($forfait->id_client == $ticket->id_client)
-                                    <option {{ ($forfait->id_forfait == $ticket->id_forfait)? 'selected' : '' }} value="{{ $forfait->id_forfait }}">{{ $forfait->id_forfait }}-{{ $forfait->type->libelle }} ({{ $forfait->restant() }} crédit)</option>
+                                    <option {{ ($forfait->id_forfait == $ticket->id_forfait)? 'selected' : '' }} value="{{ $forfait->id_forfait }}">{{ $forfait->id_forfait }}-{{ $forfait->type->libelle }} ({{ $forfait->restantEnHeures() }})</option>
                                 @endif
                             @endforeach
                         </select>

@@ -121,7 +121,7 @@
                 <div class="max-w-sm mx-auto my-5">
                     <label for="statut" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Statut</label>
                     <select id="statut" name="statut" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option selected value="">Choix du statut...</option>
+                        <!-- <option selected value="">Choix du statut...</option> -->
                         @foreach ($status as $statut)
                         @if($statut->id_statut != 4)
                         @if($statut->masquer != 1)
@@ -553,10 +553,8 @@
             tabsize: 5,
             height: 300,
             toolbar: [
-              ['style', ['style']],
               ['font', ['bold', 'underline', 'clear']],
               ['color', ['color']],
-              ['para', ['ul', 'ol', 'paragraph']],
               ['table', ['table']],
               ['insert', ['link', 'picture']],
               ['view', ['codeview']]

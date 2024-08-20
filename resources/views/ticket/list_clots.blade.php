@@ -6,7 +6,7 @@
     <!-- Your Page Content Here -->
     <h1 class="text-2xl font-semibold">Tickets</h1>
     <div class="overflow-x-auto overflow-y-auto">
-        <div class="min-w-screen flex justify-center font-sans  min-h-[60vh] max-h-[60vh]">
+        <div class="min-w-screen flex justify-center font-sans">
             <div class="w-full lg:w-9/10">
                 <div class="bg-white shadow-md mt-20 rounded my-6 overflow-x-auto">
                     <table class="min-w-full table-auto">

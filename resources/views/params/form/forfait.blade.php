@@ -45,7 +45,7 @@
                                 <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($forfait->created_at)->format('d/m/Y') }}</td>
                                 <td class="py-3 px-6 text-left">{{ \Carbon\Carbon::parse($forfait->valid_to)->format('d/m/Y') }}</td>
                                 <td class="py-3 px-6 text-left">{{ $forfait->credit }}</td>
-                                <td class="py-3 px-6 text-left">{{ $forfait->restant() }}</td>
+                                <td class="py-3 px-6 text-left">{{ $forfait->restantEnHeures() }}</td>
                                 <td class="py-3 px-6 text-left">{{ $forfait->type->libelle }}</td>
                                 <td class="py-3 px-6 text-left">
                                     <!-- Bouton pour modifier la priorite -->
