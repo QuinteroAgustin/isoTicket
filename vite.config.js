@@ -8,4 +8,7 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        outDir: 'public/build', // Assurez-vous que les assets sont compilés dans le bon dossier
+    },
 });

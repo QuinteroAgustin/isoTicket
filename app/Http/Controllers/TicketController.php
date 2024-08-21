@@ -208,7 +208,7 @@ class TicketController extends Controller
                 $ticketLigne->text = $request->message;
                 $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
-                if($request->masquer == 1){
+                if($request->afficher == 1){
                     $type_user = 2;
                 }else{
                     $type_user = 1;

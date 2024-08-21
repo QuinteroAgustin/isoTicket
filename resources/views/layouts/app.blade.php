@@ -7,6 +7,8 @@
     <title>ISOCIEL - @yield('title')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('images/isociel-logo_ic-blanc-png.png') }}">
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
+
 
     <!-- Include stylesheet -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.snow.css" rel="stylesheet" /> -->
