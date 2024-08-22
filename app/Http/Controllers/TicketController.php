@@ -99,8 +99,6 @@ class TicketController extends Controller
             $ticket->closed_at = ($request->statut==4)?Carbon::now()->timezone('Europe/Paris'):null;
             $ticket->cri = 0;
             $ticket->cloture = ($request->statut==4)?1:0;
-            list($hours, $minutes) = explode(':', $request->duree);
-            $ticket->duree = (float)($hours . '.' . $minutes);
             $ticket->date_rappel = (isset($request->date_rappel))?$request->date_rappel:null;
             $ticket->action_cours = (isset($request->action_cours))?$request->action_cours:null;
             if(isset($request->forfait)){
@@ -129,7 +127,14 @@ class TicketController extends Controller
 
                 $ticketLigne->ct_num = $request->client;
                 $ticketLigne->id_contact = $request->contact ?? null;
+
+                list($hours, $minutes) = explode(':', $request->duree);
+                $ticketLigne->duree = (float)($hours . '.' . $minutes);
+                $timeLigne = TimeHelper::convertDureeToMinutes($ticketLigne->duree);
+                $ticket->duree = TimeHelper::convertMinutesToDuration($timeLigne);
+
                 $ticketLigne->save();
+                $ticket->save();
             }
             $data = [
                 'titre' => $ticket->titre,
@@ -155,7 +160,7 @@ class TicketController extends Controller
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
         }
     }
 
@@ -222,7 +227,15 @@ class TicketController extends Controller
 
                 $ticketLigne->ct_num = $request->client;
                 $ticketLigne->id_contact = $request->contact ?? null;
+
+                list($hours, $minutes) = explode(':', $request->duree);
+                $ticketLigne->duree = (float)($hours . '.' . $minutes);
+                $timeLigne = TimeHelper::convertDureeToMinutes($ticketLigne->duree);
+                $timeTicket = TimeHelper::convertDureeToMinutes($ticket->duree);
+                $ticket->duree = TimeHelper::convertMinutesToDuration($timeLigne + $timeTicket);
+
                 $ticketLigne->save();
+                $ticket->save();
             }
 
             return redirect()->back()->with('success', 'Nouveau message ajouté avec succès!');
@@ -302,7 +315,7 @@ class TicketController extends Controller
             return redirect()->back()->with('success', 'Edition du ticket '.$ticket->id_ticket.' avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
         }
     }
 
@@ -359,13 +372,14 @@ class TicketController extends Controller
             if ($ticket->exists) {
                 $ticketLigne = $ticket->lignes()->orderBy('created_at', 'asc')->first();
                 if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
+                    $email_contact = $ticketLigne->contactCbmarq->CT_EMail;
                     // Créez une nouvelle ligne de ticket
                     $ticketLigne = new TicketLigne();
                     $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
                     $ticketLigne->text = "Nos équipes ont tenté de prendre contact avec vous.";
                     $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                     $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
-                    $ticketLigne->type_user = 1;
+                    $ticketLigne->type_user = 2;
                     $ticketLigne->id_technicien = Technicien::getTechId();
                     $ticketLigne->ct_num = $ticket->id_client;
                     $ticketLigne->save();
@@ -384,17 +398,17 @@ class TicketController extends Controller
                         'fonction' => $ticket->fonction->libelle,
                         'id' => $ticket->id_ticket
                     ];
-                    Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailContact($data));
+                    Mail::to($email_contact)->send(new PostMailContact($data));
                 }else{
                     return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
                 }
 
             }
 
-            return redirect()->back()->with('success', 'Tentative de contact avec succès!');
+            return redirect()->back()->with('success', 'Tentative de contact avec succès! Mail envoyé à : '. $email_contact);
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.');
+            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.'. $e);
         }
     }
 

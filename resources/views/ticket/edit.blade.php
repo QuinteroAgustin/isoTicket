@@ -183,6 +183,9 @@
                                             <span class="text-sm font-medium text-gray-900">
                                                 {{ \Carbon\Carbon::parse($ligne->created_at)->format('d/m H:i') }}
                                             </span>
+                                            <span class="text-sm font-medium text-gray-900">
+                                                Temp : {{ $ligne->formatted_duree }}
+                                            </span>
                                         </div>
                                         @if ($ligne->type_user == 2)
                                             <div class="p-6 bg-yellow-100 border border-gray-200 rounded-lg shadow">

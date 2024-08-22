@@ -83,7 +83,7 @@
                         <label for="afficher" class="text-sm font-medium text-gray-900 dark:text-gray-300 ml-2">Afficher</label> <!-- ml-2 pour une marge à gauche -->
                     </div>
                     <div class="max-w-[8rem] rounded dark:border-gray-700 flex px-4 py-2">
-                        <input type="time" id="time" name="duree" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ ($ticket->duree!= 0)? $ticket->formatted_duree :'00:00' }}" {{ $disabled }} />
+                        <input type="time" id="time" name="duree" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="00:00" {{ $disabled }} />
                     </div>
                 </div>
             </form>

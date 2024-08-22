@@ -50,4 +50,25 @@ class TicketLigne extends Model
     {
         return $this->belongsTo(Ticket::class, 'id_ticket', 'id_ticket');
     }
+
+    /**
+     * Accessoire pour retourner la durée formatée en hh:mm.
+     *
+     * @return string
+     */
+    public function getFormattedDureeAttribute()
+    {
+        // Assure que la durée est formatée avec deux chiffres après la virgule
+        $dureeFormatted = number_format($this->duree, 2);
+
+        // Sépare les heures et les minutes
+        list($hours, $minutes) = explode('.', $dureeFormatted);
+
+        // Formate les heures et les minutes sur deux chiffres
+        $formattedHours = str_pad($hours, 2, '0', STR_PAD_LEFT);
+        $formattedMinutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
+
+        // Retourne le résultat sous la forme hh:mm
+        return $formattedHours . ':' . $formattedMinutes;
+    }
 }

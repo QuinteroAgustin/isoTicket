@@ -46,20 +46,20 @@ class Forfait extends Model
     }
 
     public function restantEnHeures()
-{
-    // Calculer le total des crédits utilisés en additionnant la durée des tickets
-    $totalCreditsUsed = $this->tickets->where('cri', 1)->where('cloture', 1)->sum(function ($ticket) {
-        return $this->convertDureeToMinutes($ticket->duree);
-    });
+    {
+        // Calculer le total des crédits utilisés en additionnant la durée des tickets
+        $totalCreditsUsed = $this->tickets->where('cri', 1)->where('cloture', 1)->sum(function ($ticket) {
+            return $this->convertDureeToMinutes($ticket->duree);
+        });
 
-    // Calculer le crédit restant en minutes
-    $remainingCreditInMinutes = $this->credit - $totalCreditsUsed;
+        // Calculer le crédit restant en minutes
+        $remainingCreditInMinutes = $this->credit - $totalCreditsUsed;
 
-    // Convertir les minutes restantes en heures et minutes
-    $hours = intdiv($remainingCreditInMinutes, 60);
-    $minutes = $remainingCreditInMinutes % 60;
+        // Convertir les minutes restantes en heures et minutes
+        $hours = intdiv($remainingCreditInMinutes, 60);
+        $minutes = $remainingCreditInMinutes % 60;
 
-    // Retourner le résultat sous la forme "Xh Ym"
-    return sprintf('%dh %02dm', $hours, $minutes);
-}
+        // Retourner le résultat sous la forme "Xh Ym"
+        return sprintf('%dh %02dm', $hours, $minutes);
+    }
 }
