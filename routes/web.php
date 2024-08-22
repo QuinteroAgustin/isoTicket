@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ParamsController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\RechercheController;
 use App\Http\Middleware\RememberMeMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
 
@@ -129,3 +130,8 @@ Route::post('/params/technicien/ajouter', [ParamsController::class, 'addTechnici
 Route::get('/params/technicien/modifier/{id}', [ParamsController::class, 'modifierTechnicien'])->name('params.technicien.modifier')->middleware(Authenticate::class);
 Route::post('/params/technicien/modifier/{id}', [ParamsController::class, 'updateTechnicien'])->name('params.technicien.update')->middleware(Authenticate::class);
 Route::delete('/params/technicien/supprimer/{id}', [ParamsController::class, 'supprimerTechnicien'])->name('params.technicien.supprimer')->middleware(Authenticate::class);
+
+
+//recherches
+Route::get('/recherche', [RechercheController::class, 'home'])->name('recherche')->middleware(Authenticate::class);
+Route::get('/recherche/filtre', [RechercheController::class, 'filtre'])->name('recherche.filtre')->middleware(Authenticate::class);

@@ -27,7 +27,9 @@
                                 <th class="py-3 px-6 text-left">Téléphone</th>
                                 <th class="py-3 px-6 text-left">Portable</th>
                                 <th class="py-3 px-6 text-left">E-Mail</th>
+                                @if(isset($ticket))
                                 <th class="py-3 px-6 text-left">Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody id="contacts-table" class="text-gray-600 text-sm font-light">

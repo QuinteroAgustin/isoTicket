@@ -347,7 +347,6 @@
                                 <td class="py-3 px-6 text-left">${contact.CT_Telephone}</td>
                                 <td class="py-3 px-6 text-left">${contact.CT_TelPortable}</td>
                                 <td class="py-3 px-6 text-left">${contact.CT_EMail}</td>
-                                <td class="py-3 px-6 text-left"></td>
                             `;
 
                             contactsTable.appendChild(row);

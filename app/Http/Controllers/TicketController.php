@@ -127,8 +127,12 @@ class TicketController extends Controller
 
                 $ticketLigne->ct_num = $request->client;
                 $ticketLigne->id_contact = $request->contact ?? null;
-
-                list($hours, $minutes) = explode(':', $request->duree);
+                if($request->duree == "00:00"){
+                    $tempsTicket = "00:01";
+                }else{
+                    $tempsTicket = $request->duree;
+                }
+                list($hours, $minutes) = explode(':', $tempsTicket);
                 $ticketLigne->duree = (float)($hours . '.' . $minutes);
                 $timeLigne = TimeHelper::convertDureeToMinutes($ticketLigne->duree);
                 $ticket->duree = TimeHelper::convertMinutesToDuration($timeLigne);
@@ -160,7 +164,7 @@ class TicketController extends Controller
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'. $e);
         }
     }
 
@@ -284,6 +288,9 @@ class TicketController extends Controller
                 $ticket->id_priorite = $request->priorite;
                 $ticket->save();
             }
+            $ticketLigne = $ticket->lignes->first();
+            $ticketLigne->id_contact = $request->contact;
+            $ticketLigne->save();
             $ticketLigne = $ticket->lignes->first();
             $data = [
                 'titre' => $ticket->titre,
