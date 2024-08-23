@@ -9,6 +9,7 @@
         max-height: 200px; /* Limite à environ 5 éléments (ajustez si nécessaire) */
         overflow-y: auto;
     }
+    
 </style>
     <!-- Your Page Content Here -->
     <h1 class="text-2xl font-semibold">Tickets</h1>
@@ -193,6 +194,10 @@
 
                         </tbody>
                     </table>
+                </div>
+                <!-- Liens de pagination -->
+                <div class="pagination">
+                    {{ $tickets->appends(request()->input())->links() }}
                 </div>
             </div>
         </div>

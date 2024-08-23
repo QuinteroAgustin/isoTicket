@@ -72,18 +72,11 @@ class TicketController extends Controller
             $query->whereDate('created_at', $request->input('date'));
         }
 
-        // Nouveau filtre par message dans ticket_lignes
-        if ($request->filled('message')) {
-            $query->whereHas('lignes', function ($q) use ($request) {
-                $q->where('text', 'like', '%' . $request->input('message') . '%');
-            });
-        }
-
         // Tri des tickets par ID décroissant
         $query->orderBy('id_ticket', 'desc');
 
-        // Récupérer les tickets filtrés
-        $tickets = $query->get();
+        // Pagination des résultats (25 tickets par page)
+        $tickets = $query->paginate(5);
 
         return view('ticket.list', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
