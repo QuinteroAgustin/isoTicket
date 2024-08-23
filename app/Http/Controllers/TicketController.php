@@ -14,52 +14,139 @@ use App\Models\Service;
 use App\Models\Fonction;
 use App\Models\Priorite;
 use App\Models\Categorie;
+use App\Mail\PostMailOpen;
 use App\Models\Technicien;
 use App\Helpers\TimeHelper;
-use App\Mail\PostMail;
 use App\Mail\PostMailClose;
-use App\Mail\PostMailContact;
-use App\Mail\PostMailOpen;
-use App\Mail\PostMailTicket;
-use App\Mail\PostMailUpdate;
 use App\Models\TicketLigne;
+use App\Mail\PostMailUpdate;
 use Illuminate\Http\Request;
+use App\Mail\PostMailContact;
+use App\Helpers\FunctionHelper;
 use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
     public function ticket(Request $request)
     {
-        // Récupérer les paramètres de tri depuis la requête
-        $sort = $request->input('sort', 'asc');
-        $sortDate = $request->input('sortDate', 'desc');
-
-        // Filtrer et trier les tickets
-        $tickets = Ticket::where('cloture', 0)
-                        ->orderBy('id_service', $sort)
-                        ->orderBy('created_at', $sortDate)
-                        ->get();
-
+        $statuts = Status::all();
+        $techniciens = Technicien::all();
+        $services = Service::all();
+        $categories = Categorie::all();
+        $fonctions = Fonction::all();
         $risques = Risque::all();
 
-        return view('ticket.list', compact('tickets', 'risques', 'sort', 'sortDate'));
+        $tickets = collect();
+
+        // Requête de base pour les tickets
+        $query = Ticket::where('cloture', 0);
+
+        // Appliquer les filtres si présents
+        if ($request->filled('ticket_id')) {
+            $query->where('id_ticket', 'like', $request->input('ticket_id'). '%');
+        }
+
+        if ($request->filled('ticket_titre')) {
+            $query->where('titre', 'like', '%' .$request->input('ticket_titre'). '%');
+        }
+
+        if ($request->filled('client_name')) {
+            $query->where('id_client', 'like', '%' .$request->input('client_name'). '%');
+        }
+        if ($request->filled('statut')) {
+            $query->where('id_statut', $request->input('statut'));
+        }
+        if ($request->filled('technicien')) {
+            $query->where('id_technicien', $request->input('technicien'));
+        }
+        if ($request->filled('service')) {
+            $query->where('id_service', $request->input('service'));
+        }
+        if ($request->filled('categorie')) {
+            $query->where('id_categorie', $request->input('categorie'));
+        }
+        if ($request->filled('fonction')) {
+            $query->where('id_fonction', $request->input('fonction'));
+        }
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->input('date'));
+        }
+
+        // Nouveau filtre par message dans ticket_lignes
+        if ($request->filled('message')) {
+            $query->whereHas('lignes', function ($q) use ($request) {
+                $q->where('text', 'like', '%' . $request->input('message') . '%');
+            });
+        }
+
+        // Tri des tickets par ID décroissant
+        $query->orderBy('id_ticket', 'desc');
+
+        // Récupérer les tickets filtrés
+        $tickets = $query->get();
+
+        return view('ticket.list', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
 
     public function ticket_clots(Request $request)
     {
-        // Récupérer les paramètres de tri depuis la requête
-        $sort = $request->input('sort', 'asc');
-        $sortDate = $request->input('sortDate', 'desc');
-
-        // Filtrer et trier les tickets
-        $tickets = Ticket::where('cloture', 1)
-                        ->orderBy('id_service', $sort)
-                        ->orderBy('created_at', $sortDate)
-                        ->get();
-
+        $statuts = Status::all();
+        $techniciens = Technicien::all();
+        $services = Service::all();
+        $categories = Categorie::all();
+        $fonctions = Fonction::all();
         $risques = Risque::all();
 
-        return view('ticket.list_clots', compact('tickets', 'risques', 'sort', 'sortDate'));
+        $tickets = collect();
+
+        // Requête de base pour les tickets
+        $query = Ticket::where('cloture', 1);
+
+        // Appliquer les filtres si présents
+        if ($request->filled('ticket_id')) {
+            $query->where('id_ticket', 'like', $request->input('ticket_id'). '%');
+        }
+
+        if ($request->filled('ticket_titre')) {
+            $query->where('titre', 'like', '%' .$request->input('ticket_titre'). '%');
+        }
+
+        if ($request->filled('client_name')) {
+            $query->where('id_client', 'like', '%' .$request->input('client_name'). '%');
+        }
+        if ($request->filled('statut')) {
+            $query->where('id_statut', $request->input('statut'));
+        }
+        if ($request->filled('technicien')) {
+            $query->where('id_technicien', $request->input('technicien'));
+        }
+        if ($request->filled('service')) {
+            $query->where('id_service', $request->input('service'));
+        }
+        if ($request->filled('categorie')) {
+            $query->where('id_categorie', $request->input('categorie'));
+        }
+        if ($request->filled('fonction')) {
+            $query->where('id_fonction', $request->input('fonction'));
+        }
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->input('date'));
+        }
+
+        // Nouveau filtre par message dans ticket_lignes
+        if ($request->filled('message')) {
+            $query->whereHas('lignes', function ($q) use ($request) {
+                $q->where('text', 'like', '%' . $request->input('message') . '%');
+            });
+        }
+
+        // Tri des tickets par ID décroissant
+        $query->orderBy('id_ticket', 'desc');
+
+        // Récupérer les tickets filtrés
+        $tickets = $query->get();
+
+        return view('ticket.list_clots', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
 
     public function createVue()
@@ -155,9 +242,13 @@ class TicketController extends Controller
                 'id' => $ticket->id_ticket
             ];
             if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
-                Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailOpen($data));
+                if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
+                    Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailOpen($data));
+                }else{
+                    return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('warning', 'Le contact n\'a pas une adresse mail valide.');
+                }
             }else{
-                return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
+                return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('warning', 'Le contact n\'a pas d\'adresse mail.');
             }
 
             // Retournez une réponse de succès
@@ -306,13 +397,20 @@ class TicketController extends Controller
             ];
             if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
                 if($ticket->cloture == 1){
-                    Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailClose($data));
+                    if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
+                        Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailClose($data));
+                    }else{
+                        return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
+                    }
                 }else{
                     if($ticket->cloture != 1 && $ticket->id_statut != 1){
                         if($request->statut != $old_statut){
-                            Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailUpdate($data));
+                            if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
+                                Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailUpdate($data));
+                            }else{
+                                return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
+                            }
                         }
-
                     }
                 }
             }else{
@@ -405,7 +503,12 @@ class TicketController extends Controller
                         'fonction' => $ticket->fonction->libelle,
                         'id' => $ticket->id_ticket
                     ];
-                    Mail::to($email_contact)->send(new PostMailContact($data));
+                    if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
+                        Mail::to($email_contact)->send(new PostMailContact($data));
+                    }else{
+                        return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
+                    }
+
                 }else{
                     return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
                 }

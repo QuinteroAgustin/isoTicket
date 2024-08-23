@@ -23,7 +23,7 @@ class RechercheController extends Controller
     $tickets = collect(); // Initialise une collection vide
 
     // Vérifier si des filtres sont appliqués
-    if ($request->hasAny(['ticket_id', 'client_name', 'contact_name', 'statut', 'technicien', 'service', 'categorie', 'fonction', 'date'])) {
+    if ($request->hasAny(['ticket_id', 'ticket_titre', 'client_name', 'contact_name', 'statut', 'technicien', 'service', 'categorie', 'fonction', 'date', 'message'])) {
         // Requête de base pour les tickets
         $query = Ticket::query();
 
@@ -31,6 +31,11 @@ class RechercheController extends Controller
         if ($request->filled('ticket_id')) {
             $query->where('id_ticket', $request->input('ticket_id'));
         }
+
+        if ($request->filled('ticket_titre')) {
+            $query->where('titre', 'like', '%' .$request->input('ticket_titre'). '%');
+        }
+
         if ($request->filled('client_name')) {
             $query->where('id_client', 'like', '%' .$request->input('client_name'). '%');
         }
@@ -59,6 +64,16 @@ class RechercheController extends Controller
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->input('date'));
         }
+
+        // Nouveau filtre par message dans ticket_lignes
+        if ($request->filled('message')) {
+            $query->whereHas('lignes', function ($q) use ($request) {
+                $q->where('text', 'like', '%' . $request->input('message') . '%');
+            });
+        }
+
+        // Tri des tickets par ID décroissant
+        $query->orderBy('id_ticket', 'desc');
 
         // Récupérer les tickets filtrés
         $tickets = $query->get();

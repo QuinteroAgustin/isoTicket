@@ -20,6 +20,12 @@
                 <input type="text" name="ticket_id" id="ticket_id" class="form-input mt-1 block w-full" value="{{ request('ticket_id') }}">
             </div>
 
+            <!-- Filtre par titre ticket -->
+            <div>
+                <label for="ticket_titre" class="block text-gray-700">Titre du Ticket</label>
+                <input type="text" name="ticket_titre" id="ticket_titre" class="form-input mt-1 block w-full" value="{{ request('ticket_titre') }}" autocomplete="off">
+            </div>
+
             <!-- Filtre par nom du client -->
             <div>
                 <label for="client_name" class="block text-gray-700">Nom du Client</label>
@@ -102,6 +108,12 @@
             <div>
                 <label for="date" class="block text-gray-700">Date</label>
                 <input type="date" name="date" id="date" class="form-input mt-1 block w-full" value="{{ request('date') }}">
+            </div>
+
+            <!-- Filtre par message -->
+            <div>
+                <label for="message" class="block text-gray-700">Message</label>
+                <input type="text" name="message" id="message" class="form-input mt-1 block w-full" value="{{ request('message') }}">
             </div>
         </div>
 

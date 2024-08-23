@@ -83,7 +83,7 @@
                         <label for="afficher" class="text-sm font-medium text-gray-900 dark:text-gray-300 ml-2">Afficher</label> <!-- ml-2 pour une marge à gauche -->
                     </div>
                     <div class="max-w-[8rem] rounded dark:border-gray-700 flex px-4 py-2">
-                        <input type="time" id="time" name="duree" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="00:00" {{ $disabled }} />
+                        <input type="time" id="time_response" name="duree" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="00:00" {{ $disabled }} />
                     </div>
                 </div>
             </form>
@@ -121,5 +121,51 @@
                 }
             }
         });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formulaire = document.getElementById('newFormReponse');
+
+        formulaire.addEventListener('submit', function(event) {
+            // Annuler la soumission par défaut du formulaire
+            event.preventDefault();
+
+            // Réactiver le bouton de soumission au début pour chaque tentative
+            document.getElementById('newSubmitReponse').disabled = false;
+
+            // Vérifier ici si tous les champs sont valides
+            const validationMessage = validateForm();
+
+            if (validationMessage === '') {
+                // Désactivez le bouton de soumission seulement si la validation passe
+                document.getElementById('newSubmitReponse').disabled = true;
+                // Soumettre le formulaire
+                formulaire.submit();
+            } else {
+                // Afficher le message d'erreur à l'utilisateur
+                alert(validationMessage);
+                // Le bouton reste activé pour permettre une nouvelle tentative
+            }
+        });
+
+        function validateForm() {
+            // Vérifier ici chaque champ du formulaire
+            const timeSaisi = document.getElementById('time_response').value.trim();
+            const reponse = document.getElementById('message').value.trim();
+
+            // Initialiser un message d'erreur vide
+            let errorMessage = '';
+
+            // Exemple de validation simple (vérifie que les champs ne sont pas vides)
+            if (timeSaisi === '' || timeSaisi === "00:00") {
+                errorMessage += 'Il faut mettre une durée minimale.\n';
+            }
+            if (reponse === '') {
+                errorMessage += 'Il faut mettre une réponse.\n';
+            }
+
+            return errorMessage; // Retourner le message d'erreur
+        }
     });
 </script>

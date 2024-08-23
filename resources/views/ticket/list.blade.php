@@ -3,6 +3,13 @@
 @section('page_title', 'Liste des tickets')
 
 @section('content')
+<style>
+    /* Ajoutez cette classe pour limiter la hauteur du dropdown et permettre le défilement */
+    .dropdown-scroll {
+        max-height: 200px; /* Limite à environ 5 éléments (ajustez si nécessaire) */
+        overflow-y: auto;
+    }
+</style>
     <!-- Your Page Content Here -->
     <h1 class="text-2xl font-semibold">Tickets</h1>
     <div class="overflow-x-auto overflow-y-auto">
@@ -20,28 +27,116 @@
                                 <th class="py-3 px-6 text-center">Risque</th>
                                 <th class="py-3 px-6 text-center">Categorie</th>
                                 <th class="py-3 px-6 text-center">Fonction</th>
-                                <th class="py-3 px-6 text-center">
-                                    <div class="flex items-center">
-                                        <span>Service</span>
-                                        <a href="{{ route('ticket', ['sort' => ($sort == 'asc') ? 'desc' : 'asc']) }}" class="ml-1.5">
-                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </th>
-                                <th class="py-3 px-6 text-center">
-                                    <div class="flex items-center">
-                                        <span>Date</span>
-                                        <a href="{{ route('ticket', ['sortDate' => ($sortDate == 'asc') ? 'desc' : 'asc']) }}" class="ml-1.5">
-                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </th>
+                                <th class="py-3 px-6 text-center">Service</th>
+                                <th class="py-3 px-6 text-center">Date</th>
                                 <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
+                            <form action="{{ route('ticket') }}" method="GET">
+                            <tr>
+                                <td>
+                                    <div>
+                                        <select name="statut" id="statut" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            @foreach($statuts as $statut)
+                                            @if ($statut->id_statut != 4)
+                                                <option value="{{ $statut->id_statut }}" {{ request('statut') == $statut->id_statut ? 'selected' : '' }}>
+                                                    {{ $statut->libelle }}
+                                                </option>
+                                            @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <input type="text" name="ticket_id" id="ticket_id" class="form-input mt-1 block w-full" value="{{ request('ticket_id') }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <input type="text" name="ticket_titre" id="ticket_titre" class="form-input mt-1 block w-full" value="{{ request('ticket_titre') }}" autocomplete="off">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <input type="text" name="client_name" id="client_name" class="form-input mt-1 block w-full" value="{{ request('client_name') }}" autocomplete="off">
+                                        <div id="dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="technicien" id="technicien" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            @foreach($techniciens as $technicien)
+                                                <option value="{{ $technicien->id_technicien }}" {{ request('technicien') == $technicien->id_technicien ? 'selected' : '' }}>
+                                                    {{ $technicien->nom }} {{ $technicien->prenom }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="risque" id="risque" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            <!--
+                                            @foreach($risques as $risque)
+                                                <option value="{{ $risque->id_risque }}" {{ request('risque') == $risque->id_risque ? 'selected' : '' }}>
+                                                    {{ $risque->libelle }}
+                                                </option>
+                                            @endforeach
+                                            -->
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="categorie" id="categorie" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            @foreach($categories as $categorie)
+                                                <option value="{{ $categorie->id_categorie }}" {{ request('categorie') == $categorie->id_categorie ? 'selected' : '' }}>
+                                                    {{ $categorie->libelle }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="fonction" id="fonction" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            @foreach($fonctions as $fonction)
+                                                <option value="{{ $fonction->id_fonction }}" {{ request('fonction') == $fonction->id_fonction ? 'selected' : '' }}>
+                                                    {{ $fonction->libelle }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="service" id="service" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            @foreach($services as $service)
+                                                <option value="{{ $service->id_service }}" {{ request('service') == $service->id_service ? 'selected' : '' }}>
+                                                    {{ $service->libelle }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <input type="date" name="date" id="date" class="form-input mt-1 block w-full" value="{{ request('date') }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Rechercher
+                                    </button>
+                                </td>
+                            </tr>
+                        </form>
                         </thead>
                         <tbody class="text-gray-600 text-sm font-light">
                             @foreach ($tickets as $ticket)
@@ -62,11 +157,18 @@
                                             break; // Sortir de la boucle une fois l'icône trouvée
                                         }
                                     }
+
+                                    //truncate titre
+                                    $truncatedTitre = Str::limit($ticket->titre, 25, '...');
                                 @endphp
                                 <tr class="border-b border-gray-200 {{ $bgColor }} hover:bg-gray-100">
                                     <td class="py-3 px-6 text-center">{{ $ticket->statut->libelle }}</td>
                                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $ticket->titre }}</td>
+                                    <td class="py-3 px-6 text-left">
+                                        <span title="{{ $ticket->titre }}">
+                                            {{ $truncatedTitre }}
+                                        </span>
+                                    </td>
                                     <td class="py-3 px-6 text-left">{{ $ticket->client->CT_Num }}</td>
                                     <td class="py-3 px-6 text-center">{{ $ticket->technicien->nom }} {{ $ticket->technicien->prenom }}</td>
                                     <td class="py-3 px-6 text-center">
@@ -95,4 +197,45 @@
             </div>
         </div>
     </div>
+<script>
+    document.getElementById('client_name').addEventListener('input', function() {
+        let search = this.value.trim();
+        if (search.length > 0) {
+            axios.get('{{ route("search.clients") }}', { params: { search: search } })
+                .then(response => {
+                    let clients = response.data;
+                    let dropdown = document.getElementById('dropdown');
+                    dropdown.innerHTML = '';
+                    if (clients.length > 0) {
+                        clients.forEach(client => {
+                            let div = document.createElement('div');
+                            div.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
+                            div.textContent = `${client.CT_Num} - ${client.CT_Intitule}`;
+                            div.addEventListener('click', function() {
+                                document.getElementById('client_name').value = client.CT_Num;
+                                // Utilisation de setTimeout pour garantir que le DOM est mis à jour correctement
+                                setTimeout(function() {
+                                    dropdown.classList.add('hidden');
+                                }, 50);
+                            });
+                            dropdown.appendChild(div);
+                        });
+                        dropdown.classList.remove('hidden');
+                    } else {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+        } else {
+            document.getElementById('dropdown').classList.add('hidden');
+        }
+    });
+
+    // Masquer le dropdown si on clique en dehors du champ ou du dropdown
+    document.addEventListener('click', function(event) {
+        let dropdown = document.getElementById('dropdown');
+        if (!dropdown.contains(event.target) && event.target.id !== 'client_name') {
+            dropdown.classList.add('hidden');
+        }
+    });
+</script>
 @endsection

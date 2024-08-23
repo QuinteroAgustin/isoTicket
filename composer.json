@@ -26,6 +26,7 @@
         },
         "files": [
         "app/Helpers/TimeHelper.php",
+        "app/Helpers/FunctionHelper.php",
         "app/Helpers/Utf8Encoder.php"
         ]
 
