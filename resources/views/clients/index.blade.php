@@ -14,38 +14,38 @@
 
             <!-- Filtre par CT_Intitulé -->
             <div>
-                <label for="intitule" class="block text-gray-700">Intitulé du Client</label>
-                <input type="text" name="intitule" id="intitule" class="form-input mt-1 block w-full" value="{{ request('intitule') }}">
+                <label for="CT_Intitule" class="block text-gray-700">Intitulé du Client</label>
+                <input type="text" name="CT_Intitule" id="CT_Intitule" class="form-input mt-1 block w-full" value="{{ request('CT_Intitule') }}">
             </div>
 
             <!-- Filtre par Telephone -->
             <div>
-                <label for="telephone" class="block text-gray-700">Téléphone du Client</label>
-                <input type="text" name="telephone" id="telephone" class="form-input mt-1 block w-full" value="{{ request('telephone') }}">
+                <label for="CT_Telephone" class="block text-gray-700">Téléphone du Client</label>
+                <input type="text" name="CT_Telephone" id="CT_Telephone" class="form-input mt-1 block w-full" value="{{ request('CT_Telephone') }}">
             </div>
 
             <!-- Filtre par ville -->
             <div>
-                <label for="ville" class="block text-gray-700">Ville</label>
-                <input type="text" name="ville" id="ville" class="form-input mt-1 block w-full" value="{{ request('ville') }}">
+                <label for="CT_Ville" class="block text-gray-700">Ville</label>
+                <input type="text" name="CT_Ville" id="CT_Ville" class="form-input mt-1 block w-full" value="{{ request('CT_Ville') }}">
             </div>
 
             <!-- Filtre par adresse -->
             <div>
-                <label for="adresse" class="block text-gray-700">Adresse</label>
-                <input type="text" name="adresse" id="adresse" class="form-input mt-1 block w-full" value="{{ request('adresse') }}">
+                <label for="CT_Adresse" class="block text-gray-700">Adresse</label>
+                <input type="text" name="CT_Adresse" id="CT_Adresse" class="form-input mt-1 block w-full" value="{{ request('CT_Adresse') }}">
             </div>
 
             <!-- Filtre par Code postal -->
             <div>
-                <label for="code_postal" class="block text-gray-700">Code postal</label>
-                <input type="text" name="code_postal" id="code_postal" class="form-input mt-1 block w-full" value="{{ request('code_postal') }}">
+                <label for="CT_CodePostal" class="block text-gray-700">Code postal</label>
+                <input type="text" name="CT_CodePostal" id="CT_CodePostal" class="form-input mt-1 block w-full" value="{{ request('CT_CodePostal') }}">
             </div>
 
             <!-- Filtre par Siret -->
             <div>
-                <label for="siret" class="block text-gray-700">Siret</label>
-                <input type="text" name="siret" id="siret" class="form-input mt-1 block w-full" value="{{ request('siret') }}">
+                <label for="CT_Siret" class="block text-gray-700">Siret</label>
+                <input type="text" name="CT_Siret" id="CT_Siret" class="form-input mt-1 block w-full" value="{{ request('CT_Siret') }}">
             </div>
         </div>
 
@@ -101,7 +101,7 @@
 
     {{-- Pagination --}}
     <div class="d-flex justify-content-center my-4">
-        {{ $clients->links() }}
+        {{ $clients->appends(request()->input())->links() }}
     </div>
 </div>
 @endsection

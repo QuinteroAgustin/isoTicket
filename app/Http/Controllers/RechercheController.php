@@ -77,10 +77,11 @@ class RechercheController extends Controller
 
         // Récupérer les tickets filtrés
         $tickets = $query->get();
+
+
     }
 
     return view('recherche.home', compact('statuts', 'techniciens', 'services', 'categories', 'fonctions', 'tickets'));
 
-}
-
+    }
 }

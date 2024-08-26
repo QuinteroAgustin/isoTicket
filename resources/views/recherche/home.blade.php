@@ -165,6 +165,7 @@
     @else
         <p class="text-center text-gray-500">Aucun ticket trouvé pour les critères de recherche.</p>
     @endif
+    
 
 <script>
 document.getElementById('client_name').addEventListener('input', function() {

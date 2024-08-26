@@ -13,31 +13,31 @@ class ClientController extends Controller
         $query = Client::query();
 
         if ($request->filled('CT_Num')) {
-            $query->where('CT_Num', 'like', '%' . $request->CT_Num . '%');
+            $query->where('CT_Num', 'like', '%' . $request->input('CT_Num') . '%');
         }
 
-        if ($request->filled('intitule')) {
-            $query->where('CT_Intitule', 'like', '%' . $request->intitule . '%');
+        if ($request->filled('CT_Intitule')) {
+            $query->where('CT_Intitule', 'like', '%' . $request->input('CT_Intitule') . '%');
         }
 
-        if ($request->filled('telephone')) {
-            $query->where('CT_Telephone', 'like', '%' . $request->telephone . '%');
+        if ($request->filled('CT_Telephone')) {
+            $query->where('CT_Telephone', 'like', '%' . $request->input('CT_Telephone') . '%');
         }
 
-        if ($request->filled('ville')) {
-            $query->where('CT_Ville', 'like', '%' . $request->ville . '%');
+        if ($request->filled('CT_Ville')) {
+            $query->where('CT_Ville', 'like', '%' . $request->input('CT_Ville') . '%');
         }
 
-        if ($request->filled('adresse')) {
-            $query->where('CT_Adresse', 'like', '%' . $request->adresse . '%');
+        if ($request->filled('CT_Adresse')) {
+            $query->where('CT_Adresse', 'like', '%' . $request->input('CT_Adresse') . '%');
         }
 
-        if ($request->filled('code_postal')) {
-            $query->where('CT_CodePostal', 'like', '%' . $request->code_postal . '%');
+        if ($request->filled('CT_CodePostal')) {
+            $query->where('CT_CodePostal', 'like', '%' . $request->input('CT_CodePostal') . '%');
         }
 
-        if ($request->filled('siret')) {
-            $query->where('CT_Siret', 'like', '%' . $request->siret . '%');
+        if ($request->filled('CT_Siret')) {
+            $query->where('CT_Siret', 'like', '%' . $request->input('CT_Siret') . '%');
         }
 
         // Paginer les résultats
