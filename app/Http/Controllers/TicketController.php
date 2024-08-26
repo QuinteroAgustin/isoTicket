@@ -76,7 +76,7 @@ class TicketController extends Controller
         $query->orderBy('id_ticket', 'desc');
 
         // Pagination des résultats (25 tickets par page)
-        $tickets = $query->paginate(5);
+        $tickets = $query->paginate(25);
 
         return view('ticket.list', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
@@ -136,8 +136,12 @@ class TicketController extends Controller
         // Tri des tickets par ID décroissant
         $query->orderBy('id_ticket', 'desc');
 
+
         // Récupérer les tickets filtrés
         $tickets = $query->get();
+
+        // Pagination des résultats (25 tickets par page)
+        $tickets = $query->paginate(25);
 
         return view('ticket.list_clots', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }

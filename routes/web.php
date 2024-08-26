@@ -49,7 +49,6 @@ Route::get('/create/client/{client_id}/societetableau', [TicketController::class
 
 // Clients
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.index')->middleware(Authenticate::class);
-Route::get('/clients/filter', [ClientController::class, 'filter'])->name('clients.filter')->middleware(Authenticate::class);
 
 //params
 Route::get('/params', [ParamsController::class, 'home'])->name('params')->middleware(Authenticate::class);

@@ -196,6 +196,10 @@
             </div>
         </div>
     </div>
+<!-- Liens de pagination -->
+<div class="pagination">
+    {{ $tickets->appends(request()->input())->links() }}
+</div>
 <script>
     document.getElementById('client_name').addEventListener('input', function() {
         let search = this.value.trim();
