@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- Your Page Content Here -->
-    <h1 class="text-2xl font-semibold">Paramètrage des interfaces</h1>
+    <h1 class="text-2xl font-semibold">Paramétrage des interfaces</h1>
     <p>Panel administrateur d'E-Ticket</p>
     <div class="grid grid-cols-4 divide-x">
         <div class="border m-5 p-5">
@@ -19,7 +19,7 @@
                             <path d="M14.1899 5.8501H17.1199V8.7701" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        Satus
+                        Statuts
                     </a>
                 </li>
                 <li class="mt-2">

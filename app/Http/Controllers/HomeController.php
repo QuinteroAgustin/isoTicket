@@ -7,6 +7,7 @@ use App\Models\Ticket;
 use App\Models\Technicien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Validator;
 
 class HomeController extends Controller
 {
@@ -67,6 +68,21 @@ class HomeController extends Controller
     public function loginPost(Request $request)
     {
         $credentials = $request->only('email', 'password');
+        $validator = Validator::make($credentials, [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ], [
+            'required' => 'Des champs sont obligatoires.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'email.email' => 'Veuillez fournir une adresse email valide.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput($request->only('email'));
+        }
+
 
         if (Technicien::login($credentials['email'], $credentials['password'])) {
             // Gérer les cookies "remember_me"
@@ -83,8 +99,10 @@ class HomeController extends Controller
             // Rediriger l'utilisateur vers une autre vue après la connexion réussie
             return redirect()->route('home');
         } else {
-            // Si les informations d'identification sont incorrectes, rediriger l'utilisateur vers la page de connexion avec un message d'erreur
-            return redirect()->route('login')->with('error', 'Adresse e-mail ou mot de passe incorrect.');
+             // Si la tentative échoue, renvoyer à la page de connexion avec un message d'erreur
+            return redirect()->back()
+                ->withErrors(['email' => 'Informations d\'identification incorrectes.'])
+                ->withInput($request->only('email'));
         }
     }
 

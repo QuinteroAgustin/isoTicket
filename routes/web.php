@@ -4,6 +4,7 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ParamsController;
 use App\Http\Controllers\TicketController;
@@ -17,14 +18,22 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 //'checkrole:1'
 //Authenticate::class
 
+//accueil
 Route::get('/', [HomeController::class, 'home'])->name('home')->middleware(Authenticate::class);
 
+//users
 Route::middleware([RememberMeMiddleware::class])->group(function () {
 Route::get('/login', [HomeController::class, 'login'])->name('login')->middleware(RedirectIfAuthenticated::class);
 Route::post('/login', [HomeController::class, 'loginPost'])->name('loginPost')->middleware(RedirectIfAuthenticated::class);
 });
 Route::get('/logout', [HomeController::class, 'logoutPost'])->name('logout')->middleware(Authenticate::class);
+
+//erreur
 Route::get('/404', [HomeController::class, 'notFound'])->name('404');
+
+// users profil
+Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
+Route::post('/profile', [UserController::class, 'update'])->name('profile.update');
 
 //tickets
 Route::get('/ticket', [TicketController::class, 'ticket'])->name('ticket')->middleware(Authenticate::class);

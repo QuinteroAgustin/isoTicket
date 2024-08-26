@@ -30,8 +30,20 @@
                     <form action="{{ route('loginPost') }}" method="POST">
                         @csrf
                         <h3 class="mb-6 text-2xl font-medium text-center">Connexion</h3>
-                        <input type="text" name="email" id="email" class="block w-full px-4 py-3 mb-4 border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Identifiant" value="{{ old('email', Cookie::get('email')) }}">
-                        <input type="password" name="password" id="password" class="block w-full px-4 py-3 mb-4 border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Mot de passe">
+
+                        <div>
+                            <input type="text" name="email" id="email" class="block w-full px-4 py-3 mb-4 border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Identifiant" value="{{ old('email', Cookie::get('email')) }}">
+                            @error('email')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div>
+                            <input type="password" name="password" id="password" class="block w-full px-4 py-3 mb-4 border-2 border-transparent border-gray-200 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none" data-rounded="rounded-lg" data-primary="blue-500" placeholder="Mot de passe">
+                            @error('password')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <div class="block">
                             <input class="w-full px-3 py-4 font-medium text-white bg-blue-600 rounded-lg" data-primary="blue-600" data-rounded="rounded-lg" type="submit" value="Se connecter">
                         </div>
