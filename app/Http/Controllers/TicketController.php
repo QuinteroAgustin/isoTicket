@@ -203,7 +203,7 @@ class TicketController extends Controller
                 // Créez une nouvelle ligne de ticket
                 $ticketLigne = new TicketLigne();
                 $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
-                $ticketLigne->text = $request->message;
+                $ticketLigne->text = wordwrap($request->message, 40, "\n", true);
                 $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->type_user = 1;
@@ -302,7 +302,7 @@ class TicketController extends Controller
                 // Créez une nouvelle ligne de ticket
                 $ticketLigne = new TicketLigne();
                 $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
-                $ticketLigne->text = $request->message;
+                $ticketLigne->text = wordwrap($request->message, 40, "\n", true);
                 $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
                 if($request->afficher == 1){
@@ -333,7 +333,7 @@ class TicketController extends Controller
             return redirect()->back()->with('success', 'Nouveau message ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'. $e);
         }
     }
 
