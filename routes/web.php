@@ -11,6 +11,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\RechercheController;
 use App\Http\Middleware\RememberMeMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Controllers\PasswordResetController;
 
 
 
@@ -27,6 +28,18 @@ Route::get('/login', [HomeController::class, 'login'])->name('login')->middlewar
 Route::post('/login', [HomeController::class, 'loginPost'])->name('loginPost')->middleware(RedirectIfAuthenticated::class);
 });
 Route::get('/logout', [HomeController::class, 'logoutPost'])->name('logout')->middleware(Authenticate::class);
+
+// Route pour afficher le formulaire de saisie de l'adresse e-mail
+Route::get('/password/reset', [PasswordResetController::class, 'showEmailForm'])->name('password.request');
+
+// Route pour envoyer le lien de réinitialisation de mot de passe
+Route::post('/password/reset-link', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+
+// Route pour afficher le formulaire de réinitialisation du mot de passe avec le token
+Route::get('/password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+
+// Route pour traiter la réinitialisation du mot de passe
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.update');
 
 //erreur
 Route::get('/404', [HomeController::class, 'notFound'])->name('404');
