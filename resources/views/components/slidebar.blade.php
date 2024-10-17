@@ -56,6 +56,7 @@
                     Clients
                 </a>
             </li>
+            @if(session('technicien')->role->id_role <= 4)
             <li>
                 <a href="{{ route('params') }}" class="flex items-center py-2 px-4 text-white hover:bg-gray-700 rounded-lg transition duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,6 +66,7 @@
                     Paramètrage
                 </a>
             </li>
+            @endif
         </ul>
     </div>
 </div>

@@ -366,32 +366,31 @@
                 axios.get(`/create/client/${clientId}/societetableau`)
                     .then(response => {
                         const client = response.data.client;
-                        societeTable.innerHTML = ''; // Clear previous content
 
-                        const row = document.createElement('tr');
-                        row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+                        // Sélectionner la carte modale
+                        const modal = document.getElementById('tabSociete');
+
+                        // Remplir la carte avec les données du client
+                        modal.querySelector('h4').innerText = `ID: ${client.CT_Num}`;
+                        modal.querySelector('p:nth-child(2)').innerHTML = `<strong>Nom:</strong> ${client.CT_Intitule}`;
+                        modal.querySelector('p:nth-child(3)').innerHTML = `<strong>Téléphone:</strong> ${client.CT_Telephone || '-'}`;
+                        modal.querySelector('p:nth-child(4)').innerHTML = `<strong>Télécopie:</strong> ${client.CT_Telecopie || '-'}`;
+                        modal.querySelector('p:nth-child(5)').innerHTML = `<strong>Adresse:</strong> ${client.CT_Adresse}`;
+                        modal.querySelector('p:nth-child(6)').innerHTML = `<strong>Ville:</strong> ${client.CT_Ville}`;
+                        modal.querySelector('p:nth-child(7)').innerHTML = `<strong>Complément:</strong> ${client.CT_Complement || '-'}`;
+                        modal.querySelector('p:nth-child(8)').innerHTML = `<strong>E-Mail:</strong> ${client.CT_EMail}`;
 
                         const collaborateur = client.collaborateur ? `${client.collaborateur.CO_Nom} ${client.collaborateur.CO_Prenom}` : 'Aucun commercial';
+                        modal.querySelector('p:nth-child(9)').innerHTML = `<strong>Commercial Agréé:</strong> ${collaborateur}`;
 
-                        row.innerHTML = `
-                            <td class="py-3 px-6 text-center">${client.CT_Num}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Intitule}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Telephone}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Telecopie}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Adresse}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Ville}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Complement}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_EMail}</td>
-                            <td class="py-3 px-6 text-left">${collaborateur}</td>
-                        `;
-
-                        societeTable.appendChild(row);
+                        // Ne pas afficher le modal ici
                     })
                     .catch(error => {
                         console.error('Erreur lors de la récupération du Client:', error);
-                });
+                    });
             }
         }
+
 
 
         // Attendre que le DOM soit chargé

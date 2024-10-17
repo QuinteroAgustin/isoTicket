@@ -15,6 +15,7 @@ use App\Models\Fonction;
 use App\Models\Priorite;
 use App\Models\Categorie;
 use App\Mail\PostMailOpen;
+use App\Models\Abonnement;
 use App\Models\Technicien;
 use App\Helpers\TimeHelper;
 use App\Mail\PostMailClose;
@@ -23,6 +24,7 @@ use App\Mail\PostMailUpdate;
 use Illuminate\Http\Request;
 use App\Mail\PostMailContact;
 use App\Helpers\FunctionHelper;
+use App\Models\AbonnementLigne;
 use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
@@ -252,7 +254,7 @@ class TicketController extends Controller
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
         }
     }
 
@@ -265,6 +267,20 @@ class TicketController extends Controller
                      ->get(['CT_Num', 'CT_Intitule']);
 
         return response()->json($clients);
+    }
+
+    public function getAbonnementsByClient($clientId)
+    {
+        $abonnements = Abonnement::where('CT_Num', $clientId)->get();
+
+        // Convertir en UTF-8
+        $abonnements = $abonnements->map(function ($item) {
+            return array_map(function ($value) {
+                return is_string($value) ? utf8_encode($value) : $value;
+            }, $item->toArray());
+        });
+
+        return response()->json(['abonnements' => $abonnements]);
     }
 
     public function getContacts($client_id)
@@ -333,7 +349,7 @@ class TicketController extends Controller
             return redirect()->back()->with('success', 'Nouveau message ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
         }
     }
 
@@ -473,15 +489,17 @@ class TicketController extends Controller
             // Vérifiez si le ticket a été créé avec succès
             if ($ticket->exists) {
                 $ticketLigne = $ticket->lignes()->orderBy('created_at', 'asc')->first();
+
                 if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
                     $email_contact = $ticketLigne->contactCbmarq->CT_EMail;
+
                     // Créez une nouvelle ligne de ticket
                     $ticketLigne = new TicketLigne();
                     $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
                     $ticketLigne->text = "Nos équipes ont tenté de prendre contact avec vous.";
                     $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                     $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
-                    $ticketLigne->type_user = 2;
+                    $ticketLigne->type_user = 1;
                     $ticketLigne->id_technicien = Technicien::getTechId();
                     $ticketLigne->ct_num = $ticket->id_client;
                     $ticketLigne->save();
@@ -500,7 +518,8 @@ class TicketController extends Controller
                         'fonction' => $ticket->fonction->libelle,
                         'id' => $ticket->id_ticket
                     ];
-                    if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
+
+                    if(filter_var($email_contact, FILTER_VALIDATE_EMAIL) !== false){
                         Mail::to($email_contact)->send(new PostMailContact($data));
                     }else{
                         return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
@@ -509,13 +528,13 @@ class TicketController extends Controller
                 }else{
                     return redirect()->back()->with('warning', 'Le contact n\'a pas d\'adresse mail.');
                 }
-
+                return redirect()->back()->with('success', 'Tentative de contact avec succès! Mail envoyé à : '. $email_contact);
+            }else{
+                return redirect()->back()->with('warning', 'Le ticket n\'existe pas.');
             }
-
-            return redirect()->back()->with('success', 'Tentative de contact avec succès! Mail envoyé à : '. $email_contact);
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.'. $e);
+            return redirect()->back()->with('error', 'Erreur lors de le l\'envoie du mail.');
         }
     }
 
@@ -625,5 +644,4 @@ class TicketController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la création du contact.');
         }
     }
-
 }

@@ -226,8 +226,25 @@
             <!-- droite -->
             <div class="flex-none w-30 h-full p-4">
                 @if($ticket->cloture == 0)
-                <a href="{{ route('call.client', ['id' => $ticket->id_ticket]) }}" class="block text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full mt-2">Tentative de contact</a>
+                <div class="flex space-x-2">
+                    <!-- Premier bouton avec l'action actuelle -->
+                    <a href="{{ route('call.client', ['id' => $ticket->id_ticket]) }}" class="block text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
+                        Tentative de contact
+                    </a>
+
+                    <!-- Deuxième bouton -->
+                    <a data-modal-target="tabAbonnements" data-modal-toggle="tabAbonnements" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
+                        Liste des Abonnements
+                    </a>
+
+                    <!-- Troisième bouton -->
+                    <a class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
+                        Action 3
+                    </a>
+                </div>
                 @endif
+
+
                 <!-- client -->
                 <div class="max-w-sm mx-auto">
                     <label for="client" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
@@ -346,6 +363,8 @@
     @include('components.contact')
     <!-- Inclure le composant des info societe -->
     @include('components.societe')
+    <!-- Inclure le composant des info abonnements -->
+    @include('components.abonnements')
 
     <script>
         document.getElementById('client').addEventListener('input', function() {
@@ -458,30 +477,58 @@
                 axios.get(`/create/client/${clientId}/societetableau`)
                     .then(response => {
                         const client = response.data.client;
-                        societeTable.innerHTML = ''; // Clear previous content
 
-                        const row = document.createElement('tr');
-                        row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+                        // Sélectionner la carte modale
+                        const modal = document.getElementById('tabSociete');
+
+                        // Remplir la carte avec les données du client
+                        modal.querySelector('h4').innerText = `ID: ${client.CT_Num}`;
+                        modal.querySelector('p:nth-child(2)').innerHTML = `<strong>Nom:</strong> ${client.CT_Intitule}`;
+                        modal.querySelector('p:nth-child(3)').innerHTML = `<strong>Téléphone:</strong> ${client.CT_Telephone || '-'}`;
+                        modal.querySelector('p:nth-child(4)').innerHTML = `<strong>Télécopie:</strong> ${client.CT_Telecopie || '-'}`;
+                        modal.querySelector('p:nth-child(5)').innerHTML = `<strong>Adresse:</strong> ${client.CT_Adresse}`;
+                        modal.querySelector('p:nth-child(6)').innerHTML = `<strong>Ville:</strong> ${client.CT_Ville}`;
+                        modal.querySelector('p:nth-child(7)').innerHTML = `<strong>Complément:</strong> ${client.CT_Complement || '-'}`;
+                        modal.querySelector('p:nth-child(8)').innerHTML = `<strong>E-Mail:</strong> ${client.CT_EMail}`;
 
                         const collaborateur = client.collaborateur ? `${client.collaborateur.CO_Nom} ${client.collaborateur.CO_Prenom}` : 'Aucun commercial';
+                        modal.querySelector('p:nth-child(9)').innerHTML = `<strong>Commercial Agréé:</strong> ${collaborateur}`;
 
-                        row.innerHTML = `
-                            <td class="py-3 px-6 text-center">${client.CT_Num}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Intitule}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Telephone}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Telecopie}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Adresse}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Ville}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_Complement}</td>
-                            <td class="py-3 px-6 text-left">${client.CT_EMail}</td>
-                            <td class="py-3 px-6 text-left">${collaborateur}</td>
-                        `;
-
-                        societeTable.appendChild(row);
+                        // Ne pas afficher le modal ici
                     })
                     .catch(error => {
                         console.error('Erreur lors de la récupération du Client:', error);
-                });
+                    });
+            }
+        }
+
+        // Générer le tableau des abonnements
+        const abonnementsTable = document.getElementById('abonnements-table');
+        function fetchAndDisplayAbonnements(clientId) {
+            if (clientId) {
+                axios.get(`/ticket/search-abonnementtableau/${clientId}`)
+                    .then(response => {
+                        const abonnements = response.data.abonnements;
+                        abonnementsTable.innerHTML = ''; // Clear previous content
+
+                        abonnements.forEach(abonnement => {
+                            const row = document.createElement('tr');
+                            row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+
+                            row.innerHTML = `
+                                <td class="py-3 px-6 text-center">${abonnement.AB_Type || '-'}</td>
+                                <td class="py-3 px-6 text-left">${abonnement.AB_Intitule || '-'}</td>
+                                <td class="py-3 px-6 text-left">${abonnement.AB_Debut || '-'}</td>
+                                <td class="py-3 px-6 text-left">${abonnement.AB_Fin || '-'}</td>
+                                <td class="py-3 px-6 text-left">${abonnement.N_de_Srie || '-'}</td>
+                            `;
+
+                            abonnementsTable.appendChild(row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des abonnements:', error);
+                    });
             }
         }
 

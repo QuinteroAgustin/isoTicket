@@ -7,6 +7,7 @@
     <h1 class="text-2xl font-semibold">Paramétrage des interfaces</h1>
     <p>Panel administrateur d'E-Ticket</p>
     <div class="grid grid-cols-4 divide-x">
+        @if(session('technicien')->role->id_role <= 2)
         <div class="border m-5 p-5">
             <ul class="my-2">
                 <li class="mt-2">
@@ -52,6 +53,8 @@
                 </li>
             </ul>
         </div>
+        @endif
+        @if(session('technicien')->role->id_role <= 2)
         <div class="border m-5 p-5">
             <ul class="my-2">
                 <li class="mt-2">
@@ -83,6 +86,8 @@
                 </li>
             </ul>
         </div>
+        @endif
+        @if(session('technicien')->role->id_role <= 1)
         <div class="border m-5 p-5">
             <ul class="my-2">
                 <li class="mt-2">
@@ -107,6 +112,8 @@
                 </li>
             </ul>
         </div>
+        @endif
+        @if(session('technicien')->role->id_role <= 4)
         <div class="border m-5 p-5">
             <ul>
                 <li class="mt-2">
@@ -127,5 +134,6 @@
                 </li>
             </ul>
         </div>
+        @endif
     </div>
 @endsection
