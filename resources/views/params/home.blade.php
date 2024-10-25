@@ -119,6 +119,12 @@
                 <li class="mt-2">
                     <a href="{{ route('params.form.typeForfait') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
                         <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <circle fill="#ffffff" cx="6" cy="12" r="2"/>
+                            <path fill="#ffffff" d="M8.708 5.717l-1.954 1.96c-.25.243-.61.37-.958.307C5.5 7.93 4.64 7.327 4.458 7.21c-.46-.29-.6-.91-.3-1.383.29-.46.91-.602 1.38-.3l.32.2 1.43-1.435c.39-.39 1.03-.39 1.42 0 .39.392.39 1.034 0 1.425z"/>
+                            <path fill="#ffffff" d="M20 7c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1z"/>
+                            <circle fill="#ffffff" cx="6" cy="18" r="2"/>
+                            <path fill="#ffffff" d="M20 13c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1zM20 19c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1z"/>
+                            <path fill="#ffffff" d="M22 0H2C.9 0 0 .9 0 2v20c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2zm0 21.5c0 .276-.224.5-.5.5h-19c-.276 0-.5-.224-.5-.5v-19c0-.276.224-.5.5-.5h19c.276 0 .5.224.5.5v19z"/>
 
                         </svg>
                         Type de forfait
@@ -127,7 +133,7 @@
                 <li class="mt-2">
                     <a href="{{ route('params.form.forfait') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
                         <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
+                            <path fill="#ffffff" d="M11.998 2l3.092 6.585L22 9.652l-5 5.114L18.184 22l-6.18-3.425-6.18 3.405L7 14.75 2 9.62l6.91-1.044L11.998 2m0-2c-.774 0-1.48.448-1.81 1.15L7.555 6.758 1.7 7.642c-.74.112-1.357.63-1.596 1.34-.24.712-.06 1.497.464 2.034l4.297 4.408L3.85 21.66c-.124.754.195 1.514.82 1.955.344.243.748.366 1.153.366.33 0 .664-.08.965-.247L12 20.86l5.215 2.89c.3.167.635.25.968.25.405 0 .808-.123 1.15-.365.628-.44.947-1.202.824-1.958l-1.02-6.237 4.293-4.39c.524-.537.704-1.32.467-2.032-.237-.71-.852-1.23-1.592-1.344l-5.857-.904-2.64-5.62C13.48.448 12.775 0 12 0z"/>
                         </svg>
                         Forfait
                     </a>

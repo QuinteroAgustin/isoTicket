@@ -28,6 +28,10 @@
                 </ul>
             </p>
             <br>
+            <p>Merci de bien vouloir répondre à notre enquête de satisfaction en cliquant ci-dessous.</p>
+            <a href="https://www.isociel.fr/enquete-qualite-defaut?ticket={{ $data['id'] }}">Répondre à l'enquête</a>
+            <br>
+            <br>
             <br>
             <p style="margin: 0 0 15px; font-family: Arial, sans-serif;">Cordialement,</p>
             <p style="margin: 0 0 15px; font-family: Arial, sans-serif;">L'équipe du support Isociel</p>
