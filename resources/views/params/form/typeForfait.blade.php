@@ -6,7 +6,7 @@
     <div class="overflow-x-auto">
         <div class="min-w-screen flex items-center justify-center font-sans overflow-hidden">
             <div class="w-full lg:w-9/10">
-                <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
+                <div class="bg-white shadow-md rounded my-6 overflow-x-auto overflow-y-auto max-h-[60vh]">
                     <div class="flex justify-between px-6 py-3">
                         <h2 class="text-lg font-semibold text-gray-800">Liste des Type de forfait</h2>
 
@@ -47,7 +47,7 @@
                             <label for="libelle" class="block text-sm font-medium text-gray-700">Libellé</label>
                             <input type="text" name="libelle" placeholder="Libellé" class="px-4 py-2 border rounded-md">
                         </div>
-                        
+
                         <div>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ajouter</button>
                         </div>
