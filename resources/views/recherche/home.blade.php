@@ -147,7 +147,11 @@
                                         <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
                                         <td class="py-3 px-6 text-left">{{ $ticket->titre }}</td>
                                         <td class="py-3 px-6 text-left">{{ $ticket->client->CT_Num }}</td>
+                                        @if($ticket->technicien != null)
                                         <td class="py-3 px-6 text-center">{{ $ticket->technicien->nom }} {{ $ticket->technicien->prenom }}</td>
+                                        @else
+                                        <td class="py-3 px-6 text-center">NA</td>
+                                        @endif
                                         <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m/Y') }}</td>
                                         <td class="py-3 px-6 text-center">
                                             <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -165,7 +169,7 @@
     @else
         <p class="text-center text-gray-500">Aucun ticket trouvé pour les critères de recherche.</p>
     @endif
-    
+
 
 <script>
 document.getElementById('client_name').addEventListener('input', function() {

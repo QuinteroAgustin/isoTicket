@@ -16,9 +16,7 @@ use App\Models\Categorie;
 use App\Models\Technicien;
 use App\Models\TypeForfait;
 use Illuminate\Http\Request;
-use App\Mail\NotificationEmail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 class ParamsController extends Controller
 {
@@ -64,30 +62,42 @@ class ParamsController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $status = Status::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $status = Status::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Valider les données du formulaire
-        $validatedData = $request->validate([
-            'libelle' => 'required|string|max:50',
-            // Autres règles de validation si nécessaire
-        ]);
-        $status->masquer = $request->masquer;
-        // Mettre à jour les attributs du statut avec les données du formulaire
-        $status->update($validatedData);
+            // Valider les données du formulaire
+            $validatedData = $request->validate([
+                'libelle' => 'required|string|max:50',
+                // Autres règles de validation si nécessaire
+            ]);
+            $status->masquer = $request->masquer;
+            // Mettre à jour les attributs du statut avec les données du formulaire
+            $status->update($validatedData);
 
-        // Rediriger avec un message de succès
-        return redirect()->route('params.form.status')->with('success', 'Statut mis à jour avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->route('params.form.status')->with('success', 'Statut mis à jour avec succès.');
+
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification du statut.');
+        }
     }
 
     public function supprimerStatus($id)
     {
-        $status = Status::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $status = Status::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Supprimer le statut
-        $status->delete();
+            // Supprimer le statut
+            $status->delete();
 
-        // Rediriger avec un message de succès
-        return redirect()->back()->with('success', 'Statut supprimé avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->back()->with('success', 'Statut supprimé avec succès.');
+
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la suppression du statut.');
+        }
     }
 
 
@@ -128,30 +138,42 @@ class ParamsController extends Controller
 
     public function updatePriorite(Request $request, $id)
     {
-        $priorite = Priorite::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $priorite = Priorite::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Valider les données du formulaire
-        $validatedData = $request->validate([
-            'libelle' => 'required|string|max:50',
-            // Autres règles de validation si nécessaire
-        ]);
-        $priorite->masquer = $request->masquer;
-        // Mettre à jour les attributs du statut avec les données du formulaire
-        $priorite->update($validatedData);
+            // Valider les données du formulaire
+            $validatedData = $request->validate([
+                'libelle' => 'required|string|max:50',
+                // Autres règles de validation si nécessaire
+            ]);
+            $priorite->masquer = $request->masquer;
+            // Mettre à jour les attributs du statut avec les données du formulaire
+            $priorite->update($validatedData);
 
-        // Rediriger avec un message de succès
-        return redirect()->route('params.form.priorite')->with('success', 'Prioritée mise à jour avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->route('params.form.priorite')->with('success', 'Prioritée mise à jour avec succès.');
+
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification de la prioritée.');
+        }
     }
 
     public function supprimerPriorite($id)
     {
-        $priorite = Priorite::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $priorite = Priorite::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Supprimer le statut
-        $priorite->delete();
+            // Supprimer le statut
+            $priorite->delete();
 
-        // Rediriger avec un message de succès
-        return redirect()->back()->with('success', 'Prioritée supprimé avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->back()->with('success', 'Prioritée supprimé avec succès.');
+
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la suppression de la prioritée.');
+        }
     }
 
 
@@ -193,30 +215,42 @@ class ParamsController extends Controller
 
     public function updateImpact(Request $request, $id)
     {
-        $impact = Impact::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $impact = Impact::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Valider les données du formulaire
-        $validatedData = $request->validate([
-            'libelle' => 'required|string|max:50',
-            // Autres règles de validation si nécessaire
-        ]);
-        $impact->masquer = $request->masquer;
-        // Mettre à jour les attributs du statut avec les données du formulaire
-        $impact->update($validatedData);
+            // Valider les données du formulaire
+            $validatedData = $request->validate([
+                'libelle' => 'required|string|max:50',
+                // Autres règles de validation si nécessaire
+            ]);
+            $impact->masquer = $request->masquer;
+            // Mettre à jour les attributs du statut avec les données du formulaire
+            $impact->update($validatedData);
 
-        // Rediriger avec un message de succès
-        return redirect()->route('params.form.impact')->with('success', 'Impact mise à jour avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->route('params.form.impact')->with('success', 'Impact mise à jour avec succès.');
+
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification de l\'impact.');
+        }
     }
 
     public function supprimerImpact($id)
     {
-        $impact = Impact::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $impact = Impact::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Supprimer le statut
-        $impact->delete();
+            // Supprimer le statut
+            $impact->delete();
 
-        // Rediriger avec un message de succès
-        return redirect()->back()->with('success', 'Impact supprimé avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->back()->with('success', 'Impact supprimé avec succès.');
+
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la suppression de l\'impact.');
+        }
     }
 
 
@@ -275,13 +309,17 @@ class ParamsController extends Controller
 
     public function supprimerService($id)
     {
-        $service = Service::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            // Récupérer le statut correspondant à l'ID fourni
+            $service = Service::findOrFail($id);
 
-        // Supprimer le statut
-        $service->delete();
+            // Supprimer le service
+            $service->delete();
 
-        // Rediriger avec un message de succès
-        return redirect()->back()->with('success', 'Service supprimé avec succès.');
+            return redirect()->back()->with('success', 'Service supprimé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erreur lors de la suppression du Service : Un utilisateur existe dans ce service.');
+        }
     }
 
 
@@ -326,31 +364,41 @@ class ParamsController extends Controller
 
     public function updateCategorie(Request $request, $id)
     {
-        $categorie = Categorie::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
-        // Assurez-vous que le service existe avant de l'assigner à la catégorie
-        $service = Service::findOrFail($request->input('id_service'));
+        try {
+            $categorie = Categorie::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+            // Assurez-vous que le service existe avant de l'assigner à la catégorie
+            $service = Service::findOrFail($request->input('id_service'));
 
-        // Mettre à jour les autres attributs de la catégorie
-        $categorie->libelle = $request->input('libelle');
-        // Assigner l'ID du service à la catégorie
-        $categorie->id_service = $service->id_service;
-        $categorie->masquer = $request->masquer;
-        // Sauvegarder la catégorie mise à jour
-        $categorie->save();
+            // Mettre à jour les autres attributs de la catégorie
+            $categorie->libelle = $request->input('libelle');
+            // Assigner l'ID du service à la catégorie
+            $categorie->id_service = $service->id_service;
+            $categorie->masquer = $request->masquer;
+            // Sauvegarder la catégorie mise à jour
+            $categorie->save();
 
-        // Rediriger avec un message de succès
-        return redirect()->route('params.form.categorie')->with('success', 'Catégorie mise à jour avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->route('params.form.categorie')->with('success', 'Catégorie mise à jour avec succès.');
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification de la catégorie.');
+        }
     }
 
     public function supprimerCategorie($id)
     {
-        $categorie = Categorie::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+        try {
+            $categorie = Categorie::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
 
-        // Supprimer le statut
-        $categorie->delete();
+            // Supprimer le statut
+            $categorie->delete();
 
-        // Rediriger avec un message de succès
-        return redirect()->back()->with('success', 'Catégorie supprimé avec succès.');
+            // Rediriger avec un message de succès
+            return redirect()->back()->with('success', 'Catégorie supprimé avec succès.');
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la suppression de la catégorie.');
+        }
     }
 
 
@@ -387,9 +435,14 @@ class ParamsController extends Controller
 
     public function modifierFonction($id)
     {
-        $fonction = Fonction::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
-        $categories = Categorie::all();
-        return view('params.form.fonctionEdit', compact('fonction', 'categories'));
+        try {
+            $fonction = Fonction::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+            $categories = Categorie::all();
+            return view('params.form.fonctionEdit', compact('fonction', 'categories'));
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification de la fonction.');
+        }
     }
 
     public function updateFonction(Request $request, $id)
@@ -469,10 +522,15 @@ class ParamsController extends Controller
 
     public function modifierRisque($id)
     {
-        $risque = Risque::findOrFail($id); // Récupérer le statut correspondant à l'ID
-        $impacts = Impact::all();
-        $priorites = Priorite::all();
-        return view('params.form.risqueEdit', compact('risque', 'impacts', 'priorites'));
+        try {
+            $risque = Risque::findOrFail($id); // Récupérer le statut correspondant à l'ID
+            $impacts = Impact::all();
+            $priorites = Priorite::all();
+            return view('params.form.risqueEdit', compact('risque', 'impacts', 'priorites'));
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la suppression du risque.');
+        }
     }
 
     public function updateRisque(Request $request, $id)
@@ -553,8 +611,13 @@ class ParamsController extends Controller
 
     public function modifierRole($id)
     {
-        $role = Role::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
-        return view('params.form.roleEdit', compact('role'));
+        try {
+            $role = Role::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+            return view('params.form.roleEdit', compact('role'));
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la suppression du rôle.');
+        }
     }
 
     public function updateRole(Request $request, $id)
@@ -703,16 +766,21 @@ class ParamsController extends Controller
             return redirect()->back()->with('success', 'Nouveau forfait ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du forfait.'.$e);
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du forfait.');
         }
     }
 
     public function modifierForfait($id)
     {
-        $forfait = Forfait::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
-        $types = TypeForfait::all();
-        $clients = Client::all();
-        return view('params.form.ForfaitEdit', compact('forfait', 'types', 'clients'));
+        try {
+            $forfait = Forfait::findOrFail($id); // Récupérer le statut correspondant à l'ID fourni
+            $types = TypeForfait::all();
+            $clients = Client::all();
+            return view('params.form.ForfaitEdit', compact('forfait', 'types', 'clients'));
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification du forfait.');
+        }
     }
 
     public function updateForfait(Request $request, $id)
@@ -802,10 +870,15 @@ class ParamsController extends Controller
 
     public function modifierTechnicien($id)
     {
-        $technicien = Technicien::findOrFail($id); // Récupérer le statut correspondant à l'ID
-        $roles = Role::all();
-        $services = Service::all();
-        return view('params.form.technicienEdit', compact('technicien', 'roles', 'services'));
+        try {
+            $technicien = Technicien::findOrFail($id); // Récupérer le statut correspondant à l'ID
+            $roles = Role::all();
+            $services = Service::all();
+            return view('params.form.technicienEdit', compact('technicien', 'roles', 'services'));
+        } catch (\Exception $e) {
+            // Retournez une réponse en cas d'erreur
+            return redirect()->back()->with('error', 'Erreur lors de la modification du technicien.');
+        }
     }
 
     public function updateTechnicien(Request $request, $id)
@@ -853,11 +926,5 @@ class ParamsController extends Controller
             // Retournez une réponse en cas d'erreur
             return redirect()->back()->with('error', 'Erreur lors de la suppression du Technicien.');
         }
-    }
-
-    public function sendEmail(){
-        $messageContent = "Contenu de votre notification ici";
-
-        Mail ::to('agustin.quintero@isociel.fr')->send(new NotificationEmail($messageContent));
     }
 }

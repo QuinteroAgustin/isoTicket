@@ -23,6 +23,7 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 </head>
 
 <body class="bg-gray-100"><!-- overflow-hidden -->
@@ -50,5 +51,6 @@
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    @yield('scripts')
 </body>
 </html>

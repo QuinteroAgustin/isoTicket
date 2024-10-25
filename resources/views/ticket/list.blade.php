@@ -171,7 +171,11 @@
                                         </span>
                                     </td>
                                     <td class="py-3 px-6 text-left">{{ $ticket->client->CT_Num }}</td>
+                                    @if($ticket->technicien != null)
                                     <td class="py-3 px-6 text-center">{{ $ticket->technicien->nom }} {{ $ticket->technicien->prenom }}</td>
+                                    @else
+                                    <td class="py-3 px-6 text-center">NA</td>
+                                    @endif
                                     <td class="py-3 px-6 text-center">
                                         @if($riskIcon)
                                             <svg class="w-6 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">{!! $riskIcon !!}</svg>
@@ -243,4 +247,12 @@
         }
     });
 </script>
+@endsection
+@section('scripts')
+    <script>
+        // Recharger la page toutes les 30 secondes
+        setInterval(function() {
+            location.reload();
+        }, 30000); // 30000 ms = 30 secondes
+    </script>
 @endsection

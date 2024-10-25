@@ -237,10 +237,10 @@
                         Liste des Abonnements
                     </a>
 
-                    <!-- Troisième bouton -->
+                    <!-- Troisième bouton
                     <a class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
                         Action 3
-                    </a>
+                    </a>-->
                 </div>
                 @endif
 
@@ -268,6 +268,7 @@
                             loadContacts(ctNum);//charger les contacts
                             fetchAndDisplayContacts(ctNum);//charger le tableau de contact
                             fetchAndDisplayClient(ctNum);//charger le tableau de societe
+                            fetchAndDisplayAbonnements(ctNum);//tableau des abonnements
                         });
                     </script>
                 @endif
@@ -385,6 +386,7 @@
                                     loadContacts(client.CT_Num);// Charger les contacts pour ce client
                                     fetchAndDisplayContacts(client.CT_Num);//charger le tableau de contact
                                     fetchAndDisplayClient(client.CT_Num);//charger le tableau de societe
+                                    fetchAndDisplayAbonnements(client.CT_Num);//tableau des abonnements
                                     dropdown.classList.add('hidden');
                                 });
                                 dropdown.appendChild(div);
@@ -504,31 +506,50 @@
 
         // Générer le tableau des abonnements
         const abonnementsTable = document.getElementById('abonnements-table');
+
+        // Fonction de formatage de date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
         function fetchAndDisplayAbonnements(clientId) {
             if (clientId) {
                 axios.get(`/ticket/search-abonnementtableau/${clientId}`)
                     .then(response => {
                         const abonnements = response.data.abonnements;
-                        abonnementsTable.innerHTML = ''; // Clear previous content
+                        abonnementsTable.innerHTML = ''; // Vider le contenu précédent
+
+                        console.log("Lignes d'abonnement récupérées :", abonnements);
 
                         abonnements.forEach(abonnement => {
-                            const row = document.createElement('tr');
-                            row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+                            if (abonnement.lignes && abonnement.lignes.length > 0) {
+                                abonnement.lignes.forEach(ligne => {
+                                    // Créer une ligne pour chaque ligne d'abonnement
+                                    const row = document.createElement('tr');
+                                    row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
 
-                            row.innerHTML = `
-                                <td class="py-3 px-6 text-center">${abonnement.AB_Type || '-'}</td>
-                                <td class="py-3 px-6 text-left">${abonnement.AB_Intitule || '-'}</td>
-                                <td class="py-3 px-6 text-left">${abonnement.AB_Debut || '-'}</td>
-                                <td class="py-3 px-6 text-left">${abonnement.AB_Fin || '-'}</td>
-                                <td class="py-3 px-6 text-left">${abonnement.N_de_Srie || '-'}</td>
-                            `;
+                                    row.innerHTML = `
+                                        <td class="py-3 px-6 text-center">${abonnement.AB_Type || '-'}</td>
+                                        <td class="py-3 px-6 text-left">${ligne.AL_Design || '-'}</td>
+                                        <td class="py-3 px-6 text-left">${abonnement.AB_Debut ? formatDate(abonnement.AB_Debut) : '-'}</td>
+                                        <td class="py-3 px-6 text-left">${abonnement.AB_Fin ? formatDate(abonnement.AB_Fin) : '-'}</td>
+                                        <td class="py-3 px-6 text-left">${ligne.N_de_Srie || '-'}</td>
+                                    `;
 
-                            abonnementsTable.appendChild(row);
+                                    abonnementsTable.appendChild(row);
+                                });
+                            }
                         });
                     })
                     .catch(error => {
                         console.error('Erreur lors de la récupération des abonnements:', error);
                     });
+            } else {
+                console.warn("Aucun clientId fourni.");
             }
         }
 

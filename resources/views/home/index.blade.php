@@ -74,6 +74,7 @@
         </div>
     </div>
 
+    <!--
     <div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
         <div class="flex justify-between mb-3">
             <div class="flex items-center">
@@ -86,9 +87,15 @@
 
         </div>
     </div>
+    -->
 </div>
 
-
-
-
+@endsection
+@section('scripts')
+    <script>
+        // Recharger la page toutes les 30 secondes
+        setInterval(function() {
+            location.reload();
+        }, 10000); // 30000 ms = 30 secondes
+    </script>
 @endsection

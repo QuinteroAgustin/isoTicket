@@ -517,9 +517,6 @@
                 if(contact === ''){
                     errorMessage += 'Le champ Contact est requis.\n';
                 }
-                if(technicien === '') {
-                    errorMessage += 'Le champ Technicien est requis.\n';
-                }
                 if(statut === ''){
                     errorMessage += 'Le champ Statut est requis.\n';
                 }

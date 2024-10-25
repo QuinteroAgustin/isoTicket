@@ -169,7 +169,7 @@ class TicketController extends Controller
             $request->validate([
                 'titre' => 'required|string|max:255',
                 'client' => 'required|exists:sqlsrv2.F_COMPTET,CT_Num',
-                'technicien' => 'required|exists:techniciens,id_technicien',
+                'technicien' => 'nullable|exists:techniciens,id_technicien',
                 'service' => 'required|exists:services,id_service',
                 'fonction' => 'required|exists:Fonctions,id_fonction',
                 'categorie' => 'required|exists:Categories,id_categorie',
@@ -191,7 +191,7 @@ class TicketController extends Controller
                 $ticket->id_forfait = $request->forfait;
             }
             $ticket->id_client = $request->client;
-            $ticket->id_technicien = $request->technicien;
+            $ticket->id_technicien = (isset($request->technicien))?$request->technicien:null;
             $ticket->id_service = $request->service;
             $ticket->id_categorie = $request->categorie;
             $ticket->id_fonction = $request->fonction;
@@ -230,8 +230,8 @@ class TicketController extends Controller
                 'titre' => $ticket->titre,
                 'message' => $ticket->message,
                 'statut' => $ticket->statut->libelle,
-                't_nom' => $ticket->technicien->nom,
-                't_prenom' => $ticket->technicien->prenom,
+                't_nom' => $ticket->technicien->nom ?? '',
+                't_prenom' => $ticket->technicien->prenom ?? '',
                 'client' => $ticket->client->CT_Intitule,
                 'contact' => $ticket->client->CT_Intitule,
                 'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i:s'),
@@ -241,8 +241,8 @@ class TicketController extends Controller
                 'id' => $ticket->id_ticket
             ];
             if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
-                if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
-                    Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailOpen($data));
+                if(filter_var(trim($ticketLigne->contactCbmarq->CT_EMail), FILTER_VALIDATE_EMAIL) !== false){
+                    Mail::to(trim($ticketLigne->contactCbmarq->CT_EMail))->send(new PostMailOpen($data));
                 }else{
                     return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('warning', 'Le contact n\'a pas une adresse mail valide.');
                 }
@@ -254,7 +254,7 @@ class TicketController extends Controller
             return redirect()->route('ticket.edit', ['id' => $ticket->id_ticket])->with('success', 'Nouveau ticket ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du ticket.'.$e->getmessage());
         }
     }
 
@@ -271,13 +271,25 @@ class TicketController extends Controller
 
     public function getAbonnementsByClient($clientId)
     {
-        $abonnements = Abonnement::where('CT_Num', $clientId)->get();
+        $abonnements = Abonnement::where('CT_Num', $clientId)
+            ->with('lignes') // Charger les lignes associées
+            ->get();
 
         // Convertir en UTF-8
         $abonnements = $abonnements->map(function ($item) {
-            return array_map(function ($value) {
-                return is_string($value) ? utf8_encode($value) : $value;
-            }, $item->toArray());
+            $itemArray = $item->toArray();
+            $itemArray = array_map(function ($value) {
+                return is_string($value) ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
+            }, $itemArray);
+
+            // Encoder les lignes de l'abonnement
+            $itemArray['lignes'] = array_map(function ($ligne) {
+                return array_map(function ($value) {
+                    return is_string($value) ? mb_convert_encoding($value, 'UTF-8', 'auto') : $value;
+                }, $ligne);
+            }, $itemArray['lignes']);
+
+            return $itemArray;
         });
 
         return response()->json(['abonnements' => $abonnements]);
@@ -410,16 +422,16 @@ class TicketController extends Controller
             ];
             if(isset($ticketLigne->contactCbmarq->CT_EMail) && $ticketLigne->contactCbmarq->CT_EMail != ""){
                 if($ticket->cloture == 1){
-                    if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
-                        Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailClose($data));
+                    if(filter_var(trim($ticketLigne->contactCbmarq->CT_EMail), FILTER_VALIDATE_EMAIL) !== false){
+                        Mail::to(trim($ticketLigne->contactCbmarq->CT_EMail))->send(new PostMailClose($data));
                     }else{
                         return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
                     }
                 }else{
                     if($ticket->cloture != 1 && $ticket->id_statut != 1){
                         if($request->statut != $old_statut){
-                            if(filter_var($ticketLigne->contactCbmarq->CT_EMail, FILTER_VALIDATE_EMAIL) !== false){
-                                Mail::to($ticketLigne->contactCbmarq->CT_EMail)->send(new PostMailUpdate($data));
+                            if(filter_var(trim($ticketLigne->contactCbmarq->CT_EMail), FILTER_VALIDATE_EMAIL) !== false){
+                                Mail::to(trim($ticketLigne->contactCbmarq->CT_EMail))->send(new PostMailUpdate($data));
                             }else{
                                 return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
                             }
@@ -519,8 +531,8 @@ class TicketController extends Controller
                         'id' => $ticket->id_ticket
                     ];
 
-                    if(filter_var($email_contact, FILTER_VALIDATE_EMAIL) !== false){
-                        Mail::to($email_contact)->send(new PostMailContact($data));
+                    if(filter_var(trim($email_contact), FILTER_VALIDATE_EMAIL) !== false){
+                        Mail::to(trim($email_contact))->send(new PostMailContact($data));
                     }else{
                         return redirect()->back()->with('warning', 'Le contact n\'a pas une adresse mail valide.');
                     }

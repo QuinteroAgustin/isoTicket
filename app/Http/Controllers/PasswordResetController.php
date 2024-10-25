@@ -44,7 +44,7 @@ class PasswordResetController extends Controller
 
         // Envoie l'email avec le lien de réinitialisation (ajuste selon ta vue)
         $data = ['token' => $token];
-        Mail::to($email)->send(new ResetPassword($data));
+        Mail::to(trim($email))->send(new ResetPassword($data));
 
         // Retournez une réponse de succès
         return redirect()->back()->with('success', 'Un lien de réinitialisation a été envoyé à votre email si elle existe dans la base.');
