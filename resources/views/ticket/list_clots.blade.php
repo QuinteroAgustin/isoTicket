@@ -160,7 +160,7 @@
                                     //truncate titre
                                     $truncatedTitre = Str::limit($ticket->titre, 25, '...');
                                 @endphp
-                                <tr class="border-b border-gray-200 {{ $bgColor }} hover:bg-gray-100">
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
                                     <td class="py-3 px-6 text-center">{{ $ticket->statut->libelle }}</td>
                                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
                                     <td class="py-3 px-6 text-left">
@@ -176,7 +176,7 @@
                                     @endif
                                     <td class="py-3 px-6 text-center">
                                         @if($riskIcon)
-                                            <svg class="w-6 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">{!! $riskIcon !!}</svg>
+                                            <svg class="w-12 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">{!! $riskIcon !!}</svg>
                                         @else
                                             NA
                                         @endif
