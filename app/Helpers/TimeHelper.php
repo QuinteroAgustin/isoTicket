@@ -25,7 +25,16 @@ class TimeHelper {
      * @return int
      */
     public static function convertDureeToMinutes($duree) {
-        list($hours, $minutes) = explode('.', $duree);
+        // Vérifiez si la durée contient un point
+        if (strpos($duree, '.') !== false) {
+            list($hours, $minutes) = explode('.', $duree);
+            $minutes = str_pad($minutes, 2, '0', STR_PAD_RIGHT); // Assurez que les minutes ont toujours deux chiffres
+        } else {
+            // Si le format est incorrect, définissez des valeurs par défaut
+            $hours = $duree;
+            $minutes = '00';
+        }
+
         $totalMinutes = ((int) $hours * 60) + (int) $minutes; // Convertir en entiers avant de faire l'addition
         return $totalMinutes;
     }

@@ -333,12 +333,7 @@ class TicketController extends Controller
                 $ticketLigne->text = wordwrap($request->message, 40, "\n", true);
                 $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
-                if($request->afficher == 1){
-                    $type_user = 2;
-                }else{
-                    $type_user = 1;
-                }
-                $ticketLigne->type_user = $type_user;
+                $ticketLigne->type_user = $request->afficher == 1 ? 2 : 1;
                 $ticketLigne->id_technicien = Technicien::getTechId();
                 // Séparer les informations du contact
                 $contactInfo = explode('-', $request->contact);
@@ -348,11 +343,30 @@ class TicketController extends Controller
                 $ticketLigne->ct_num = $request->client;
                 $ticketLigne->id_contact = $request->contact ?? null;
 
-                list($hours, $minutes) = explode(':', $request->duree);
-                $ticketLigne->duree = (float)($hours . '.' . $minutes);
-                $timeLigne = TimeHelper::convertDureeToMinutes($ticketLigne->duree);
-                $timeTicket = TimeHelper::convertDureeToMinutes($ticket->duree);
-                $ticket->duree = TimeHelper::convertMinutesToDuration($timeLigne + $timeTicket);
+
+                $duree = $request->duree;
+
+                // Vérifiez si la durée est bien au format HH:MM
+                if (strpos($duree, ':') !== false) {
+                    list($hours, $minutes) = explode(':', $duree);
+                    $minutes = $minutes ?? '0'; // Utilisez '0' si la partie minutes n'est pas définie
+                } else {
+                    // Si le format est incorrect, définissez des valeurs par défaut
+                    $hours = (int) $duree; // Par exemple, utilisez la durée entière pour les heures
+                    $minutes = 0;
+                }
+
+                $ticketLigne->duree = (float)($hours . '.' . str_pad($minutes, 2, '0', STR_PAD_LEFT));
+                $ticketLigne->duree = (float) $ticketLigne->duree;
+                $ticket->duree = (float) $ticket->duree;
+
+
+                $timeLigne = TimeHelper::convertDureeToMinutes((float)$ticketLigne->duree);
+                $timeTicket = TimeHelper::convertDureeToMinutes((float)$ticket->duree);
+
+                $totalMinutes = $timeLigne + $timeTicket;
+
+                $ticket->duree = TimeHelper::convertMinutesToDuration($totalMinutes);
 
                 $ticketLigne->save();
                 $ticket->save();
@@ -361,7 +375,7 @@ class TicketController extends Controller
             return redirect()->back()->with('success', 'Nouveau message ajouté avec succès!');
         } catch (\Exception $e) {
             // Retournez une réponse en cas d'erreur
-            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.');
+            return redirect()->back()->with('error', 'Erreur lors de l\'ajout du message.'.$e->getMessage());
         }
     }
 
