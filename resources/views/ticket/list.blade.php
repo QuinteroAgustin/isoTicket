@@ -12,7 +12,7 @@
 
 </style>
     <!-- Your Page Content Here -->
-    <h1 class="text-2xl font-semibold">Tickets</h1>
+    <h1 class="text-2xl font-semibold">Tickets ouverts <span class="font-bold ">{{ $tickets->where('cloture', 0)->count() }}</span></h1>
     <div class="overflow-x-auto overflow-y-auto">
         <div class="min-w-screen flex justify-center font-sans">
             <div class="w-full lg:w-9/10">
