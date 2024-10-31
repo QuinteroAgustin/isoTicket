@@ -384,7 +384,7 @@ class TicketController extends Controller
             // Validez les données du formulaire
             $request->validate([
                 'client' => 'required|exists:sqlsrv2.F_COMPTET,CT_Num',
-                'technicien' => 'required|exists:techniciens,id_technicien',
+                'technicien' => 'nullable|exists:techniciens,id_technicien',
                 'service' => 'required|exists:services,id_service',
                 'fonction' => 'required|exists:Fonctions,id_fonction',
                 'categorie' => 'required|exists:Categories,id_categorie',
@@ -409,7 +409,7 @@ class TicketController extends Controller
                     $ticket->id_forfait = null;
                 }
                 $ticket->id_client = $request->client;
-                $ticket->id_technicien = $request->technicien;
+                $ticket->id_technicien = (isset($request->technicien))?$request->technicien:null;
                 $ticket->id_service = $request->service;
                 $ticket->id_categorie = $request->categorie;
                 $ticket->id_fonction = $request->fonction;
@@ -425,8 +425,8 @@ class TicketController extends Controller
             $data = [
                 'titre' => $ticket->titre,
                 'statut' => $ticket->statut->libelle,
-                't_nom' => $ticket->technicien->nom,
-                't_prenom' => $ticket->technicien->prenom,
+                't_nom' => $ticket->technicien->nom ?? '',
+                't_prenom' => $ticket->technicien->prenom ?? '',
                 'contact' => $ticket->client->CT_Intitule,
                 'date' => Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i'),
                 'service' => $ticket->service->libelle,

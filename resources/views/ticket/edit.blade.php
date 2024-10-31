@@ -788,9 +788,7 @@
                 if(contact === ''){
                     errorMessage += 'Le champ Contact est requis.\n';
                 }
-                if(technicien === '') {
-                    errorMessage += 'Le champ Technicien est requis.\n';
-                }
+
 
                 if(cri.checked){
                     if(convertDureeToMinutes(time) < 1){

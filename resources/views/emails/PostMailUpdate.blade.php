@@ -22,7 +22,9 @@
             <p style="margin: 0 0 15px; font-family: Arial, sans-serif;">
                 <ul>
                     <li><strong>Statut:</strong> {{ $data['statut'] }}</li>
+                    @if($data['t_nom'] != '')
                     <li><strong>Technicien:</strong> {{ $data['t_nom'] }} {{ $data['t_prenom'] }}</li>
+                    @endif
                     <li><strong>Service:</strong> {{ $data['service'] }}</li>
                     <li><strong>Catégorie:</strong> {{ $data['categorie'] }}</li>
                     <li><strong>Fonction:</strong> {{ $data['fonction'] }}</li>
