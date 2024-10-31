@@ -249,10 +249,5 @@
 </script>
 @endsection
 @section('scripts')
-    <script>
-        // Recharger la page toutes les 30 secondes
-        setInterval(function() {
-            location.reload();
-        }, 30000); // 30000 ms = 30 secondes
-    </script>
+
 @endsection
