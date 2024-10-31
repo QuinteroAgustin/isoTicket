@@ -19,7 +19,7 @@
                 <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
                     <table class="min-w-full table-auto">
                         <thead>
-                            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                            <tr class="bg-gray-200 text-black uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-center">Statut</th>
                                 <th class="py-3 px-6 text-left">ID</th>
                                 <th class="py-3 px-6 text-left">Titre</th>
@@ -139,7 +139,7 @@
                             </tr>
                         </form>
                         </thead>
-                        <tbody class="text-gray-600 text-sm font-light">
+                        <tbody class="text-black text-sm font-light">
                             @foreach ($tickets as $ticket)
                                 @php
                                     $bgColor = '';
@@ -249,5 +249,10 @@
 </script>
 @endsection
 @section('scripts')
-
+    <script>
+        // Recharger la page toutes les 30 secondes
+        setInterval(function() {
+            location.reload();
+        }, 30000); // 30000 ms = 30 secondes
+    </script>
 @endsection

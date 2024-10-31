@@ -138,7 +138,7 @@
                             </tr>
                         </form>
                         </thead>
-                        <tbody class="text-gray-600 text-sm font-light">
+                        <tbody class="text-black text-sm font-light">
                             @foreach ($tickets as $ticket)
                                 @php
                                     $bgColor = '';
