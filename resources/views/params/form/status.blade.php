@@ -16,6 +16,7 @@
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-left">ID</th>
                                 <th class="py-3 px-6 text-left">Libelle</th>
+                                <th class="py-3 px-6 text-left">Ordre de tri</th>
                                 <th class="py-3 px-6 text-left">Actions</th>
                             </tr>
                         </thead>
@@ -24,6 +25,7 @@
                             <tr class="border-b border-gray-200 hover:bg-gray-100">
                                 <td class="py-3 px-6 text-left whitespace-nowrap">{{ $status->id_statut }}</td>
                                 <td class="py-3 px-6 text-left">{{ $status->libelle }}</td>
+                                <td class="py-3 px-6 text-left">{{ $status->ordre_tri }}</td>
                                 <td class="py-3 px-6 text-left">
                                     <!-- Bouton pour modifier le status -->
                                     <a href="{{ route('params.status.modifier', ['id' => $status->id_statut]) }}" class="text-indigo-600 hover:text-indigo-900">Modifier</a>
@@ -46,6 +48,10 @@
                         <div class="mb-4">
                             <label for="libelle" class="block text-sm font-medium text-gray-700">Libellé</label>
                             <input type="text" name="libelle" placeholder="Libellé" class="px-4 py-2 border rounded-md">
+                        </div>
+                        <div class="mb-4">
+                            <label for="ordre_tri" class="block text-sm font-medium text-gray-700">Ordre de tri</label>
+                            <input type="text" name="ordre_tri" placeholder="100" class="px-4 py-2 border rounded-md">
                         </div>
                         <div>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ajouter</button>

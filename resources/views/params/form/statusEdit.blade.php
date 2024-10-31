@@ -14,6 +14,10 @@
                             <label for="libelle" class="block text-sm font-medium text-gray-700">Libellé</label>
                             <input type="text" name="libelle" id="libelle" value="{{ $status->libelle }}" class="px-4 py-2 border rounded-md">
                         </div>
+                        <div class="mb-4">
+                            <label for="ordre_tri" class="block text-sm font-medium text-gray-700">Ordre de tri</label>
+                            <input type="text" name="ordre_tri" id="ordre_tri" value="{{ $status->ordre_tri }}" class="px-4 py-2 border rounded-md">
+                        </div>
                         <!-- masquer -->
                         <div class="flex items-center ps-2 mt-2">
                             <input id="bordered-checkbox-1" type="checkbox" value="1" {{ ($status->masquer==1)?'checked':'' }} name="masquer" class="w-4 h-4 text-blue-600 bg-gray-100 rounded focus:ring-blue-500 focus:ring-2">

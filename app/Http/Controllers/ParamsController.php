@@ -42,6 +42,7 @@ class ParamsController extends Controller
             // Créez une nouvelle instance du modèle Status avec les données à ajouter
             $status = new Status();
             $status->libelle = $request->input('libelle');
+            $status->ordre_tri = $request->input('ordre_tri');
 
             // Enregistrez les données dans la base de données
             $status->save();
@@ -71,6 +72,7 @@ class ParamsController extends Controller
                 // Autres règles de validation si nécessaire
             ]);
             $status->masquer = $request->masquer;
+            $status->ordre_tri = $request->ordre_tri;
             // Mettre à jour les attributs du statut avec les données du formulaire
             $status->update($validatedData);
 

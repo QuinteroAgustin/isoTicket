@@ -309,7 +309,7 @@ class TicketController extends Controller
         $techniciens = Technicien::orderBy('nom', 'asc')->orderBy('prenom', 'asc')->get();
         $priorites = Priorite::all();
         $impacts = Impact::all();
-        $status = Status::all();
+        $status = Status::orderBy('ordre_tri', 'asc')->get();
         $fonctions = Fonction::orderBy('libelle', 'asc')->get();
         $categories = Categorie::orderBy('libelle', 'asc')->get();
         $services = Service::orderBy('libelle', 'asc')->get();

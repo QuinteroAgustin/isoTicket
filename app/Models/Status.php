@@ -10,7 +10,7 @@ class Status extends Model
     use HasFactory;
     protected $table = 'status';
     protected $primaryKey = 'id_statut';
-    protected $fillable = ['libelle', 'masquer'];
+    protected $fillable = ['libelle', 'masquer', 'ordre_tri'];
     public $timestamps = false;
 
     public function tickets()
