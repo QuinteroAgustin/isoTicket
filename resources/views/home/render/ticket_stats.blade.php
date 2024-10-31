@@ -52,6 +52,18 @@
                 <dt class="w-8 h-8 rounded-full bg-teal-100 dark:bg-gray-500 text-teal-600 dark:text-teal-300 text-sm font-medium flex items-center justify-center mb-1">{{ $tickets->where('cloture', 0)->where('id_statut', 3)->count() }}</dt>
                 <dd class="text-teal-600 dark:text-teal-300 text-sm font-medium">En traitement</dd>
             </dl>
+            <dl class="bg-teal-50 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
+                <dt class="w-8 h-8 rounded-full bg-teal-100 dark:bg-gray-500 text-teal-600 dark:text-teal-300 text-sm font-medium flex items-center justify-center mb-1">{{ $tickets->where('cloture', 0)->where('id_statut', 2)->count() }}</dt>
+                <dd class="text-teal-600 dark:text-teal-300 text-sm font-medium">Attente Client</dd>
+            </dl>
+            <dl class="bg-teal-50 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
+                <dt class="w-8 h-8 rounded-full bg-teal-100 dark:bg-gray-500 text-teal-600 dark:text-teal-300 text-sm font-medium flex items-center justify-center mb-1">{{ $tickets->where('cloture', 0)->where('id_statut', 5)->count() }}</dt>
+                <dd class="text-teal-600 dark:text-teal-300 text-sm font-medium">Attente éditeur</dd>
+            </dl>
+            <dl class="bg-teal-50 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
+                <dt class="w-8 h-8 rounded-full bg-teal-100 dark:bg-gray-500 text-teal-600 dark:text-teal-300 text-sm font-medium flex items-center justify-center mb-1">{{ $tickets->where('cloture', 0)->where('id_statut', 6)->count() }}</dt>
+                <dd class="text-teal-600 dark:text-teal-300 text-sm font-medium">Rappel planifié</dd>
+            </dl>
             <dl class="bg-blue-50 dark:bg-gray-600 rounded-lg flex flex-col items-center justify-center h-[78px]">
                 <dt class="w-8 h-8 rounded-full bg-blue-100 dark:bg-gray-500 text-blue-600 dark:text-blue-300 text-sm font-medium flex items-center justify-center mb-1">{{ $ticketsClots->where('cloture', 1)->where('id_statut', 4)->count() }}</dt>
                 <dd class="text-blue-600 dark:text-blue-300 text-sm font-medium">Cloturé</dd>
