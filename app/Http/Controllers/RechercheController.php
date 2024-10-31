@@ -28,7 +28,7 @@ class RechercheController extends Controller
         $query = Ticket::query();
 
         // Appliquer les filtres si présents
-        if ($request->filled('ticket_id')) {
+        if ($request->filled('ticket_id') && is_numeric($request->input('ticket_id'))) {
             $query->where('id_ticket', $request->input('ticket_id'));
         }
 

@@ -151,13 +151,13 @@ class TicketController extends Controller
     public function createVue()
     {
         $clients = Client::all();
-        $techniciens = Technicien::all();
+        $techniciens = Technicien::orderBy('nom', 'asc')->orderBy('prenom', 'asc')->get();
         $priorites = Priorite::all();
         $impacts = Impact::all();
         $status = Status::where('id_statut', 1)->get();
-        $fonctions = Fonction::all();
-        $categories = Categorie::all();
-        $services = Service::all();
+        $fonctions = Fonction::orderBy('libelle', 'asc')->get();
+        $categories = Categorie::orderBy('libelle', 'asc')->get();
+        $services = Service::orderBy('libelle', 'asc')->get();
 
         return view('ticket.create', compact('clients', 'techniciens', 'priorites', 'impacts', 'status', 'fonctions', 'categories', 'services'));
     }
@@ -297,7 +297,7 @@ class TicketController extends Controller
 
     public function getContacts($client_id)
     {
-        $contacts = Contact::where('CT_Num', $client_id)->get(['CT_Num', 'CT_Nom', 'CT_Prenom', 'cbMarq']);
+        $contacts = Contact::where('CT_Num', $client_id)->orderBy('CT_Nom', 'asc')->orderBy('CT_Prenom', 'asc')->get(['CT_Num', 'CT_Nom', 'CT_Prenom', 'cbMarq']);
         return response()->json($contacts);
     }
 
@@ -306,13 +306,13 @@ class TicketController extends Controller
         $ticket = Ticket::with('lignes')->findOrFail($id);
         $ticket->formatted_duree = TimeHelper::formatDuration($ticket->duree);
         $clients = Client::all();
-        $techniciens = Technicien::all();
+        $techniciens = Technicien::orderBy('nom', 'asc')->orderBy('prenom', 'asc')->get();
         $priorites = Priorite::all();
         $impacts = Impact::all();
         $status = Status::all();
-        $fonctions = Fonction::all();
-        $categories = Categorie::all();
-        $services = Service::all();
+        $fonctions = Fonction::orderBy('libelle', 'asc')->get();
+        $categories = Categorie::orderBy('libelle', 'asc')->get();
+        $services = Service::orderBy('libelle', 'asc')->get();
         $risques = Risque::all();
         $forfaits = Forfait::all();
 
