@@ -113,4 +113,43 @@ class HomeController extends Controller
         Cookie::queue(Cookie::forget('remember_me'));
         return redirect('/login');
     }
+
+
+    public function refreshTicketsData()
+    {
+        // Récupération des tickets et autres données
+        $tickets = Ticket::all();
+        $dateJour = Carbon::today();
+        $ticketsJour = Ticket::whereDate('created_at', $dateJour)->get();
+        $ticketsClotsJour = Ticket::whereDate('closed_at', $dateJour)->get();
+        $ticketsClots = Ticket::where('cloture', 1)->get();
+
+        $hier = Carbon::yesterday();
+        $ticketsHier = Ticket::whereDate('created_at', $hier)->get();
+
+        $debutMois = Carbon::now()->startOfMonth();
+        $finMois = Carbon::now()->endOfMonth();
+
+        $ticketsMoisEnCours = Ticket::whereBetween('created_at', [$debutMois, $finMois])->get();
+
+        $countJour = $ticketsJour->count();
+        $countHier = $ticketsHier->count();
+
+        if ($countHier > 0 && $countJour > 0) {
+            $pourcentageDifference = (($countJour - $countHier) / $countJour) * 100;
+        } else {
+            $pourcentageDifference = $countJour > 0 ? 100 : 0;
+        }
+
+        // Récupération de la date formatée
+        $dateFormatted = Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i:s');
+
+        // Génération de l'HTML pour les statistiques
+        $html = view('home.render.ticket_stats', compact(
+            'tickets', 'ticketsJour', 'ticketsClotsJour', 'ticketsClots',
+            'pourcentageDifference', 'dateFormatted'
+        ))->render();
+
+        return response()->json(['html' => $html]);
+    }
 }

@@ -165,3 +165,6 @@ Route::delete('/params/technicien/supprimer/{id}', [ParamsController::class, 'su
 //recherches
 Route::get('/recherche', [RechercheController::class, 'home'])->name('recherche')->middleware(Authenticate::class);
 Route::get('/recherche/filtre', [RechercheController::class, 'filtre'])->name('recherche.filtre')->middleware(Authenticate::class);
+
+//refresh
+Route::get('/refresh-tickets-data', [HomeController::class, 'refreshTicketsData'])->name('refreshTicketsData');
