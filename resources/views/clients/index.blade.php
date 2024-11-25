@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Liste des clients')
 @section('content')
 <div class="container">
     <h1 class="text-2xl font-semibold">Recherche de Client</h1>
@@ -72,6 +72,7 @@
                                     <th class="py-3 px-6 text-center">Ville</th>
                                     <th class="py-3 px-6 text-center">Code postal</th>
                                     <th class="py-3 px-6 text-center">Siret</th>
+                                    <th class="py-3 px-6 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-600 text-sm font-light">
@@ -84,6 +85,11 @@
                                         <td class="py-3 px-6 text-center">{{ $client->CT_Ville }}</td>
                                         <td class="py-3 px-6 text-center">{{ $client->CT_CodePostal }}</td>
                                         <td class="py-3 px-6 text-center">{{ $client->CT_Siret }}</td>
+                                        <td class="py-3 px-6 text-center">
+                                            <a href="{{ route('clients.info', ['id' => $client->CT_Num]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                                Infos
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

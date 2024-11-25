@@ -70,16 +70,15 @@ Route::get('/ticket/cloture', [TicketController::class, 'ticket_clots'])->name('
 Route::get('/create', [TicketController::class, 'createVue'])->name('create')->middleware(Authenticate::class);
 Route::post('/create', [TicketController::class, 'create'])->name('createPost')->middleware(Authenticate::class);
 
-
+//recherche de client (axios)
 Route::get('/create/search-clients', [TicketController::class, 'searchClients'])->name('search.clients')->middleware(Authenticate::class);
+
+
 Route::get('/create/client/{client_id}', [TicketController::class, 'getContacts'])->name('client.contacts')->middleware(Authenticate::class);
 Route::get('/create/client/{client_id}/contacttableau', [TicketController::class, 'getContactsTab'])->name('client.contacts.tab')->middleware(Authenticate::class);
 Route::get('/create/client/{client_id}/societetableau', [TicketController::class, 'getClientTab'])->name('client.client.tab')->middleware(Authenticate::class);
 
 Route::get('/ticket/search-abonnementtableau/{clientId}', [TicketController::class, 'getAbonnementsByClient'])->name('client.abonnement.tab')->middleware(Authenticate::class);
-
-// Clients
-Route::get('/clients', [ClientController::class, 'index'])->name('clients.index')->middleware(Authenticate::class);
 
 //params
 Route::get('/params', [ParamsController::class, 'home'])->name('params')->middleware([Authenticate::class, 'CheckRole:4']);
@@ -168,3 +167,12 @@ Route::get('/recherche/filtre', [RechercheController::class, 'filtre'])->name('r
 
 //refresh
 Route::get('/refresh-tickets-data', [HomeController::class, 'refreshTicketsData'])->name('refreshTicketsData');
+
+// Clients
+Route::get('/clients', [ClientController::class, 'index'])->name('clients.index')->middleware(Authenticate::class);
+Route::get('/clients/info/{id}', [ClientController::class, 'info'])->name('clients.info')->middleware(Authenticate::class);
+//contact creation edit
+Route::get('/contact/edit/{id_contact}', [ClientController::class, 'editContact'])->name('edit.contact')->middleware(Authenticate::class);
+Route::post('/contact/edit/{id_contact}', [ClientController::class, 'editContactPost'])->name('edit.contact.post')->middleware(Authenticate::class);
+Route::get('/contact/create/{id_client}', [ClientController::class, 'createContact'])->name('create.contact')->middleware(Authenticate::class);
+Route::post('/contact/create/{id_client}', [ClientController::class, 'createContactPost'])->name('create.contact.post')->middleware(Authenticate::class);

@@ -78,7 +78,7 @@ class TicketController extends Controller
         $query->orderBy('id_ticket', 'desc');
 
         // Pagination des résultats (25 tickets par page)
-        $tickets = $query->paginate(25);
+        $tickets = $query->paginate(50);
 
         return view('ticket.list', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
