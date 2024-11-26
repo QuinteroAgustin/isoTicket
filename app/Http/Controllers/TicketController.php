@@ -261,10 +261,12 @@ class TicketController extends Controller
     public function searchClients(Request $request)
     {
         $search = $request->input('search');
-        // $clients = Client::where('CT_Num', 'LIKE', "%{$search}%")->get(['CT_Num','CT_Intitule']);
+
         $clients = Client::where('CT_Num', 'LIKE', "%{$search}%")
-                     ->orWhere('CT_Intitule', 'LIKE', "%{$search}%")
-                     ->get(['CT_Num', 'CT_Intitule']);
+        ->orWhere('CT_Intitule', 'LIKE', "%{$search}%")
+        ->orderBy('CT_Intitule') // Tri par CT_Intitule en premier
+        ->orderBy('CT_Num')      // Tri par CT_Num en second
+        ->get(['CT_Num', 'CT_Intitule']);
 
         return response()->json($clients);
     }

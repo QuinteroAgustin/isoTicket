@@ -160,7 +160,7 @@
                                     //truncate titre
                                     $truncatedTitre = Str::limit($ticket->titre, 25, '...');
                                 @endphp
-                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                <tr class="border-b border-gray-200 even:bg-gray-100 hover:bg-gray-100">
                                     <td class="py-3 px-6 text-center">{{ $ticket->statut->libelle }}</td>
                                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
                                     <td class="py-3 px-6 text-left">
