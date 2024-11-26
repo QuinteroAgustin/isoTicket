@@ -400,6 +400,12 @@ class TicketController extends Controller
                 $ticket->cri = (isset($request->cri))?$request->cri:0;
                 $ticket->cloture = ($request->statut==4)?1:0;
                 list($hours, $minutes) = explode(':', $request->duree);
+                if($request->statut==4){
+                    if($request->technicien == null){
+                        return redirect()->back()->with('warning', 'Le technicien est obligatoire pour clôturer.');
+                        die();
+                    }
+                }
                 $ticket->duree = (float)($hours . '.' . $minutes);
                 $ticket->date_rappel = (isset($request->date_rappel))?$request->date_rappel:null;
                 $ticket->action_cours = (isset($request->action_cours))?$request->action_cours:null;

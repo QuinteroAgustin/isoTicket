@@ -803,6 +803,9 @@
                     if(convertDureeToMinutes(time) < 1){
                         errorMessage += 'Une durée minimale est requise.\n';
                     }
+                    if(technicien === ''){
+                        errorMessage += 'Le champ Technicien est requis pour clôturer.\n';
+                    }
                 }
                 if(statut === ''){
                     errorMessage += 'Le champ Statut est requis.\n';
