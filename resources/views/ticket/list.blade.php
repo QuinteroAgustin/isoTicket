@@ -170,7 +170,7 @@
                                             {{ $truncatedTitre }}
                                         </span>
                                     </td>
-                                    <td class="py-3 px-6 text-left">{{ $ticket->client->CT_Num }}</td>
+                                    <td class="py-3 px-6 text-left">@if(isset($ticket->client->CT_Num)) {{$ticket->client->CT_Num}} @else NA @endif</td>
                                     @if($ticket->technicien != null)
                                     <td class="py-3 px-6 text-center">{{ $ticket->technicien->nom }} {{ $ticket->technicien->prenom }}</td>
                                     @else
