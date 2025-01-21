@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Ticket;
 use App\Models\Technicien;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 
@@ -38,6 +39,8 @@ class HomeController extends Controller
         // Récupère les tickets créés pendant le mois en cours
         $ticketsMoisEnCours = Ticket::whereBetween('created_at', [$debutMois, $finMois])->get();
 
+        $monthFormatted = Carbon::now()->timezone('Europe/Paris')->translatedFormat('F Y');
+
         // Calcul de la différence en pourcentage entre aujourd'hui et hier
         $countJour = $ticketsJour->count();
         $countHier = $ticketsHier->count();
@@ -48,11 +51,33 @@ class HomeController extends Controller
         }
 
         $techniciens = Technicien::all();
+        // Statistiques des techniciens pour le mois en cours
+        $technicienStats = Ticket::where('cloture', 1)
+        ->whereMonth('closed_at', now()->month)
+        ->whereYear('closed_at', now()->year)
+        ->whereNotNull('id_technicien')
+        ->select('id_technicien', DB::raw('count(*) as total'))
+        ->groupBy('id_technicien')
+        ->orderByDesc('total')
+        ->with('technicien')
+        ->get();
 
         // Formater la date du jour
         $dateFormatted = Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i:s');
 
-        return view('home.index', compact('tickets', 'ticketsJour', 'ticketsHier', 'ticketsMoisEnCours', 'pourcentageDifference', 'ticketsClots', 'ticketsClotsJour', 'techniciens', 'dateFormatted'));
+        return view('home.index', compact(
+        'tickets', 
+        'ticketsJour', 
+        'ticketsHier', 
+        'ticketsMoisEnCours', 
+        'pourcentageDifference', 
+        'ticketsClots', 
+        'ticketsClotsJour', 
+        'techniciens', 
+        'dateFormatted',
+        'technicienStats',
+        'monthFormatted'
+        ));
     }
 
     public function notFound()
@@ -143,11 +168,23 @@ class HomeController extends Controller
 
         // Récupération de la date formatée
         $dateFormatted = Carbon::now()->timezone('Europe/Paris')->translatedFormat('l d F Y H:i:s');
+        $monthFormatted = Carbon::now()->timezone('Europe/Paris')->translatedFormat('F Y');
+
+        // Ajout des stats techniciens
+        $technicienStats = Ticket::where('cloture', 1)
+            ->whereMonth('closed_at', now()->month)
+            ->whereYear('closed_at', now()->year)
+            ->whereNotNull('id_technicien')
+            ->select('id_technicien', DB::raw('count(*) as total'))
+            ->groupBy('id_technicien')
+            ->orderByDesc('total')
+            ->with('technicien')
+            ->get();
 
         // Génération de l'HTML pour les statistiques
         $html = view('home.render.ticket_stats', compact(
             'tickets', 'ticketsJour', 'ticketsClotsJour', 'ticketsClots',
-            'pourcentageDifference', 'dateFormatted'
+            'pourcentageDifference', 'dateFormatted', 'monthFormatted', 'technicienStats'
         ))->render();
 
         return response()->json(['html' => $html]);

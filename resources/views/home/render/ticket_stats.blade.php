@@ -71,3 +71,47 @@
         </div>
     </div>
 </div>
+<!-- Après vos cartes existantes -->
+<div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div class="flex justify-between mb-3">
+        <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">
+            Top Techniciens du mois
+        </h5>
+        <span class="text-sm text-gray-600">
+            {{ $monthFormatted }}
+        </span>
+    </div>
+    
+    <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+        @if($technicienStats->isNotEmpty())
+            @foreach($technicienStats->take(5) as $stat)
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-gray-500 text-blue-600 dark:text-blue-300 text-sm font-medium flex items-center justify-center">
+                                {{ $loop->iteration }}
+                            </span>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                {{ $stat->technicien->nom }} {{ $stat->technicien->prenom }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">
+                            {{ $stat->total }}
+                        </span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">
+                            tickets
+                        </span>
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <p class="text-center text-gray-500 dark:text-gray-400">
+                Aucun ticket clôturé ce mois-ci
+            </p>
+        @endif
+    </div>
+</div>
