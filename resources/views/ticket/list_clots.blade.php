@@ -19,7 +19,6 @@
                     <table class="min-w-full table-auto">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                <th class="py-3 px-6 text-center">Statut</th>
                                 <th class="py-3 px-6 text-left">ID</th>
                                 <th class="py-3 px-6 text-left">Titre</th>
                                 <th class="py-3 px-6 text-left">Client</th>
@@ -29,24 +28,12 @@
                                 <th class="py-3 px-6 text-center">Fonction</th>
                                 <th class="py-3 px-6 text-center">Service</th>
                                 <th class="py-3 px-6 text-center">Date</th>
+                                <th class="py-3 px-6 text-center">Date Cloture</th>
                                 <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                             <form action="{{ route('ticket.clots') }}" method="GET">
                             <tr>
-                                <td>
-                                    <div>
-                                        <select name="statut" id="statut" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            @foreach($statuts as $statut)
-                                            @if ($statut->id_statut == 4)
-                                                <option value="{{ $statut->id_statut }}" {{ request('statut') == $statut->id_statut ? 'selected' : '' }}>
-                                                    {{ $statut->libelle }}
-                                                </option>
-                                            @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </td>
+                                
                                 <td>
                                     <div>
                                         <input type="text" name="ticket_id" id="ticket_id" class="form-input mt-1 block w-full" value="{{ request('ticket_id') }}">
@@ -131,6 +118,11 @@
                                     </div>
                                 </td>
                                 <td>
+                                    <div>
+                                        <input type="date" name="date_clot" id="date" class="form-input mt-1 block w-full" value="{{ request('date_clot') }}">
+                                    </div>
+                                </td>
+                                <td>
                                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                         Rechercher
                                     </button>
@@ -161,7 +153,6 @@
                                     $truncatedTitre = Str::limit($ticket->titre, 25, '...');
                                 @endphp
                                 <tr class="border-b border-gray-200 even:bg-gray-100 hover:bg-gray-100">
-                                    <td class="py-3 px-6 text-center">{{ $ticket->statut->libelle }}</td>
                                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
                                     <td class="py-3 px-6 text-left">
                                         <span title="{{ $ticket->titre }}">
@@ -185,6 +176,7 @@
                                     <td class="py-3 px-6 text-center">{{ $ticket->fonction->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ $ticket->service->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m H:i') }}</td>
+                                    <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->closed_at)->format('d/m H:i') }}</td>
 
                                     <td class="py-3 px-6 text-center">
                                         <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

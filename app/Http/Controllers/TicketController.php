@@ -152,6 +152,9 @@ class TicketController extends Controller
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->input('date'));
         }
+        if ($request->filled('date_clot')) {
+            $query->whereDate('closed_at', $request->input('date_clot'));
+        }
 
         // Nouveau filtre par message dans ticket_lignes
         if ($request->filled('message')) {
@@ -161,7 +164,7 @@ class TicketController extends Controller
         }
 
         // Tri des tickets par ID décroissant
-        $query->orderBy('id_ticket', 'desc');
+        $query->orderBy('closed_at', 'desc')->orderBy('id_ticket', 'desc');
 
 
         // Récupérer les tickets filtrés
