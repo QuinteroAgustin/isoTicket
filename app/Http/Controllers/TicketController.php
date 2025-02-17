@@ -710,4 +710,36 @@ class TicketController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la création du contact.');
         }
     }
+
+    public function decloture($id)
+    {
+        try {
+            $ticket = Ticket::findOrFail($id);
+            
+            // Vérifier si le ticket est bien clôturé
+            if ($ticket->cloture != 1) {
+                return redirect()->back()->with('error', 'Ce ticket n\'est pas clôturé.');
+            }
+    
+            // Mettre à jour le ticket
+            $ticket->cloture = 0;
+            $ticket->closed_at = null;
+            $ticket->id_statut = 1; // Remettre le statut à "En attente"
+            $ticket->save();
+    
+            // Ajouter une ligne dans l'historique du ticket
+            $ticketLigne = new TicketLigne();
+            $ticketLigne->id_ticket = $ticket->id_ticket;
+            $ticketLigne->text = "Ticket déclôturé";
+            $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
+            $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
+            $ticketLigne->type_user = 2; // Type admin/système
+            $ticketLigne->id_technicien = Technicien::getTechId(); // Utiliser la méthode statique
+            $ticketLigne->save();
+    
+            return redirect()->back()->with('success', 'Le ticket a été déclôturé avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erreur lors de la déclôture du ticket : ' . $e->getMessage());
+        }
+    }
 }

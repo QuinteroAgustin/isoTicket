@@ -225,6 +225,15 @@
 
             <!-- droite -->
             <div class="flex-none w-30 h-full p-4">
+                @if($ticket->cloture == 1)
+                    <div class="flex space-x-2 mb-4">
+                        <a href="{{ route('ticket.decloture', ['id' => $ticket->id_ticket]) }}" 
+                        class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full"
+                        onclick="return confirm('Êtes-vous sûr de vouloir déclôturer ce ticket ?');">
+                            Déclôturer le ticket
+                        </a>
+                    </div>
+                @endif
                 @if($ticket->cloture == 0)
                 <div class="flex space-x-2">
                     <!-- Premier bouton avec l'action actuelle -->
@@ -353,6 +362,7 @@
                     </select>
                 </div>
             </div>
+            
         </div>
     </form>
 

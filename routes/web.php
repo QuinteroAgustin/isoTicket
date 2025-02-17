@@ -70,6 +70,8 @@ Route::get('/ticket/cloture', [TicketController::class, 'ticket_clots'])->name('
 Route::get('/create', [TicketController::class, 'createVue'])->name('create')->middleware(Authenticate::class);
 Route::post('/create', [TicketController::class, 'create'])->name('createPost')->middleware(Authenticate::class);
 
+Route::get('/ticket/{id}/decloture', [TicketController::class, 'decloture'])->name('ticket.decloture');
+
 //recherche de client (axios)
 Route::get('/create/search-clients', [TicketController::class, 'searchClients'])->name('search.clients')->middleware(Authenticate::class);
 
