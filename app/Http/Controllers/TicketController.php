@@ -29,6 +29,31 @@ use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
+    private function cleanHTML($text) {
+        // Supprime tous les styles inline
+        $text = preg_replace('/\s*style\s*=\s*"[^"]*"/i', '', $text);
+        
+        // Supprime toutes les classes
+        $text = preg_replace('/\s*class\s*=\s*"[^"]*"/i', '', $text);
+    
+        // Supprime tous les attributs ngx et data
+        $text = preg_replace('/\s*(_ng[^=]+|data-[^=]+)\s*=\s*"[^"]*"/i', '', $text);
+        
+        // Supprime les balises span vides
+        $text = preg_replace('/<span[^>]*>([\s]*)<\/span>/i', '$1', $text);
+        
+        // Liste des balises autorisées
+        $allowedTags = '<p><br><b><strong><i><em><u><ul><ol><li>';
+        
+        // Nettoie le HTML en ne gardant que les balises autorisées
+        $text = strip_tags($text, $allowedTags);
+        
+        // Supprime les lignes vides multiples
+        $text = preg_replace('/(\r?\n){2,}/', "\n\n", $text);
+        
+        return trim($text);
+    }
+
     public function ticket(Request $request)
     {
         $statuts = Status::all();
@@ -205,7 +230,9 @@ class TicketController extends Controller
                 // Créez une nouvelle ligne de ticket
                 $ticketLigne = new TicketLigne();
                 $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
-                $ticketLigne->text = wordwrap($request->message, 40, "\n", true);
+                // Nettoyage du texte avant sauvegarde
+                $cleanedMessage = $this->cleanHTML($request->message);
+                $ticketLigne->text = wordwrap($cleanedMessage, 40, "\n", true);
                 $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->type_user = 1;
@@ -332,7 +359,9 @@ class TicketController extends Controller
                 // Créez une nouvelle ligne de ticket
                 $ticketLigne = new TicketLigne();
                 $ticketLigne->id_ticket = $ticket->id_ticket; // Associez la ligne au ticket
-                $ticketLigne->text = wordwrap($request->message, 40, "\n", true);
+                // Nettoyage du texte avant sauvegarde
+                $cleanedMessage = $this->cleanHTML($request->message);
+                $ticketLigne->text = wordwrap($cleanedMessage, 40, "\n", true);
                 $ticketLigne->created_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->updated_at = Carbon::now()->timezone('Europe/Paris');
                 $ticketLigne->type_user = $request->afficher == 1 ? 2 : 1;
