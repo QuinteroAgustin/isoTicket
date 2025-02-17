@@ -213,6 +213,22 @@
 
         // État initial
         updateSidebarState();
+
+        //Bouton user
+        const userMenu = document.getElementById('user-menu');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userMenu.addEventListener('click', function(event) {
+            event.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Fermer le dropdown quand on clique ailleurs sur la page
+        document.addEventListener('click', function(event) {
+            if (!userMenu.contains(event.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
     });
     </script>
 
