@@ -257,14 +257,8 @@
                     <a data-modal-target="tabAbonnements" data-modal-toggle="tabAbonnements" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
                         Liste des Abonnements
                     </a>
-
-                    <!-- Troisième bouton
-                    <a class="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
-                        Action 3
-                    </a>-->
                 </div>
                 @endif
-
 
                 <!-- client -->
                 <div class="max-w-sm mx-auto">
@@ -389,49 +383,110 @@
     <!-- Inclure le composant des info abonnements -->
     @include('components.abonnements')
 
-<!-- Modales d'édition (en dehors du formulaire principal) -->
-@foreach ($ticket->lignes as $ligne)
-    @if($ligne->id_technicien == \App\Models\Technicien::getTechId() && $ticket->cloture != 1)
-        <div id="edit-message-modal-{{$ligne->id_ligne}}" 
-             tabindex="-1" 
-             aria-hidden="true" 
-             class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
-            <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
-                <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                    <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Modifier le message
-                        </h3>
-                        <button type="button" 
-                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" 
-                                data-modal-hide="edit-message-modal-{{$ligne->id_ligne}}">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <form action="{{ route('ticket.message.update', ['id' => $ligne->id_ligne]) }}" method="POST">
-                        @csrf
-                        <textarea name="message" 
-                                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" 
-                                  rows="4">{{ $ligne->text }}</textarea>
-                        <div class="flex items-center mt-4 space-x-4">
-                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                                Mettre à jour
-                            </button>
+    <!-- Modales d'édition (en dehors du formulaire principal) -->
+    @foreach ($ticket->lignes as $ligne)
+        @if($ligne->id_technicien == \App\Models\Technicien::getTechId() && $ticket->cloture != 1)
+            <div id="edit-message-modal-{{$ligne->id_ligne}}" 
+                tabindex="-1" 
+                aria-hidden="true" 
+                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+                <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+                    <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+                        <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Modifier le message
+                            </h3>
                             <button type="button" 
-                                    class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center" 
+                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" 
                                     data-modal-hide="edit-message-modal-{{$ligne->id_ligne}}">
-                                Annuler
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
                             </button>
                         </div>
-                    </form>
+                        <form action="{{ route('ticket.message.update', ['id' => $ligne->id_ligne]) }}" method="POST">
+                            @csrf
+                            <textarea name="message" 
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" 
+                                    rows="4">{{ $ligne->text }}</textarea>
+                            <div class="flex items-center mt-4 space-x-4">
+                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                    Mettre à jour
+                                </button>
+                                <button type="button" 
+                                        class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center" 
+                                        data-modal-hide="edit-message-modal-{{$ligne->id_ligne}}">
+                                    Annuler
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endif
-@endforeach
+        @endif
+    @endforeach
 
+    <!-- Système d'onglets -->
+    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 rounded-t-lg" id="tickets-tab" data-tabs-target="#tickets" type="button" role="tab" aria-controls="tickets" aria-selected="true">Tickets précédents</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="abonnements-tab" data-tabs-target="#abonnements" type="button" role="tab" aria-controls="abonnements" aria-selected="false">Abonnements</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="autres-tab" data-tabs-target="#autres" type="button" role="tab" aria-controls="autres" aria-selected="false">Autres (à venir)</button>
+            </li>
+        </ul>
+    </div>
+    <!-- Contenu des onglets -->
+<div id="myTabContent">
+    <!-- Onglet Tickets précédents -->
+    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">N° Ticket</th>
+                        <th scope="col" class="px-6 py-3">Date</th>
+                        <th scope="col" class="px-6 py-3">Titre</th>
+                        <th scope="col" class="px-6 py-3">Statut</th>
+                        <th scope="col" class="px-6 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="previous-tickets-table">
+                    <!-- Le contenu sera chargé dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Onglet Abonnements -->
+    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="abonnements" role="tabpanel" aria-labelledby="abonnements-tab">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Type</th>
+                        <th scope="col" class="px-6 py-3">Désignation</th>
+                        <th scope="col" class="px-6 py-3">Date début</th>
+                        <th scope="col" class="px-6 py-3">Date fin</th>
+                        <th scope="col" class="px-6 py-3">N° Série</th>
+                    </tr>
+                </thead>
+                    <tbody id="abonnements-list-table">
+                        <!-- Le contenu sera chargé dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Onglet Autres -->
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="autres" role="tabpanel" aria-labelledby="autres-tab">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Contenu à venir</p>
+        </div>
+    </div>
 
     <script>
         document.getElementById('client').addEventListener('input', function() {
@@ -466,6 +521,40 @@
                 document.getElementById('dropdown').classList.add('hidden');
             }
         });
+
+        // Fonction pour charger les tickets précédents
+        function loadPreviousTickets(clientId) {
+            if (clientId) {
+                axios.get(`/ticket/client/${clientId}/previous`)
+                    .then(response => {
+                        const tickets = response.data.tickets;
+                        const tableBody = document.getElementById('previous-tickets-table');
+                        tableBody.innerHTML = '';
+
+                        tickets.forEach(ticket => {
+                            const row = document.createElement('tr');
+                            row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
+                            
+                            const date = new Date(ticket.created_at).toLocaleDateString('fr-FR');
+                            
+                            row.innerHTML = `
+                                <td class="px-6 py-4">${ticket.id_ticket}</td>
+                                <td class="px-6 py-4">${date}</td>
+                                <td class="px-6 py-4">${ticket.titre}</td>
+                                <td class="px-6 py-4">${ticket.statut.libelle}</td>
+                                <td class="px-6 py-4">
+                                    <a href="/ticket/${ticket.id_ticket}/edit" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Voir</a>
+                                </td>
+                            `;
+                            
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des tickets précédents:', error);
+                    });
+            }
+        }
 
         function loadContacts(clientId) {
             axios.get(`/create/client/${clientId}`)
@@ -624,7 +713,10 @@
             const selectfonction = document.getElementById('fonction');
             const initialSelectedCategorieId = {{ $ticket->id_categorie ?? 'null' }};
             const initialSelectedFunctionId = {{ $ticket->id_fonction ?? 'null' }};
-
+            const clientId = document.getElementById('client').value;
+            if (clientId) {
+                loadPreviousTickets(clientId);
+            }
 
             // Fonction pour mettre à jour select2
             function selectCategorie(selectedServiceId) {

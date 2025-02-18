@@ -765,4 +765,15 @@ class TicketController extends Controller
     
         return redirect()->back()->with('success', 'Message mis à jour avec succès');
     }
+
+    public function getPreviousTickets($clientId)
+    {
+        $tickets = Ticket::where('id_client', $clientId)
+                        ->with(['statut'])
+                        ->orderBy('created_at', 'desc')
+                        ->take(10)  // Limite aux 10 derniers tickets
+                        ->get();
+
+        return response()->json(['tickets' => $tickets]);
+    }
 }

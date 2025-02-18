@@ -179,5 +179,8 @@ Route::post('/contact/edit/{id_contact}', [ClientController::class, 'editContact
 Route::get('/contact/create/{id_client}', [ClientController::class, 'createContact'])->name('create.contact')->middleware(Authenticate::class);
 Route::post('/contact/create/{id_client}', [ClientController::class, 'createContactPost'])->name('create.contact.post')->middleware(Authenticate::class);
 
-
+//Edition d'un message d'un ticket
 Route::post('/ticket/message/{id}/update', [TicketController::class, 'updateMessage'])->name('ticket.message.update');
+
+//liste des anciens tickets
+Route::get('/ticket/client/{clientId}/previous', [TicketController::class, 'getPreviousTickets']);
