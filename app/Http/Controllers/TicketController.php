@@ -771,7 +771,7 @@ class TicketController extends Controller
         $tickets = Ticket::where('id_client', $clientId)
                         ->with(['statut'])
                         ->orderBy('created_at', 'desc')
-                        ->take(10)  // Limite aux 10 derniers tickets
+                        ->take(25)  // Limite aux 10 derniers tickets
                         ->get();
 
         return response()->json(['tickets' => $tickets]);
