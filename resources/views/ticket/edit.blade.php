@@ -252,11 +252,6 @@
                     <a href="{{ route('call.client', ['id' => $ticket->id_ticket]) }}" class="block text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
                         Tentative de contact
                     </a>
-
-                    <!-- Deuxième bouton -->
-                    <a data-modal-target="tabAbonnements" data-modal-toggle="tabAbonnements" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
-                        Liste des Abonnements
-                    </a>
                 </div>
                 @endif
 
@@ -283,7 +278,6 @@
                             loadContacts(ctNum);//charger les contacts
                             fetchAndDisplayContacts(ctNum);//charger le tableau de contact
                             fetchAndDisplayClient(ctNum);//charger le tableau de societe
-                            fetchAndDisplayAbonnements(ctNum);//tableau des abonnements
                         });
                     </script>
                 @endif
@@ -380,8 +374,6 @@
     @include('components.contact')
     <!-- Inclure le composant des info societe -->
     @include('components.societe')
-    <!-- Inclure le composant des info abonnements -->
-    @include('components.abonnements')
 
     <!-- Modales d'édition (en dehors du formulaire principal) -->
     @foreach ($ticket->lignes as $ligne)
@@ -468,7 +460,6 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Type</th>
                         <th scope="col" class="px-6 py-3">Désignation</th>
                         <th scope="col" class="px-6 py-3">Date début</th>
                         <th scope="col" class="px-6 py-3">Date fin</th>
@@ -488,42 +479,202 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('client').addEventListener('input', function() {
-            let search = this.value.trim();
-            if (search.length > 0) {
-                axios.get('{{ route("search.clients") }}', { params: { search: search } })
-                    .then(response => {
-                        let clients = response.data;
-                        let dropdown = document.getElementById('dropdown');
-                        dropdown.innerHTML = '';
-                        if (clients.length > 0) {
-                            clients.forEach(client => {
-                                let div = document.createElement('div');
-                                div.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
-                                div.textContent = `${client.CT_Num} - ${client.CT_Intitule}`;
-                                div.addEventListener('click', function() {
-                                    document.getElementById('client').value = client.CT_Num;
-                                    loadContacts(client.CT_Num);// Charger les contacts pour ce client
-                                    fetchAndDisplayContacts(client.CT_Num);//charger le tableau de contact
-                                    fetchAndDisplayClient(client.CT_Num);//charger le tableau de societe
-                                    fetchAndDisplayAbonnements(client.CT_Num);//tableau des abonnements
-                                    dropdown.classList.add('hidden');
-                                });
-                                dropdown.appendChild(div);
-                            });
-                            dropdown.classList.remove('hidden');
-                        } else {
-                            dropdown.classList.add('hidden');
-                        }
-                    });
-            } else {
-                document.getElementById('dropdown').classList.add('hidden');
-            }
-        });
+<script>
+    document.getElementById('client').addEventListener('input', function() {
+        let search = this.value.trim();
+        if (search.length > 0) {
+            axios.get('{{ route("search.clients") }}', { params: { search: search } })
+                .then(response => {
+                    let clients = response.data;
+                    let dropdown = document.getElementById('dropdown');
+                    dropdown.innerHTML = '';
+                    if (clients.length > 0) {
+                        clients.forEach(client => {
+                            let div = document.createElement('div');
+                            div.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
+                            div.textContent = `${client.CT_Num} - ${client.CT_Intitule}`;
+                            div.addEventListener('click', function() {
+                                document.getElementById('client').value = client.CT_Num;
+                                loadContacts(client.CT_Num);// Charger les contacts pour ce client
+                                fetchAndDisplayContacts(client.CT_Num);//charger le tableau de contact
+                                fetchAndDisplayClient(client.CT_Num);//charger le tableau de societe
+                                // Charger les tickets précédents et abonnements
+                                loadPreviousTickets(client.CT_Num);
+                                fetchAndDisplayAbonnements(client.CT_Num);
 
-        // Fonction pour charger les tickets précédents
-        function loadPreviousTickets(clientId) {
+                                dropdown.classList.add('hidden');
+                            });
+                            dropdown.appendChild(div);
+                        });
+                        dropdown.classList.remove('hidden');
+                    } else {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+        } else {
+            document.getElementById('dropdown').classList.add('hidden');
+
+            // Vider les tableaux si le champ client est vide
+            document.getElementById('previous-tickets-table').innerHTML = '';
+            document.getElementById('abonnements-list-table').innerHTML = '';
+        }
+    });
+
+    function loadContacts(clientId) {
+        axios.get(`/create/client/${clientId}`)
+            .then(response => {
+                let contacts = response.data;
+                let select = document.getElementById('contact');
+                select.innerHTML = '<option value="">Choix du contact...</option>'; // Réinitialiser le select
+
+                let cbMarq = "{{ $ticket->lignes->sortBy('created_at')->first()->id_contact }}";
+                contacts.forEach(contact => {
+                    let option = document.createElement('option');
+                    option.value = contact.cbMarq;
+                    option.text = contact.CT_Nom + '-' + contact.CT_Prenom;
+                    // Vérifier si c'est le premier contact
+                    if (contact.cbMarq === cbMarq) {
+                        option.selected = true; // Sélectionner l'option correspondante
+                    }
+
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des contacts');
+            });
+    }
+
+
+
+    document.addEventListener('click', function(event) {
+        let dropdown = document.getElementById('dropdown');
+        if (!dropdown.contains(event.target) && event.target.id !== 'client') {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    //Generer le tableau info contact
+    const contactsTable = document.getElementById('contacts-table');
+
+    function fetchAndDisplayContacts(clientId) {
+        if (clientId) {
+            axios.get(`/create/client/${clientId}/contacttableau`)
+                .then(response => {
+                    const contacts = response.data.contacts;
+                    contactsTable.innerHTML = ''; // Clear previous content
+
+                    contacts.forEach(contact => {
+                        const row = document.createElement('tr');
+                        row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
+
+                        const editUrl = `/ticket/{{ $ticket->id_ticket }}/edit/${contact.cbMarq}/contact`;
+
+                        row.innerHTML = `
+                            <td class="py-3 px-6 text-center">${contact.cbMarq}</td>
+                            <td class="py-3 px-6 text-left">${contact.CT_Nom}</td>
+                            <td class="py-3 px-6 text-left">${contact.CT_Prenom}</td>
+                            <td class="py-3 px-6 text-left">${contact.CT_Fonction}</td>
+                            <td class="py-3 px-6 text-left">${contact.CT_Telephone}</td>
+                            <td class="py-3 px-6 text-left">${contact.CT_TelPortable}</td>
+                            <td class="py-3 px-6 text-left">${contact.CT_EMail}</td>
+                            <td class="py-3 px-6 text-left"><a href="${editUrl}" class="text-indigo-600 hover:text-indigo-900">Modifier</a></td>
+                        `;
+
+                        contactsTable.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération des contacts:', error);
+                });
+        }
+    }
+
+    //generer le tableau info cient
+    const societeTable = document.getElementById('societe-table');
+
+    function fetchAndDisplayClient(clientId) {
+        if (clientId) {
+            axios.get(`/create/client/${clientId}/societetableau`)
+                .then(response => {
+                    const client = response.data.client;
+
+                    // Sélectionner la carte modale
+                    const modal = document.getElementById('tabSociete');
+
+                    // Remplir la carte avec les données du client
+                    modal.querySelector('h4').innerText = `ID: ${client.CT_Num}`;
+                    modal.querySelector('p:nth-child(2)').innerHTML = `<strong>Nom:</strong> ${client.CT_Intitule}`;
+                    modal.querySelector('p:nth-child(3)').innerHTML = `<strong>Téléphone:</strong> ${client.CT_Telephone || '-'}`;
+                    modal.querySelector('p:nth-child(4)').innerHTML = `<strong>Télécopie:</strong> ${client.CT_Telecopie || '-'}`;
+                    modal.querySelector('p:nth-child(5)').innerHTML = `<strong>Adresse:</strong> ${client.CT_Adresse}`;
+                    modal.querySelector('p:nth-child(6)').innerHTML = `<strong>Ville:</strong> ${client.CT_Ville}`;
+                    modal.querySelector('p:nth-child(7)').innerHTML = `<strong>Complément:</strong> ${client.CT_Complement || '-'}`;
+                    modal.querySelector('p:nth-child(8)').innerHTML = `<strong>E-Mail:</strong> ${client.CT_EMail}`;
+
+                    const collaborateur = client.collaborateur ? `${client.collaborateur.CO_Nom} ${client.collaborateur.CO_Prenom}` : 'Aucun commercial';
+                    modal.querySelector('p:nth-child(9)').innerHTML = `<strong>Commercial Agréé:</strong> ${collaborateur}`;
+
+                    // Ne pas afficher le modal ici
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération du Client:', error);
+                });
+        }
+    }
+
+
+    // Gestion des onglets et du tableau des abonnements
+    // Déclarer les fonctions globalement
+    let loadPreviousTickets;
+    let fetchAndDisplayAbonnements;
+    let loadAbonnementsTab;
+
+    // Fonction d'initialisation
+    function initializeTabsAndTables() {
+        // Fonction de formatage de date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Définir les fonctions globalement
+        fetchAndDisplayAbonnements = function(clientId) {
+            if (clientId) {
+                axios.get(`/ticket/search-abonnementtableau/${clientId}`)
+                    .then(response => {
+                        const abonnements = response.data.abonnements;
+                        const tableBody = document.getElementById('abonnements-list-table');
+                        tableBody.innerHTML = '';
+
+                        abonnements.forEach(abonnement => {
+                            if (abonnement.lignes && abonnement.lignes.length > 0) {
+                                abonnement.lignes.forEach(ligne => {
+                                    const row = document.createElement('tr');
+                                    row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
+                                    
+                                    row.innerHTML = `
+                                        <td class="px-6 py-4">${ligne.AL_Design || '-'}</td>
+                                        <td class="px-6 py-4">${abonnement.AB_Debut ? formatDate(abonnement.AB_Debut) : '-'}</td>
+                                        <td class="px-6 py-4">${abonnement.AB_Fin ? formatDate(abonnement.AB_Fin) : '-'}</td>
+                                        <td class="px-6 py-4">${ligne.N_de_Srie || '-'}</td>
+                                    `;
+                                    
+                                    tableBody.appendChild(row);
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des abonnements:', error);
+                    });
+            }
+        };
+
+        loadPreviousTickets = function(clientId) {
             if (clientId) {
                 axios.get(`/ticket/client/${clientId}/previous`)
                     .then(response => {
@@ -554,442 +705,316 @@
                         console.error('Erreur lors du chargement des tickets précédents:', error);
                     });
             }
-        }
+        };
 
-        function loadContacts(clientId) {
-            axios.get(`/create/client/${clientId}`)
-                .then(response => {
-                    let contacts = response.data;
-                    let select = document.getElementById('contact');
-                    select.innerHTML = '<option value="">Choix du contact...</option>'; // Réinitialiser le select
-
-                    let cbMarq = "{{ $ticket->lignes->sortBy('created_at')->first()->id_contact }}";
-                    contacts.forEach(contact => {
-                        let option = document.createElement('option');
-                        option.value = contact.cbMarq;
-                        option.text = contact.CT_Nom + '-' + contact.CT_Prenom;
-                        // Vérifier si c'est le premier contact
-                        if (contact.cbMarq === cbMarq) {
-                            option.selected = true; // Sélectionner l'option correspondante
-                        }
-
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erreur lors du chargement des contacts');
-                });
-        }
-
-
-
-        document.addEventListener('click', function(event) {
-            let dropdown = document.getElementById('dropdown');
-            if (!dropdown.contains(event.target) && event.target.id !== 'client') {
-                dropdown.classList.add('hidden');
+        loadAbonnementsTab = function() {
+            const abonnementsTab = document.querySelector('[data-tabs-target="#abonnements"]');
+            if (abonnementsTab) {
+                abonnementsTab.click();
+                
+                const clientId = document.getElementById('client').value;
+                if (clientId) {
+                    fetchAndDisplayAbonnements(clientId);
+                }
             }
-        });
+        };
 
-        //Generer le tableau info contact
-        const contactsTable = document.getElementById('contacts-table');
-
-        function fetchAndDisplayContacts(clientId) {
-            if (clientId) {
-                axios.get(`/create/client/${clientId}/contacttableau`)
-                    .then(response => {
-                        const contacts = response.data.contacts;
-                        contactsTable.innerHTML = ''; // Clear previous content
-
-                        contacts.forEach(contact => {
-                            const row = document.createElement('tr');
-                            row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
-
-                            const editUrl = `/ticket/{{ $ticket->id_ticket }}/edit/${contact.cbMarq}/contact`;
-
-                            row.innerHTML = `
-                                <td class="py-3 px-6 text-center">${contact.cbMarq}</td>
-                                <td class="py-3 px-6 text-left">${contact.CT_Nom}</td>
-                                <td class="py-3 px-6 text-left">${contact.CT_Prenom}</td>
-                                <td class="py-3 px-6 text-left">${contact.CT_Fonction}</td>
-                                <td class="py-3 px-6 text-left">${contact.CT_Telephone}</td>
-                                <td class="py-3 px-6 text-left">${contact.CT_TelPortable}</td>
-                                <td class="py-3 px-6 text-left">${contact.CT_EMail}</td>
-                                <td class="py-3 px-6 text-left"><a href="${editUrl}" class="text-indigo-600 hover:text-indigo-900">Modifier</a></td>
-                            `;
-
-                            contactsTable.appendChild(row);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la récupération des contacts:', error);
-                    });
-            }
-        }
-
-        //generer le tableau info cient
-        const societeTable = document.getElementById('societe-table');
-
-        function fetchAndDisplayClient(clientId) {
-            if (clientId) {
-                axios.get(`/create/client/${clientId}/societetableau`)
-                    .then(response => {
-                        const client = response.data.client;
-
-                        // Sélectionner la carte modale
-                        const modal = document.getElementById('tabSociete');
-
-                        // Remplir la carte avec les données du client
-                        modal.querySelector('h4').innerText = `ID: ${client.CT_Num}`;
-                        modal.querySelector('p:nth-child(2)').innerHTML = `<strong>Nom:</strong> ${client.CT_Intitule}`;
-                        modal.querySelector('p:nth-child(3)').innerHTML = `<strong>Téléphone:</strong> ${client.CT_Telephone || '-'}`;
-                        modal.querySelector('p:nth-child(4)').innerHTML = `<strong>Télécopie:</strong> ${client.CT_Telecopie || '-'}`;
-                        modal.querySelector('p:nth-child(5)').innerHTML = `<strong>Adresse:</strong> ${client.CT_Adresse}`;
-                        modal.querySelector('p:nth-child(6)').innerHTML = `<strong>Ville:</strong> ${client.CT_Ville}`;
-                        modal.querySelector('p:nth-child(7)').innerHTML = `<strong>Complément:</strong> ${client.CT_Complement || '-'}`;
-                        modal.querySelector('p:nth-child(8)').innerHTML = `<strong>E-Mail:</strong> ${client.CT_EMail}`;
-
-                        const collaborateur = client.collaborateur ? `${client.collaborateur.CO_Nom} ${client.collaborateur.CO_Prenom}` : 'Aucun commercial';
-                        modal.querySelector('p:nth-child(9)').innerHTML = `<strong>Commercial Agréé:</strong> ${collaborateur}`;
-
-                        // Ne pas afficher le modal ici
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la récupération du Client:', error);
-                    });
-            }
-        }
-
-        // Générer le tableau des abonnements
-        const abonnementsTable = document.getElementById('abonnements-table');
-
-        // Fonction de formatage de date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
-
-        function fetchAndDisplayAbonnements(clientId) {
-            if (clientId) {
-                axios.get(`/ticket/search-abonnementtableau/${clientId}`)
-                    .then(response => {
-                        const abonnements = response.data.abonnements;
-                        abonnementsTable.innerHTML = ''; // Vider le contenu précédent
-                        abonnements.forEach(abonnement => {
-                            if (abonnement.lignes && abonnement.lignes.length > 0) {
-                                abonnement.lignes.forEach(ligne => {
-                                    // Créer une ligne pour chaque ligne d'abonnement
-                                    const row = document.createElement('tr');
-                                    row.classList.add('border-b', 'border-gray-200', 'hover:bg-gray-100');
-
-                                    row.innerHTML = `
-                                        <td class="py-3 px-6 text-center">${abonnement.AB_Type || '-'}</td>
-                                        <td class="py-3 px-6 text-left">${ligne.AL_Design || '-'}</td>
-                                        <td class="py-3 px-6 text-left">${abonnement.AB_Debut ? formatDate(abonnement.AB_Debut) : '-'}</td>
-                                        <td class="py-3 px-6 text-left">${abonnement.AB_Fin ? formatDate(abonnement.AB_Fin) : '-'}</td>
-                                        <td class="py-3 px-6 text-left">${ligne.N_de_Srie || '-'}</td>
-                                    `;
-
-                                    abonnementsTable.appendChild(row);
-                                });
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la récupération des abonnements:', error);
-                    });
-            } else {
-                console.warn("Aucun clientId fourni.");
-            }
-        }
-
-        // Attendre que le DOM soit chargé
+        // Initialisation des onglets
         document.addEventListener('DOMContentLoaded', function() {
-            // Sélectionner les éléments HTML
-            const selectservice = document.getElementById('service');
-            const selectcategorie = document.getElementById('categorie');
-            const selectfonction = document.getElementById('fonction');
-            const initialSelectedCategorieId = {{ $ticket->id_categorie ?? 'null' }};
-            const initialSelectedFunctionId = {{ $ticket->id_fonction ?? 'null' }};
             const clientId = document.getElementById('client').value;
             if (clientId) {
                 loadPreviousTickets(clientId);
-            }
-
-            // Fonction pour mettre à jour select2
-            function selectCategorie(selectedServiceId) {
-                // Réinitialiser categorie
-                selectcategorie.innerHTML = '<option value="">Choix de la categorie...</option>';
-                // Réinitialiser fonction
-                selectfonction.innerHTML = '<option selected value="">Choix de la fonction...</option>';
-                // Si aucune catégorie n'est sélectionnée, sortir de la fonction
-                if (!selectedServiceId) {
-                    return;
-                }
-
-                // Filtrer les fonctions basées sur la catégorie sélectionnée
-                const filteredCategories = @json($categories->groupBy('id_service'));
-
-                // Ajouter les options filtrées à select2
-                filteredCategories[selectedServiceId].forEach(function(categorie) {
-                    const option = document.createElement('option');
-                    option.value = categorie.id_categorie;
-                    option.textContent = categorie.libelle;
-                    if (categorie.id_categorie === initialSelectedCategorieId) {
-                        option.selected = true;
-                    }
-                    selectcategorie.appendChild(option);
-                });
-            }
-            // Écouter les changements sur select1
-            selectservice.addEventListener('change', function() {
-                // Récupérer la valeur sélectionnée dans select1
-                const selectedServiceId = selectservice.value;
-
-                // Mettre à jour select2
-                selectCategorie(selectedServiceId);
-            });
-
-            // Mise à jour initiale de select2 si une catégorie est déjà sélectionnée
-            if (selectservice.value) {
-                selectCategorie(selectservice.value);
-            }
-
-            // Fonction pour mettre à jour select2
-            function selectFonction(selectedCategorieId) {
-                // Réinitialiser categorie
-                selectfonction.innerHTML = '<option value="">Choix de la categorie...</option>';
-                // Si aucune catégorie n'est sélectionnée, sortir de la fonction
-                if (!selectedCategorieId) {
-                    return;
-                }
-
-                // Filtrer les fonctions basées sur la catégorie sélectionnée
-                const filteredFonctions = @json($fonctions->groupBy('id_categorie'));
-
-                // Ajouter les options filtrées à select2
-                filteredFonctions[selectedCategorieId].forEach(function(fonction) {
-                    const option = document.createElement('option');
-                    option.value = fonction.id_fonction;
-                    option.textContent = fonction.libelle;
-                    if (fonction.id_fonction === initialSelectedFunctionId) {
-                        option.selected = true;
-                    }
-                    selectfonction.appendChild(option);
-                });
-            }
-            // Écouter les changements sur select1
-            selectcategorie.addEventListener('change', function() {
-                // Récupérer la valeur sélectionnée dans select1
-                const selectedCategorieId = selectcategorie.value;
-
-                // Mettre à jour select2
-                selectFonction(selectedCategorieId);
-            });
-
-            // Mise à jour initiale de select2 si une catégorie est déjà sélectionnée
-            if (selectcategorie.value) {
-                selectFonction(selectcategorie.value);
+                fetchAndDisplayAbonnements(clientId);
             }
         });
+    }
 
-        // Fonction pour afficher/masquer le menu déroulant
-        document.getElementById('cri').addEventListener('change', function () {
-            var dropdown = document.getElementById('forfaits-dropdown');
-            if (this.checked) {
-                dropdown.style.display = 'block';
+    // Initialiser le système d'onglets et les tableaux
+    initializeTabsAndTables();
+
+
+
+    // Attendre que le DOM soit chargé
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sélectionner les éléments HTML
+        const selectservice = document.getElementById('service');
+        const selectcategorie = document.getElementById('categorie');
+        const selectfonction = document.getElementById('fonction');
+        const initialSelectedCategorieId = {{ $ticket->id_categorie ?? 'null' }};
+        const initialSelectedFunctionId = {{ $ticket->id_fonction ?? 'null' }};
+
+        // Fonction pour mettre à jour select2
+        function selectCategorie(selectedServiceId) {
+            // Réinitialiser categorie
+            selectcategorie.innerHTML = '<option value="">Choix de la categorie...</option>';
+            // Réinitialiser fonction
+            selectfonction.innerHTML = '<option selected value="">Choix de la fonction...</option>';
+            // Si aucune catégorie n'est sélectionnée, sortir de la fonction
+            if (!selectedServiceId) {
+                return;
+            }
+
+            // Filtrer les fonctions basées sur la catégorie sélectionnée
+            const filteredCategories = @json($categories->groupBy('id_service'));
+
+            // Ajouter les options filtrées à select2
+            filteredCategories[selectedServiceId].forEach(function(categorie) {
+                const option = document.createElement('option');
+                option.value = categorie.id_categorie;
+                option.textContent = categorie.libelle;
+                if (categorie.id_categorie === initialSelectedCategorieId) {
+                    option.selected = true;
+                }
+                selectcategorie.appendChild(option);
+            });
+        }
+        // Écouter les changements sur select1
+        selectservice.addEventListener('change', function() {
+            // Récupérer la valeur sélectionnée dans select1
+            const selectedServiceId = selectservice.value;
+
+            // Mettre à jour select2
+            selectCategorie(selectedServiceId);
+        });
+
+        // Mise à jour initiale de select2 si une catégorie est déjà sélectionnée
+        if (selectservice.value) {
+            selectCategorie(selectservice.value);
+        }
+
+        // Fonction pour mettre à jour select2
+        function selectFonction(selectedCategorieId) {
+            // Réinitialiser categorie
+            selectfonction.innerHTML = '<option value="">Choix de la categorie...</option>';
+            // Si aucune catégorie n'est sélectionnée, sortir de la fonction
+            if (!selectedCategorieId) {
+                return;
+            }
+
+            // Filtrer les fonctions basées sur la catégorie sélectionnée
+            const filteredFonctions = @json($fonctions->groupBy('id_categorie'));
+
+            // Ajouter les options filtrées à select2
+            filteredFonctions[selectedCategorieId].forEach(function(fonction) {
+                const option = document.createElement('option');
+                option.value = fonction.id_fonction;
+                option.textContent = fonction.libelle;
+                if (fonction.id_fonction === initialSelectedFunctionId) {
+                    option.selected = true;
+                }
+                selectfonction.appendChild(option);
+            });
+        }
+        // Écouter les changements sur select1
+        selectcategorie.addEventListener('change', function() {
+            // Récupérer la valeur sélectionnée dans select1
+            const selectedCategorieId = selectcategorie.value;
+
+            // Mettre à jour select2
+            selectFonction(selectedCategorieId);
+        });
+
+        // Mise à jour initiale de select2 si une catégorie est déjà sélectionnée
+        if (selectcategorie.value) {
+            selectFonction(selectcategorie.value);
+        }
+    });
+
+    // Fonction pour afficher/masquer le menu déroulant
+    document.getElementById('cri').addEventListener('change', function () {
+        var dropdown = document.getElementById('forfaits-dropdown');
+        if (this.checked) {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    //check forfait restant
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const criCheckbox = document.getElementById('cri');
+        const forfaitsDropdown = document.getElementById('forfaits-dropdown');
+        const selectElement = document.getElementById('forfait');
+        const ticketDuree = document.getElementById('time');
+
+        function showModal() {
+            const modal = document.getElementById('credit-insufficient-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideModal() {
+            const modal = document.getElementById('credit-insufficient-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Attacher l'événement de fermeture à tous les boutons de fermeture de modal
+        document.querySelectorAll('[data-modal-hide]').forEach(button => {
+            button.addEventListener('click', hideModal);
+        });
+
+        // Fonction pour convertir la durée en format HH:MM en minutes totales
+        function convertDureeToMinutes(duree) {
+            // Séparer les heures et les minutes en utilisant le séparateur ":"
+            const [hours, minutes] = duree.split(':');
+
+            // Convertir les heures et les minutes en nombres entiers
+            const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
+
+            return totalMinutes;
+        }
+
+        // Fonction pour vérifier le crédit restant via une requête Axios
+        function checkCredit() {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const forfaitId = selectedOption.value;
+
+            if (forfaitId) {
+                axios.get(`/ticket/forfait/${forfaitId}/credit`)
+                    .then(response => {
+                        const remainingCredit = response.data.remainingCredit;
+                        if (remainingCredit < 0 || remainingCredit - convertDureeToMinutes(ticketDuree.value) < 0) {
+                            showModal();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la vérification du crédit');
+                    });
+            }
+        }
+
+        // Fonction pour initialiser l'affichage du dropdown en fonction de l'état de la case à cocher "CRI"
+        function initializeDropdown() {
+            if (criCheckbox.checked) {
+                forfaitsDropdown.style.display = 'block';
             } else {
-                dropdown.style.display = 'none';
+                forfaitsDropdown.style.display = 'none';
+            }
+        }
+
+        // Initialiser l'affichage du dropdown au chargement de la page
+        initializeDropdown();
+
+        // Ajouter un écouteur d'événement à la case à cocher "CRI" pour afficher ou masquer le dropdown
+        criCheckbox.addEventListener('change', initializeDropdown);
+
+        // Vérifier le crédit lors du changement de sélection
+        selectElement.addEventListener('change', checkCredit);
+
+        // Vérifier le crédit lors du changement de la durée
+        ticketDuree.addEventListener('input', checkCredit);
+
+        // Vérifier le crédit au chargement si une option est déjà sélectionnée
+        if (selectElement.value) {
+            checkCredit();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const formulaire = document.getElementById('editTicket');
+
+        formulaire.addEventListener('submit', function(event) {
+            // Annuler la soumission par défaut du formulaire
+            event.preventDefault();
+
+            // Vérifier ici si tous les champs sont valides
+            const validationMessage = validateForm();
+
+            if (validationMessage === '') {
+                // Désactivez le bouton de soumission
+                document.getElementById('submit-button').disabled = true;
+                // Soumettre le formulaire si la validation passe
+                formulaire.submit();
+            } else {
+                // Afficher le message d'erreur à l'utilisateur
+                alert(validationMessage);
             }
         });
 
-        //check forfait restant
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const criCheckbox = document.getElementById('cri');
-            const forfaitsDropdown = document.getElementById('forfaits-dropdown');
-            const selectElement = document.getElementById('forfait');
-            const ticketDuree = document.getElementById('time');
+        // Fonction pour convertir la durée en format HH:MM en minutes totales
+        function convertDureeToMinutes(duree) {
+            // Séparer les heures et les minutes en utilisant le séparateur ":"
+            const [hours, minutes] = duree.split(':');
 
-            function showModal() {
-                const modal = document.getElementById('credit-insufficient-modal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+            // Convertir les heures et les minutes en nombres entiers
+            const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
+
+            return totalMinutes;
+        }
+
+        function validateForm() {
+            // Vérifier ici chaque champ du formulaire
+            const client = document.getElementById('client').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+            const technicien = document.getElementById('technicien').value.trim();
+            const cri = document.getElementById('cri');
+            const forfait = document.getElementById('forfait').value.trim();
+            const time = document.getElementById('time').value.trim();
+            const statut = document.getElementById('statut').value.trim();
+            const service = document.getElementById('service').value.trim();
+            const categorie = document.getElementById('categorie').value.trim();
+            const fonction = document.getElementById('fonction').value.trim();
+            const priorite = document.getElementById('priorite').value.trim();
+            const impact = document.getElementById('impact').value.trim();
+
+            // Initialiser un message d'erreur vide
+            let errorMessage = '';
+
+            // Exemple de validation simple (vérifie que les champs ne sont pas vides)
+            if (client === ''){
+                errorMessage += 'Le champ Client est requis.\n';
+            }
+            if(contact === ''){
+                errorMessage += 'Le champ Contact est requis.\n';
             }
 
-            function hideModal() {
-                const modal = document.getElementById('credit-insufficient-modal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
 
-            // Attacher l'événement de fermeture à tous les boutons de fermeture de modal
-            document.querySelectorAll('[data-modal-hide]').forEach(button => {
-                button.addEventListener('click', hideModal);
-            });
-
-            // Fonction pour convertir la durée en format HH:MM en minutes totales
-            function convertDureeToMinutes(duree) {
-                // Séparer les heures et les minutes en utilisant le séparateur ":"
-                const [hours, minutes] = duree.split(':');
-
-                // Convertir les heures et les minutes en nombres entiers
-                const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
-
-                return totalMinutes;
-            }
-
-            // Fonction pour vérifier le crédit restant via une requête Axios
-            function checkCredit() {
-                const selectedOption = selectElement.options[selectElement.selectedIndex];
-                const forfaitId = selectedOption.value;
-
-                if (forfaitId) {
-                    axios.get(`/ticket/forfait/${forfaitId}/credit`)
-                        .then(response => {
-                            const remainingCredit = response.data.remainingCredit;
-                            if (remainingCredit < 0 || remainingCredit - convertDureeToMinutes(ticketDuree.value) < 0) {
-                                showModal();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erreur lors de la vérification du crédit');
-                        });
+            if(cri.checked){
+                if(convertDureeToMinutes(time) < 1){
+                    errorMessage += 'Une durée minimale est requise.\n';
+                }
+                if(forfait == ''){
+                    errorMessage += 'Le choix du forfait est requis.\n';
                 }
             }
 
-            // Fonction pour initialiser l'affichage du dropdown en fonction de l'état de la case à cocher "CRI"
-            function initializeDropdown() {
-                if (criCheckbox.checked) {
-                    forfaitsDropdown.style.display = 'block';
-                } else {
-                    forfaitsDropdown.style.display = 'none';
+            if(statut == 4){
+                if(convertDureeToMinutes(time) < 1){
+                    errorMessage += 'Une durée minimale est requise.\n';
+                }
+                if(technicien === ''){
+                    errorMessage += 'Le champ Technicien est requis pour clôturer.\n';
                 }
             }
-
-            // Initialiser l'affichage du dropdown au chargement de la page
-            initializeDropdown();
-
-            // Ajouter un écouteur d'événement à la case à cocher "CRI" pour afficher ou masquer le dropdown
-            criCheckbox.addEventListener('change', initializeDropdown);
-
-            // Vérifier le crédit lors du changement de sélection
-            selectElement.addEventListener('change', checkCredit);
-
-            // Vérifier le crédit lors du changement de la durée
-            ticketDuree.addEventListener('input', checkCredit);
-
-            // Vérifier le crédit au chargement si une option est déjà sélectionnée
-            if (selectElement.value) {
-                checkCredit();
+            if(statut === ''){
+                errorMessage += 'Le champ Statut est requis.\n';
             }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const formulaire = document.getElementById('editTicket');
-
-            formulaire.addEventListener('submit', function(event) {
-                // Annuler la soumission par défaut du formulaire
-                event.preventDefault();
-
-                // Vérifier ici si tous les champs sont valides
-                const validationMessage = validateForm();
-
-                if (validationMessage === '') {
-                    // Désactivez le bouton de soumission
-                    document.getElementById('submit-button').disabled = true;
-                    // Soumettre le formulaire si la validation passe
-                    formulaire.submit();
-                } else {
-                    // Afficher le message d'erreur à l'utilisateur
-                    alert(validationMessage);
-                }
-            });
-
-            // Fonction pour convertir la durée en format HH:MM en minutes totales
-            function convertDureeToMinutes(duree) {
-                // Séparer les heures et les minutes en utilisant le séparateur ":"
-                const [hours, minutes] = duree.split(':');
-
-                // Convertir les heures et les minutes en nombres entiers
-                const totalMinutes = (parseInt(hours, 10) * 60) + parseInt(minutes, 10);
-
-                return totalMinutes;
+            if(service === ''){
+                errorMessage += 'Le champ Service est requis.\n';
+            }
+            if(categorie === ''){
+                errorMessage += 'Le champ Categorie est requis.\n';
+            }
+            if(fonction === ''){
+                errorMessage += 'Le champ Fonction est requis.\n';
+            }
+            if(priorite === ''){
+                errorMessage += 'Le champ Priorité est requis.\n';
+            }
+            if(impact === ''){
+                errorMessage += 'Le champ Impact est requis.\n';
             }
 
-            function validateForm() {
-                // Vérifier ici chaque champ du formulaire
-                const client = document.getElementById('client').value.trim();
-                const contact = document.getElementById('contact').value.trim();
-                const technicien = document.getElementById('technicien').value.trim();
-                const cri = document.getElementById('cri');
-                const forfait = document.getElementById('forfait').value.trim();
-                const time = document.getElementById('time').value.trim();
-                const statut = document.getElementById('statut').value.trim();
-                const service = document.getElementById('service').value.trim();
-                const categorie = document.getElementById('categorie').value.trim();
-                const fonction = document.getElementById('fonction').value.trim();
-                const priorite = document.getElementById('priorite').value.trim();
-                const impact = document.getElementById('impact').value.trim();
+            return errorMessage; // Retourner le message d'erreur
+        }
+    });
 
-                // Initialiser un message d'erreur vide
-                let errorMessage = '';
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('ticket-container');
+        container.scrollTop = container.scrollHeight;
+    });
 
-                // Exemple de validation simple (vérifie que les champs ne sont pas vides)
-                if (client === ''){
-                    errorMessage += 'Le champ Client est requis.\n';
-                }
-                if(contact === ''){
-                    errorMessage += 'Le champ Contact est requis.\n';
-                }
-
-
-                if(cri.checked){
-                    if(convertDureeToMinutes(time) < 1){
-                        errorMessage += 'Une durée minimale est requise.\n';
-                    }
-                    if(forfait == ''){
-                        errorMessage += 'Le choix du forfait est requis.\n';
-                    }
-                }
-
-                if(statut == 4){
-                    if(convertDureeToMinutes(time) < 1){
-                        errorMessage += 'Une durée minimale est requise.\n';
-                    }
-                    if(technicien === ''){
-                        errorMessage += 'Le champ Technicien est requis pour clôturer.\n';
-                    }
-                }
-                if(statut === ''){
-                    errorMessage += 'Le champ Statut est requis.\n';
-                }
-                if(service === ''){
-                    errorMessage += 'Le champ Service est requis.\n';
-                }
-                if(categorie === ''){
-                    errorMessage += 'Le champ Categorie est requis.\n';
-                }
-                if(fonction === ''){
-                    errorMessage += 'Le champ Fonction est requis.\n';
-                }
-                if(priorite === ''){
-                    errorMessage += 'Le champ Priorité est requis.\n';
-                }
-                if(impact === ''){
-                    errorMessage += 'Le champ Impact est requis.\n';
-                }
-
-                return errorMessage; // Retourner le message d'erreur
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const container = document.getElementById('ticket-container');
-            container.scrollTop = container.scrollHeight;
-        });
-
-    </script>
+</script>
 
 @endsection
