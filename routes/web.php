@@ -184,3 +184,5 @@ Route::post('/ticket/message/{id}/update', [TicketController::class, 'updateMess
 
 //liste des anciens tickets
 Route::get('/ticket/client/{clientId}/previous', [TicketController::class, 'getPreviousTickets']);
+Route::get('/ticket/client/{clientId}/forfaits', [TicketController::class, 'getForfaits']);
+Route::get('/ticket/client/{clientId}/tickets-forfaits', [TicketController::class, 'getTicketsForfaits']);

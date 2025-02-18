@@ -776,4 +776,58 @@ class TicketController extends Controller
 
         return response()->json(['tickets' => $tickets]);
     }
+
+    public function getForfaits($clientId)
+    {
+        $forfaits = Forfait::with('type')
+            ->where('id_client', $clientId)
+            ->where('masquer', null)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($forfait) {
+                // Convertir le crédit initial de minutes en format "Xh Ym"
+                $creditInitialMinutes = $forfait->credit;
+                $hours = intdiv($creditInitialMinutes, 60);
+                $minutes = $creditInitialMinutes % 60;
+                $forfait->credit_initial = sprintf('%dh %02dm', $hours, $minutes);
+                
+                // Crédit restant (utilise la méthode existante)
+                $forfait->credit_restant = $forfait->restantEnHeures();
+                
+                // Formatage des dates
+                $forfait->formatted_created_at = Carbon::parse($forfait->created_at)->format('d/m/Y');
+                $forfait->formatted_valid_to = Carbon::parse($forfait->valid_to)->format('d/m/Y');
+                
+                return $forfait;
+            });
+    
+        return response()->json(['forfaits' => $forfaits]);
+    }
+
+    public function getTicketsForfaits($clientId)
+    {
+        $tickets = Ticket::with(['forfait.type'])
+            ->where('id_client', $clientId)
+            ->where('cloture', 1) // Seulement les tickets clôturés
+            ->whereNotNull('id_forfait')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($ticket) {
+                // Formatage de la durée en HH:mm
+                $ticket->formatted_duree = TimeHelper::formatDuration($ticket->duree);
+                return $ticket;
+            });
+    
+        // Calcul du total des durées utilisées
+        $totalMinutesUsed = $tickets->sum(function ($ticket) {
+            return TimeHelper::convertDureeToMinutes($ticket->duree);
+        });
+    
+        return response()->json([
+            'tickets' => $tickets,
+            'total_used' => TimeHelper::formatDuration(
+                TimeHelper::convertMinutesToDuration($totalMinutesUsed)
+            )
+        ]);
+    }
 }

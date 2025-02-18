@@ -428,47 +428,89 @@
                 <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="abonnements-tab" data-tabs-target="#abonnements" type="button" role="tab" aria-controls="abonnements" aria-selected="false">Abonnements</button>
             </li>
             <li class="mr-2" role="presentation">
-                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="autres-tab" data-tabs-target="#autres" type="button" role="tab" aria-controls="autres" aria-selected="false">Autres (à venir)</button>
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="forfaits-tab" data-tabs-target="#forfaits" type="button" role="tab" aria-controls="forfaits" aria-selected="false">Liste des Forfaits</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="tickets-forfaits-tab" data-tabs-target="#tickets-forfaits" type="button" role="tab" aria-controls="tickets-forfaits" aria-selected="false">Tickets avec Forfait</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="autres-tab" data-tabs-target="#autres" type="button" role="tab" aria-controls="autres" aria-selected="false">Autres (à venir)</button>
             </li>
         </ul>
     </div>
     <!-- Contenu des onglets -->
-<div id="myTabContent">
-    <!-- Onglet Tickets précédents -->
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">N° Ticket</th>
-                        <th scope="col" class="px-6 py-3">Date</th>
-                        <th scope="col" class="px-6 py-3">Titre</th>
-                        <th scope="col" class="px-6 py-3">Statut</th>
-                        <th scope="col" class="px-6 py-3">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="previous-tickets-table">
-                    <!-- Le contenu sera chargé dynamiquement -->
-                </tbody>
-            </table>
+    <div id="myTabContent">
+        <!-- Onglet Tickets précédents -->
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">N° Ticket</th>
+                            <th scope="col" class="px-6 py-3">Date</th>
+                            <th scope="col" class="px-6 py-3">Titre</th>
+                            <th scope="col" class="px-6 py-3">Statut</th>
+                            <th scope="col" class="px-6 py-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previous-tickets-table">
+                        <!-- Le contenu sera chargé dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- Onglet Abonnements -->
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="abonnements" role="tabpanel" aria-labelledby="abonnements-tab">
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">Désignation</th>
-                        <th scope="col" class="px-6 py-3">Date début</th>
-                        <th scope="col" class="px-6 py-3">Date fin</th>
-                        <th scope="col" class="px-6 py-3">N° Série</th>
-                    </tr>
-                </thead>
+        <!-- Onglet Abonnements -->
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="abonnements" role="tabpanel" aria-labelledby="abonnements-tab">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Désignation</th>
+                            <th scope="col" class="px-6 py-3">Date début</th>
+                            <th scope="col" class="px-6 py-3">Date fin</th>
+                            <th scope="col" class="px-6 py-3">N° Série</th>
+                        </tr>
+                    </thead>
                     <tbody id="abonnements-list-table">
                         <!-- Le contenu sera chargé dynamiquement -->
                     </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Onglet Forfaits -->
+        <div class="hidden p-4 rounded-lg bg-gray-50" id="forfaits" role="tabpanel" aria-labelledby="forfaits-tab">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Type</th>
+                            <th scope="col" class="px-6 py-3">Date création</th>
+                            <th scope="col" class="px-6 py-3">Date fin</th>
+                            <th scope="col" class="px-6 py-3">Crédit initial</th>
+                            <th scope="col" class="px-6 py-3">Crédit restant</th>
+                        </tr>
+                    </thead>
+                    <tbody id="forfaits-list-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Onglet Tickets avec Forfait -->
+        <div class="hidden p-4 rounded-lg bg-gray-50" id="tickets-forfaits" role="tabpanel" aria-labelledby="tickets-forfaits-tab">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">N° Ticket</th>
+                            <th scope="col" class="px-6 py-3">Date</th>
+                            <th scope="col" class="px-6 py-3">Titre</th>
+                            <th scope="col" class="px-6 py-3">Temps passé</th>
+                            <th scope="col" class="px-6 py-3">Forfait utilisé</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-forfaits-list-table"></tbody>
                 </table>
             </div>
         </div>
@@ -501,6 +543,8 @@
                                 // Charger les tickets précédents et abonnements
                                 loadPreviousTickets(client.CT_Num);
                                 fetchAndDisplayAbonnements(client.CT_Num);
+                                fetchAndDisplayForfaits(client.CT_Num);
+                                fetchAndDisplayTicketsForfaits(client.CT_Num);
 
                                 dropdown.classList.add('hidden');
                             });
@@ -629,6 +673,8 @@
     let loadPreviousTickets;
     let fetchAndDisplayAbonnements;
     let loadAbonnementsTab;
+    let fetchAndDisplayForfaits;
+    let fetchAndDisplayTicketsForfaits;
 
     // Fonction d'initialisation
     function initializeTabsAndTables() {
@@ -719,12 +765,86 @@
             }
         };
 
+        fetchAndDisplayForfaits = function(clientId) {
+        if (clientId) {
+            axios.get(`/ticket/client/${clientId}/forfaits`)
+                .then(response => {
+                    const forfaits = response.data.forfaits;
+                    const tableBody = document.getElementById('forfaits-list-table');
+                    tableBody.innerHTML = '';
+
+                    forfaits.forEach(forfait => {
+                        const row = document.createElement('tr');
+                        row.classList.add('bg-white', 'border-b', 'hover:bg-gray-50');
+                        
+                        row.innerHTML = `
+                            <td class="px-6 py-4">${forfait.type?.libelle || '-'}</td>
+                            <td class="px-6 py-4">${forfait.formatted_created_at}</td>
+                            <td class="px-6 py-4">${forfait.formatted_valid_to}</td>
+                            <td class="px-6 py-4">${forfait.credit_initial}</td>
+                            <td class="px-6 py-4">${forfait.credit_restant}</td>
+                        `;
+                        
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement des forfaits:', error);
+                });
+        }
+    };
+
+        fetchAndDisplayTicketsForfaits = function(clientId) {
+            if (clientId) {
+                axios.get(`/ticket/client/${clientId}/tickets-forfaits`)
+                    .then(response => {
+                        const tickets = response.data.tickets;
+                        const tableBody = document.getElementById('tickets-forfaits-list-table');
+                        tableBody.innerHTML = '';
+
+                        tickets.forEach(ticket => {
+                            const row = document.createElement('tr');
+                            row.classList.add('bg-white', 'border-b', 'hover:bg-gray-50');
+                            
+                            row.innerHTML = `
+                                <td class="px-6 py-4">${ticket.id_ticket}</td>
+                                <td class="px-6 py-4">${formatDate(ticket.created_at)}</td>
+                                <td class="px-6 py-4">${ticket.titre}</td>
+                                <td class="px-6 py-4">${ticket.formatted_duree}</td>
+                                <td class="px-6 py-4">${ticket.forfait?.type?.libelle || '-'}</td>
+                            `;
+                            
+                            tableBody.appendChild(row);
+                        });
+
+                        // Ajouter une ligne pour le total si nécessaire
+                        if (response.data.total_used) {
+                            const totalRow = document.createElement('tr');
+                            totalRow.classList.add('bg-gray-100', 'font-bold');
+                            
+                            totalRow.innerHTML = `
+                                <td class="px-6 py-4" colspan="3">Total utilisé</td>
+                                <td class="px-6 py-4">${response.data.total_used}</td>
+                                <td class="px-6 py-4"></td>
+                            `;
+                            
+                            tableBody.appendChild(totalRow);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des tickets avec forfait:', error);
+                    });
+            }
+        };
+
         // Initialisation des onglets
         document.addEventListener('DOMContentLoaded', function() {
             const clientId = document.getElementById('client').value;
             if (clientId) {
                 loadPreviousTickets(clientId);
                 fetchAndDisplayAbonnements(clientId);
+                fetchAndDisplayForfaits(clientId);
+                fetchAndDisplayTicketsForfaits(clientId);
             }
         });
     }
