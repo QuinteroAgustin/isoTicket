@@ -742,4 +742,27 @@ class TicketController extends Controller
             return redirect()->back()->with('error', 'Erreur lors de la déclôture du ticket : ' . $e->getMessage());
         }
     }
+
+    public function updateMessage(Request $request, $id)
+    {
+        $ligne = TicketLigne::findOrFail($id);
+        
+        // Conversion des deux valeurs en entiers pour une comparaison cohérente
+        if ((int)$ligne->id_technicien != (int)Technicien::getTechId()) {
+            return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à modifier ce message');
+        }
+    
+        if ($ligne->ticket->cloture == 1) {
+            return redirect()->back()->with('error', 'Le ticket est clôturé');
+        }
+    
+        $request->validate([
+            'message' => 'required|string',
+        ]);
+    
+        $ligne->text = $request->message;
+        $ligne->save();
+    
+        return redirect()->back()->with('success', 'Message mis à jour avec succès');
+    }
 }

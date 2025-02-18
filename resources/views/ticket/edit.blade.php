@@ -174,31 +174,43 @@
                     <!-- Section de discussion -->
                     <div id="ticket-container" class="flex-1 overflow-y-auto p-4">
                         <ul>
-                            @foreach ($ticket->lignes as $ligne)
-                                @if ($ligne->type_user >= 1)
+                        @foreach ($ticket->lignes as $ligne)
+                            @if ($ligne->type_user >= 1)
                                 <div class="flex justify-end mb-4">
                                     <div class="w-full max-w-sm">
+                                        <!-- En-tête du message -->
                                         <div class="flex justify-between mb-2">
-                                            <span class="text-sm font-medium text-gray-900">{{ $ligne->technicien->nom }} {{ $ligne->technicien->prenom }}</span>
+                                            <span class="text-sm font-medium text-gray-900">
+                                                {{ $ligne->technicien->nom }} {{ $ligne->technicien->prenom }}
+                                            </span>
                                             <span class="text-sm font-medium text-gray-900">
                                                 {{ \Carbon\Carbon::parse($ligne->created_at)->format('d/m H:i') }}
                                             </span>
                                             <span class="text-sm font-medium text-gray-900">
-                                                Temp : {{ $ligne->formatted_duree }}
+                                                 Temp : {{ $ligne->formatted_duree }}
                                             </span>
                                         </div>
-                                        @if ($ligne->type_user == 2)
-                                            <div class="p-6 bg-yellow-100 border border-gray-200 rounded-lg shadow">
-                                                <p>{!! $ligne->text !!}</p>
-                                            </div>
-                                        @else
-                                            <div class="p-6 bg-green-100 border border-gray-200 rounded-lg shadow ">
-                                                <p>{!! $ligne->text !!}</p>
-                                            </div>
-                                        @endif
+                                        
+                                        <!-- Corps du message -->
+                                        <div class="p-6 {{ $ligne->type_user == 2 ? 'bg-yellow-100' : 'bg-green-100' }} border border-gray-200 rounded-lg shadow relative">
+                                            <p>{!! $ligne->text !!}</p>
+                                            @if($ligne->id_technicien == \App\Models\Technicien::getTechId() && $ticket->cloture != 1)
+                                                <button 
+                                                    type="button"
+                                                    data-modal-target="edit-message-modal-{{$ligne->id_ligne}}" 
+                                                    data-modal-toggle="edit-message-modal-{{$ligne->id_ligne}}"
+                                                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                                                >
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                                @else
+                            @else
+                                <!-- Message client -->
                                 <div class="mb-4 w-full max-w-sm">
                                     <div class="flex justify-between mb-2">
                                         <span class="text-sm font-medium text-gray-900">{{ $ticket->id_client }}</span>
@@ -206,12 +218,12 @@
                                             {{ \Carbon\Carbon::parse($ligne->created_at)->format('d/m H:i') }}
                                         </span>
                                     </div>
-                                    <div  class="p-6 bg-white border border-gray-200 rounded-lg shadow">
+                                    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow">
                                         <p>{!! $ligne->text !!}</p>
                                     </div>
                                 </div>
-                                @endif
-                            @endforeach
+                            @endif
+                        @endforeach
                         </ul>
                     </div>
                 </div>
@@ -377,6 +389,50 @@
     <!-- Inclure le composant des info abonnements -->
     @include('components.abonnements')
 
+<!-- Modales d'édition (en dehors du formulaire principal) -->
+@foreach ($ticket->lignes as $ligne)
+    @if($ligne->id_technicien == \App\Models\Technicien::getTechId() && $ticket->cloture != 1)
+        <div id="edit-message-modal-{{$ligne->id_ligne}}" 
+             tabindex="-1" 
+             aria-hidden="true" 
+             class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+            <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+                <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+                    <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            Modifier le message
+                        </h3>
+                        <button type="button" 
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" 
+                                data-modal-hide="edit-message-modal-{{$ligne->id_ligne}}">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <form action="{{ route('ticket.message.update', ['id' => $ligne->id_ligne]) }}" method="POST">
+                        @csrf
+                        <textarea name="message" 
+                                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" 
+                                  rows="4">{{ $ligne->text }}</textarea>
+                        <div class="flex items-center mt-4 space-x-4">
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                Mettre à jour
+                            </button>
+                            <button type="button" 
+                                    class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center" 
+                                    data-modal-hide="edit-message-modal-{{$ligne->id_ligne}}">
+                                Annuler
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
+
+
     <script>
         document.getElementById('client').addEventListener('input', function() {
             let search = this.value.trim();
@@ -532,9 +588,6 @@
                     .then(response => {
                         const abonnements = response.data.abonnements;
                         abonnementsTable.innerHTML = ''; // Vider le contenu précédent
-
-                        console.log("Lignes d'abonnement récupérées :", abonnements);
-
                         abonnements.forEach(abonnement => {
                             if (abonnement.lignes && abonnement.lignes.length > 0) {
                                 abonnement.lignes.forEach(ligne => {

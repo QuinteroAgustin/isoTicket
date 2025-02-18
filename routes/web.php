@@ -178,3 +178,6 @@ Route::get('/contact/edit/{id_contact}', [ClientController::class, 'editContact'
 Route::post('/contact/edit/{id_contact}', [ClientController::class, 'editContactPost'])->name('edit.contact.post')->middleware(Authenticate::class);
 Route::get('/contact/create/{id_client}', [ClientController::class, 'createContact'])->name('create.contact')->middleware(Authenticate::class);
 Route::post('/contact/create/{id_client}', [ClientController::class, 'createContactPost'])->name('create.contact.post')->middleware(Authenticate::class);
+
+
+Route::post('/ticket/message/{id}/update', [TicketController::class, 'updateMessage'])->name('ticket.message.update');
