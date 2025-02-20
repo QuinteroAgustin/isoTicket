@@ -740,7 +740,7 @@
                                 <td class="px-6 py-4">${ticket.titre}</td>
                                 <td class="px-6 py-4">${ticket.statut.libelle}</td>
                                 <td class="px-6 py-4">
-                                    <a href="/ticket/${ticket.id_ticket}/edit" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Voir</a>
+                                    <a href="/ticket/${ticket.id_ticket}/edit" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" target="_blank">Voir</a>
                                 </td>
                             `;
                             

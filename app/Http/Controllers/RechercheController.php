@@ -93,6 +93,9 @@ class RechercheController extends Controller
             if ($request->filled('date')) {
                 $query->whereDate('created_at', $request->input('date'));
             }
+            if ($request->filled('date_cloture')) {
+                $query->whereDate('closed_at', $request->input('date_cloture'));
+            }
             // Filtre CRI
             if ($request->filled('cri')) {
                 $query->where('cri', $request->input('cri'));
