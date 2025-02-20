@@ -32,13 +32,27 @@
                 <input type="text" name="client_name" id="client_name" class="form-input mt-1 block w-full" value="{{ request('client_name') }}" autocomplete="off">
                 <div id="dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
             </div>
-
-            <!-- Filtre par nom du contact
+            <!-- Filtre par cri -->
             <div>
-                <label for="contact_name" class="block text-gray-700">Nom du Contact</label>
-                <input type="text" name="contact_name" id="contact_name" class="form-input mt-1 block w-full" value="{{ request('contact_name') }}">
+                <label for="cri" class="block text-gray-700">CRI</label>
+                <select name="cri" id="cri" class="form-select mt-1 block w-full">
+                    <option value="">Tous</option>
+                    <option value="1" {{ request('cri') == '1' ? 'selected' : '' }}>Oui</option>
+                    <option value="0" {{ request('cri') == '0' ? 'selected' : '' }}>Non</option>
+                </select>
             </div>
-            -->
+            <!-- Filtre par risque -->
+            <div>
+                <label for="risque" class="block text-gray-700">Risque</label>
+                <select name="risque" id="risque" class="form-select mt-1 block w-full">
+                    <option value="">Tous</option>
+                    @foreach($risques as $risque)
+                        <option value="{{ $risque->id_risque }}" {{ request('risque') == $risque->id_risque ? 'selected' : '' }}>
+                            {{ $risque->libelle }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
             <!-- Filtre par statut -->
             <div>
                 <label for="statut" class="block text-gray-700">Statut</label>
@@ -137,6 +151,8 @@
                                     <th class="py-3 px-6 text-left">Client</th>
                                     <th class="py-3 px-6 text-center">Technicien</th>
                                     <th class="py-3 px-6 text-center">Date</th>
+                                    <th class="py-3 px-6 text-center">CRI</th>
+                                    <th class="py-3 px-6 text-center">Risque</th>
                                     <th class="py-3 px-6 text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -153,6 +169,31 @@
                                         <td class="py-3 px-6 text-center">NA</td>
                                         @endif
                                         <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m/Y') }}</td>
+                                        <td class="py-3 px-6 text-center">
+                                            @if($ticket->cri)
+                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Oui</span>
+                                            @else
+                                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Non</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3 px-6 text-center">
+                                            @php
+                                                $riskIcon = '';
+                                                if($ticket->impact && $ticket->priorite) {
+                                                    foreach ($risques as $risque) {
+                                                        if ($ticket->impact->id_impact == $risque->id_impact && $ticket->priorite->id_priorite == $risque->id_priorite) {
+                                                            $riskIcon = $risque->icon;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            @endphp
+                                            @if($riskIcon)
+                                                <svg class="w-12 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">{!! $riskIcon !!}</svg>
+                                            @else
+                                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">NA</span>
+                                            @endif
+                                        </td>
                                         <td class="py-3 px-6 text-center">
                                             <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                                 Éditer

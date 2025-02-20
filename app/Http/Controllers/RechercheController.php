@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categorie;
-use App\Models\Fonction;
-use App\Models\Service;
+use App\Models\Risque;
 use App\Models\Status;
-use App\Models\Technicien;
 use App\Models\Ticket;
+use App\Models\Service;
+use App\Models\Fonction;
+use App\Models\Categorie;
+use App\Models\Technicien;
 use Illuminate\Http\Request;
 
 class RechercheController extends Controller
@@ -15,15 +16,33 @@ class RechercheController extends Controller
     public function home(Request $request)
 {
     $statuts = Status::all();
-    $techniciens = Technicien::all();
-    $services = Service::all();
-    $categories = Categorie::all();
-    $fonctions = Fonction::all();
+    $techniciens = Technicien::where(function($query) {
+        $query->whereNull('masquer')
+              ->orWhere('masquer', 0);
+    })->orderBy('nom')->get();
+    
+    $services = Service::where(function($query) {
+        $query->whereNull('masquer')
+              ->orWhere('masquer', 0);
+    })->orderBy('libelle')->get();
+    
+    $categories = Categorie::where(function($query) {
+        $query->whereNull('masquer')
+              ->orWhere('masquer', 0);
+    })->orderBy('libelle')->get();
+    
+    $fonctions = Fonction::where(function($query) {
+        $query->whereNull('masquer')
+              ->orWhere('masquer', 0);
+    })->orderBy('libelle')->get();
+    
+    $risques = Risque::orderBy('libelle')->get();
 
-    $tickets = collect(); // Initialise une collection vide
+    $tickets = collect();
 
     // Vérifier si des filtres sont appliqués
-    if ($request->hasAny(['ticket_id', 'ticket_titre', 'client_name', 'contact_name', 'statut', 'technicien', 'service', 'categorie', 'fonction', 'date', 'message'])) {
+    if ($request->hasAny(['ticket_id', 'ticket_titre', 'client_name', 'contact_name', 'statut', 
+        'technicien', 'service', 'categorie', 'fonction', 'date', 'message', 'cri', 'risque'])) {
         // Requête de base pour les tickets
         $query = Ticket::query();
 
@@ -39,13 +58,15 @@ class RechercheController extends Controller
         if ($request->filled('client_name')) {
             $query->where('id_client', 'like', '%' .$request->input('client_name'). '%');
         }
-        /*En attente de trouver une autre solution
-        if ($request->filled('contact_name')) {
-            $query->whereHas('lignes.contactCbmarq', function ($q) use ($request) {
-                $q->where('Nom', 'like', '%' . $request->input('contact_name') . '%');
+        // Filtre Risque
+        if ($request->filled('risque')) {
+            $risque = $request->input('risque');
+            $query->whereHas('impact', function($q) use ($risque) {
+                $q->whereHas('risques', function($q) use ($risque) {
+                    $q->where('id_risque', $risque);
+                });
             });
         }
-        */
         if ($request->filled('statut')) {
             $query->where('id_statut', $request->input('statut'));
         }
@@ -64,6 +85,10 @@ class RechercheController extends Controller
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->input('date'));
         }
+        // Filtre CRI
+        if ($request->filled('cri')) {
+            $query->where('cri', $request->input('cri'));
+        }
 
         // Nouveau filtre par message dans ticket_lignes
         if ($request->filled('message')) {
@@ -72,16 +97,13 @@ class RechercheController extends Controller
             });
         }
 
-        // Tri des tickets par ID décroissant
-        $query->orderBy('id_ticket', 'desc');
-
-        // Récupérer les tickets filtrés
-        $tickets = $query->get();
+        $tickets = $query->orderBy('id_ticket', 'desc')->get();
 
 
     }
 
-    return view('recherche.home', compact('statuts', 'techniciens', 'services', 'categories', 'fonctions', 'tickets'));
+    return view('recherche.home', compact('statuts', 'techniciens', 'services', 
+        'categories', 'fonctions', 'tickets', 'risques'));
 
     }
 }
