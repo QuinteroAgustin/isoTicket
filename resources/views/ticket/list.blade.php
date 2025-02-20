@@ -20,6 +20,7 @@
                     <table class="min-w-full table-auto">
                         <thead>
                             <tr class="bg-gray-200 text-black uppercase text-sm leading-normal">
+                                <th class="py-3 px-6 text-center">Actions</th>
                                 <th class="py-3 px-6 text-center">Statut</th>
                                 <th class="py-3 px-6 text-left">ID</th>
                                 <th class="py-3 px-6 text-left">Titre</th>
@@ -31,11 +32,14 @@
                                 <th class="py-3 px-6 text-center">Fonction</th>
                                 <th class="py-3 px-6 text-center">Service</th>
                                 <th class="py-3 px-6 text-center">Date</th>
-                                <th class="py-3 px-6 text-center">CRI</th>
-                                <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                             <form action="{{ route('ticket') }}" method="GET">
                             <tr>
+                                <td>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Rechercher
+                                    </button>
+                                </td>
                                 <td>
                                     <div>
                                         <select name="statut" id="statut" class="form-select mt-1 block w-full">
@@ -67,12 +71,12 @@
                                     </div>
                                 </td>
                                 <td>
-                                <div>
-                                    <input type="text" name="contact_name_display" id="contact_name" class="form-input mt-1 block w-full" autocomplete="off">
-                                    <input type="hidden" name="contact_id" id="contact_id">
-                                    <div id="contact-dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
-                                </div>
-                            </td>
+                                    <div>
+                                        <input type="text" name="contact_name_display" id="contact_name" class="form-input mt-1 block w-full" autocomplete="off">
+                                        <input type="hidden" name="contact_id" id="contact_id">
+                                        <div id="contact-dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
+                                    </div>
+                                </td>
                                 <td>
                                     <div>
                                     <select name="technicien" id="technicien" class="form-select mt-1 block w-full">
@@ -138,20 +142,6 @@
                                         <input type="date" name="date" id="date" class="form-input mt-1 block w-full" value="{{ request('date') }}">
                                     </div>
                                 </td>
-                                <td>
-                                    <div>
-                                        <select name="cri" id="cri" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            <option value="1" {{ request('cri') == '1' ? 'selected' : '' }}>Oui</option>
-                                            <option value="0" {{ request('cri') == '0' ? 'selected' : '' }}>Non</option>
-                                        </select>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                        Rechercher
-                                    </button>
-                                </td>
                             </tr>
                         </form>
                         </thead>
@@ -179,6 +169,11 @@
                                     $truncatedTitre = Str::limit($ticket->titre, 25, '...');
                                 @endphp
                                 <tr class="border-b border-gray-200 {{ $bgColor }} even:bg-gray-100 hover:bg-gray-100">
+                                    <td class="py-3 px-6 text-center">
+                                        <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                            Éditer
+                                        </a>
+                                    </td>
                                     <td class="py-3 px-6 text-center">{{ $ticket->statut->libelle }}</td>
                                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
                                     <td class="py-3 px-6 text-left">
@@ -211,18 +206,6 @@
                                     <td class="py-3 px-6 text-center">{{ $ticket->fonction->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ $ticket->service->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m H:i') }}</td>
-                                    <td class="py-3 px-6 text-center">
-                                        @if($ticket->cri)
-                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Oui</span>
-                                        @else
-                                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Non</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3 px-6 text-center">
-                                        <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                            Éditer
-                                        </a>
-                                    </td>
                                 </tr>
                             @endforeach
 

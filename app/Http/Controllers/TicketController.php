@@ -135,9 +135,6 @@ class TicketController extends Controller
                 });
             });
         }
-        if ($request->filled('cri')) {
-            $query->where('cri', $request->input('cri'));
-        }
 
         // Tri des tickets par ID décroissant
         $query->orderBy('id_ticket', 'desc');
