@@ -10,6 +10,7 @@ use App\Http\Controllers\ParamsController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\RechercheController;
 use App\Http\Middleware\RememberMeMiddleware;
+use App\Http\Controllers\StatistiqueController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Controllers\PasswordResetController;
 
@@ -186,3 +187,13 @@ Route::post('/ticket/message/{id}/update', [TicketController::class, 'updateMess
 Route::get('/ticket/client/{clientId}/previous', [TicketController::class, 'getPreviousTickets']);
 Route::get('/ticket/client/{clientId}/forfaits', [TicketController::class, 'getForfaits']);
 Route::get('/ticket/client/{clientId}/tickets-forfaits', [TicketController::class, 'getTicketsForfaits']);
+
+//statistiques
+Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
+    Route::get('/statistiques', [StatistiqueController::class, 'index'])->name('statistiques.index');
+    Route::post('/statistiques/export', [StatistiqueController::class, 'exportTechnicienStats'])->name('statistiques.export');
+});
+
+Route::post('/statistiques/top-techniciens', [StatistiqueController::class, 'exportTopTechniciensPDF'])
+    ->name('statistiques.top-techniciens')
+    ->middleware(['auth', 'role:1']);
