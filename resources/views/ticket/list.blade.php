@@ -24,6 +24,7 @@
                                 <th class="py-3 px-6 text-left">ID</th>
                                 <th class="py-3 px-6 text-left">Titre</th>
                                 <th class="py-3 px-6 text-left">Client</th>
+                                <th class="py-3 px-6 text-left">Contact</th>
                                 <th class="py-3 px-6 text-left">Technicien</th>
                                 <th class="py-3 px-6 text-center">Risque</th>
                                 <th class="py-3 px-6 text-center">Categorie</th>
@@ -65,6 +66,13 @@
                                         <div id="dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
                                     </div>
                                 </td>
+                                <td>
+                                <div>
+                                    <input type="text" name="contact_name_display" id="contact_name" class="form-input mt-1 block w-full" autocomplete="off">
+                                    <input type="hidden" name="contact_id" id="contact_id">
+                                    <div id="contact-dropdown" class="absolute bg-white border border-gray-300 mt-1 rounded shadow-lg hidden dropdown-scroll"></div>
+                                </div>
+                            </td>
                                 <td>
                                     <div>
                                     <select name="technicien" id="technicien" class="form-select mt-1 block w-full">
@@ -179,6 +187,14 @@
                                         </span>
                                     </td>
                                     <td class="py-3 px-6 text-left">@if(isset($ticket->client->CT_Num)) {{$ticket->client->CT_Num}} @else NA @endif</td>
+                                    <td class="py-3 px-6 text-left">
+                                        @if($ticket->premiereTicketLigne && $ticket->premiereTicketLigne->contactCbmarq)
+                                            {{ $ticket->premiereTicketLigne->contactCbmarq->CT_Nom }} 
+                                            {{ $ticket->premiereTicketLigne->contactCbmarq->CT_Prenom }}
+                                        @else
+                                            NA
+                                        @endif
+                                    </td>
                                     @if($ticket->technicien != null)
                                     <td class="py-3 px-6 text-center">{{ $ticket->technicien->nom }} {{ $ticket->technicien->prenom }}</td>
                                     @else
@@ -258,6 +274,50 @@
         let dropdown = document.getElementById('dropdown');
         if (!dropdown.contains(event.target) && event.target.id !== 'client_name') {
             dropdown.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('contact_name').addEventListener('input', function() {
+        let search = this.value.trim();
+        let contactInput = this;
+        let contactId = document.getElementById('contact_id');
+        
+        if (search.length > 0) {
+            axios.get('{{ route("search.contacts") }}', { params: { search: search } })
+                .then(response => {
+                    let contacts = response.data;
+                    let dropdown = document.getElementById('contact-dropdown');
+                    dropdown.innerHTML = '';
+                    if (contacts.length > 0) {
+                        contacts.forEach(contact => {
+                            let div = document.createElement('div');
+                            div.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
+                            div.textContent = `${contact.CT_Nom} ${contact.CT_Prenom}`;
+                            div.addEventListener('click', function() {
+                                contactInput.value = `${contact.CT_Nom} ${contact.CT_Prenom}`;
+                                contactId.value = contact.cbMarq;
+                                setTimeout(function() {
+                                    dropdown.classList.add('hidden');
+                                }, 50);
+                            });
+                            dropdown.appendChild(div);
+                        });
+                        dropdown.classList.remove('hidden');
+                    } else {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+        } else {
+            document.getElementById('contact-dropdown').classList.add('hidden');
+            contactId.value = '';
+        }
+    });
+
+    // Masquer le dropdown des contacts
+    document.addEventListener('click', function(event) {
+        let dropdownContact = document.getElementById('contact-dropdown');
+        if (dropdownContact && !dropdownContact.contains(event.target) && event.target.id !== 'contact_name') {
+            dropdownContact.classList.add('hidden');
         }
     });
 </script>

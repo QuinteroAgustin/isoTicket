@@ -94,6 +94,14 @@ class TicketController extends Controller
             $query->where('id_ticket', 'like', $request->input('ticket_id'). '%');
         }
 
+            // Ajouter le filtre par contact
+        if ($request->filled('contact_id')) {
+            $cbMarq = $request->input('contact_id');
+            $query->whereHas('premiereTicketLigne', function($q) use ($cbMarq) {
+                $q->where('id_contact', $cbMarq);
+            });
+        }
+
         if ($request->filled('ticket_titre')) {
             $query->where('titre', 'like', '%' .$request->input('ticket_titre'). '%');
         }
@@ -178,6 +186,13 @@ class TicketController extends Controller
         // Appliquer les filtres si présents
         if ($request->filled('ticket_id')) {
             $query->where('id_ticket', 'like', $request->input('ticket_id'). '%');
+        }
+        
+        if ($request->filled('contact_id')) {
+            $cbMarq = $request->input('contact_id');
+            $query->whereHas('premiereTicketLigne', function($q) use ($cbMarq) {
+                $q->where('id_contact', $cbMarq);
+            });
         }
 
         if ($request->filled('ticket_titre')) {
