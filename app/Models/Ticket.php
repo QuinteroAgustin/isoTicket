@@ -62,4 +62,10 @@ class Ticket extends Model
         return $this->hasMany(TicketLigne::class, 'id_ticket', 'id_ticket');
     }
 
+    public function premiereTicketLigne()
+    {
+        return $this->hasOne(TicketLigne::class, 'id_ticket', 'id_ticket')
+                    ->orderBy('id_ligne', 'asc');
+    }
+
 }

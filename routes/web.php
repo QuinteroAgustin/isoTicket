@@ -201,3 +201,7 @@ Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
     Route::post('/statistiques/export/clients', [StatistiqueController::class, 'exportClientsStats'])
         ->name('statistiques.export.clients');
 });
+
+Route::get('/search/contacts', [RechercheController::class, 'searchContacts'])
+    ->name('search.contacts')
+    ->middleware(Authenticate::class);
