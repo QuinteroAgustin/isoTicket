@@ -194,6 +194,10 @@ Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
     Route::post('/statistiques/export', [StatistiqueController::class, 'exportTechnicienStats'])->name('statistiques.export');
 });
 
-Route::post('/statistiques/top-techniciens', [StatistiqueController::class, 'exportTopTechniciensPDF'])
-    ->name('statistiques.top-techniciens')
-    ->middleware(['auth', 'role:1']);
+
+Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
+    Route::post('/statistiques/export/techniciens', [StatistiqueController::class, 'exportTechnicienStats'])
+        ->name('statistiques.export.techniciens');
+    Route::post('/statistiques/export/clients', [StatistiqueController::class, 'exportClientsStats'])
+        ->name('statistiques.export.clients');
+});
