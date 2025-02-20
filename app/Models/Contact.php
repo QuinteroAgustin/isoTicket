@@ -24,6 +24,6 @@ class Contact extends Model
 
     public function client()
     {
-        return $this->hasOne(Client::class, 'CT_Num');
+        return $this->belongsTo(Client::class, 'CT_Num', 'CT_Num');
     }
 }
