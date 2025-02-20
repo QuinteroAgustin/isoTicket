@@ -44,7 +44,7 @@ class Ticket extends Model
 
     public function impact()
     {
-        return $this->hasOne(Impact::class, 'id_impact', 'id_impact');
+        return $this->belongsTo(Impact::class, 'id_impact');
     }
 
     public function priorite()

@@ -15,6 +15,6 @@ class Impact extends Model
 
     public function risques()
     {
-        return $this->belongsTo(Risque::class, 'id_risque');
+        return $this->hasMany(Risque::class, 'id_impact');
     }
 }

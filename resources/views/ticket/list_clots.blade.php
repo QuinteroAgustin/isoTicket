@@ -29,6 +29,7 @@
                                 <th class="py-3 px-6 text-center">Service</th>
                                 <th class="py-3 px-6 text-center">Date</th>
                                 <th class="py-3 px-6 text-center">Date Cloture</th>
+                                <th class="py-3 px-6 text-center">CRI</th>
                                 <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                             <form action="{{ route('ticket.clots') }}" method="GET">
@@ -66,13 +67,11 @@
                                     <div>
                                         <select name="risque" id="risque" class="form-select mt-1 block w-full">
                                             <option value="">Tous</option>
-                                            <!--
-                                                @foreach($risques as $risque)
+                                            @foreach($risques as $risque)
                                                 <option value="{{ $risque->id_risque }}" {{ request('risque') == $risque->id_risque ? 'selected' : '' }}>
                                                     {{ $risque->libelle }}
                                                 </option>
-                                                @endforeach
-                                            -->
+                                            @endforeach
                                         </select>
                                     </div>
                                 </td>
@@ -120,6 +119,15 @@
                                 <td>
                                     <div>
                                         <input type="date" name="date_clot" id="date" class="form-input mt-1 block w-full" value="{{ request('date_clot') }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="cri" id="cri" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            <option value="1" {{ request('cri') == '1' ? 'selected' : '' }}>Oui</option>
+                                            <option value="0" {{ request('cri') == '0' ? 'selected' : '' }}>Non</option>
+                                        </select>
                                     </div>
                                 </td>
                                 <td>
@@ -177,7 +185,13 @@
                                     <td class="py-3 px-6 text-center">{{ $ticket->service->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m H:i') }}</td>
                                     <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->closed_at)->format('d/m H:i') }}</td>
-
+                                    <td class="py-3 px-6 text-center">
+                                        @if($ticket->cri)
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Oui</span>
+                                        @else
+                                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Non</span>
+                                        @endif
+                                    </td>
                                     <td class="py-3 px-6 text-center">
                                         <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Éditer

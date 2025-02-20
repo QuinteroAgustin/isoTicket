@@ -57,11 +57,32 @@ class TicketController extends Controller
     public function ticket(Request $request)
     {
         $statuts = Status::all();
-        $techniciens = Technicien::all();
-        $services = Service::all();
-        $categories = Categorie::all();
-        $fonctions = Fonction::all();
-        $risques = Risque::all();
+        $techniciens = Technicien::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('nom')
+        ->orderBy('prenom')
+        ->get();
+        $services = Service::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('libelle')
+        ->get();
+        $categories = Categorie::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('libelle')
+        ->get();
+        $fonctions = Fonction::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('libelle')
+        ->get();
+        $risques = Risque::orderBy('libelle')->get();
 
         $tickets = collect();
 
@@ -98,6 +119,17 @@ class TicketController extends Controller
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->input('date'));
         }
+        if ($request->filled('risque')) {
+            $risque = $request->input('risque');
+            $query->whereHas('impact', function($q) use ($risque) {
+                $q->whereHas('risques', function($q) use ($risque) {
+                    $q->where('id_risque', $risque);
+                });
+            });
+        }
+        if ($request->filled('cri')) {
+            $query->where('cri', $request->input('cri'));
+        }
 
         // Tri des tickets par ID décroissant
         $query->orderBy('id_ticket', 'desc');
@@ -111,11 +143,32 @@ class TicketController extends Controller
     public function ticket_clots(Request $request)
     {
         $statuts = Status::all();
-        $techniciens = Technicien::all();
-        $services = Service::all();
-        $categories = Categorie::all();
-        $fonctions = Fonction::all();
-        $risques = Risque::all();
+        $techniciens = Technicien::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('nom')
+        ->orderBy('prenom')
+        ->get();
+        $services = Service::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('libelle')
+        ->get();
+        $categories = Categorie::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('libelle')
+        ->get();
+        $fonctions = Fonction::where(function($query) {
+            $query->whereNull('masquer')
+                  ->orWhere('masquer', 0);
+        })
+        ->orderBy('libelle')
+        ->get();
+        $risques = Risque::orderBy('libelle')->get();
 
         $tickets = collect();
 
@@ -154,6 +207,17 @@ class TicketController extends Controller
         }
         if ($request->filled('date_clot')) {
             $query->whereDate('closed_at', $request->input('date_clot'));
+        }
+        if ($request->filled('risque')) {
+            $risque = $request->input('risque');
+            $query->whereHas('impact', function($q) use ($risque) {
+                $q->whereHas('risques', function($q) use ($risque) {
+                    $q->where('id_risque', $risque);
+                });
+            });
+        }
+        if ($request->filled('cri')) {
+            $query->where('cri', $request->input('cri'));
         }
 
         // Nouveau filtre par message dans ticket_lignes

@@ -30,6 +30,7 @@
                                 <th class="py-3 px-6 text-center">Fonction</th>
                                 <th class="py-3 px-6 text-center">Service</th>
                                 <th class="py-3 px-6 text-center">Date</th>
+                                <th class="py-3 px-6 text-center">CRI</th>
                                 <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                             <form action="{{ route('ticket') }}" method="GET">
@@ -66,69 +67,76 @@
                                 </td>
                                 <td>
                                     <div>
-                                        <select name="technicien" id="technicien" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            @foreach($techniciens as $technicien)
-                                                <option value="{{ $technicien->id_technicien }}" {{ request('technicien') == $technicien->id_technicien ? 'selected' : '' }}>
-                                                    {{ $technicien->nom }} {{ $technicien->prenom }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <select name="technicien" id="technicien" class="form-select mt-1 block w-full">
+                                        <option value="">Tous</option>
+                                        @foreach($techniciens as $technicien)
+                                            <option value="{{ $technicien->id_technicien }}" {{ request('technicien') == $technicien->id_technicien ? 'selected' : '' }}>
+                                                {{ $technicien->nom }} {{ $technicien->prenom }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <select name="risque" id="risque" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            <!--
-                                            @foreach($risques as $risque)
-                                                <option value="{{ $risque->id_risque }}" {{ request('risque') == $risque->id_risque ? 'selected' : '' }}>
-                                                    {{ $risque->libelle }}
-                                                </option>
-                                            @endforeach
-                                            -->
-                                        </select>
+                                    <select name="risque" id="risque" class="form-select mt-1 block w-full">
+                                        <option value="">Tous</option>
+                                        @foreach($risques as $risque)
+                                            <option value="{{ $risque->id_risque }}" {{ request('risque') == $risque->id_risque ? 'selected' : '' }}>
+                                                {{ $risque->libelle }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <select name="categorie" id="categorie" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            @foreach($categories as $categorie)
-                                                <option value="{{ $categorie->id_categorie }}" {{ request('categorie') == $categorie->id_categorie ? 'selected' : '' }}>
-                                                    {{ $categorie->libelle }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <select name="categorie" id="categorie" class="form-select mt-1 block w-full">
+                                        <option value="">Tous</option>
+                                        @foreach($categories as $categorie)
+                                            <option value="{{ $categorie->id_categorie }}" {{ request('categorie') == $categorie->id_categorie ? 'selected' : '' }}>
+                                                {{ $categorie->libelle }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <select name="fonction" id="fonction" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            @foreach($fonctions as $fonction)
-                                                <option value="{{ $fonction->id_fonction }}" {{ request('fonction') == $fonction->id_fonction ? 'selected' : '' }}>
-                                                    {{ $fonction->libelle }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <select name="fonction" id="fonction" class="form-select mt-1 block w-full">
+                                        <option value="">Tous</option>
+                                        @foreach($fonctions as $fonction)
+                                            <option value="{{ $fonction->id_fonction }}" {{ request('fonction') == $fonction->id_fonction ? 'selected' : '' }}>
+                                                {{ $fonction->libelle }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <select name="service" id="service" class="form-select mt-1 block w-full">
-                                            <option value="">Tous</option>
-                                            @foreach($services as $service)
-                                                <option value="{{ $service->id_service }}" {{ request('service') == $service->id_service ? 'selected' : '' }}>
-                                                    {{ $service->libelle }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <select name="service" id="service" class="form-select mt-1 block w-full">
+                                        <option value="">Tous</option>
+                                        @foreach($services as $service)
+                                            <option value="{{ $service->id_service }}" {{ request('service') == $service->id_service ? 'selected' : '' }}>
+                                                {{ $service->libelle }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     </div>
                                 </td>
                                 <td>
                                     <div>
                                         <input type="date" name="date" id="date" class="form-input mt-1 block w-full" value="{{ request('date') }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select name="cri" id="cri" class="form-select mt-1 block w-full">
+                                            <option value="">Tous</option>
+                                            <option value="1" {{ request('cri') == '1' ? 'selected' : '' }}>Oui</option>
+                                            <option value="0" {{ request('cri') == '0' ? 'selected' : '' }}>Non</option>
+                                        </select>
                                     </div>
                                 </td>
                                 <td>
@@ -187,7 +195,13 @@
                                     <td class="py-3 px-6 text-center">{{ $ticket->fonction->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ $ticket->service->libelle }}</td>
                                     <td class="py-3 px-6 text-center">{{ \Carbon\Carbon::parse($ticket->created_at)->format('d/m H:i') }}</td>
-
+                                    <td class="py-3 px-6 text-center">
+                                        @if($ticket->cri)
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Oui</span>
+                                        @else
+                                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Non</span>
+                                        @endif
+                                    </td>
                                     <td class="py-3 px-6 text-center">
                                         <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Éditer
