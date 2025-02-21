@@ -19,6 +19,7 @@
                     <table class="min-w-full table-auto">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <th class="py-3 px-6 text-center">Actions</th>
                                 <th class="py-3 px-6 text-left">ID</th>
                                 <th class="py-3 px-6 text-left">Titre</th>
                                 <th class="py-3 px-6 text-left">Client</th>
@@ -31,11 +32,14 @@
                                 <th class="py-3 px-6 text-center">Date</th>
                                 <th class="py-3 px-6 text-center">Date Cloture</th>
                                 <th class="py-3 px-6 text-center">CRI</th>
-                                <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                             <form action="{{ route('ticket.clots') }}" method="GET">
                             <tr>
-                                
+                                <td>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Rechercher
+                                    </button>
+                                </td>
                                 <td>
                                     <div>
                                         <input type="text" name="ticket_id" id="ticket_id" class="form-input mt-1 block w-full" value="{{ request('ticket_id') }}">
@@ -138,11 +142,7 @@
                                         </select>
                                     </div>
                                 </td>
-                                <td>
-                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                        Rechercher
-                                    </button>
-                                </td>
+                                
                             </tr>
                         </form>
                         </thead>
@@ -169,6 +169,11 @@
                                     $truncatedTitre = Str::limit($ticket->titre, 25, '...');
                                 @endphp
                                 <tr class="border-b border-gray-200 even:bg-gray-100 hover:bg-gray-100">
+                                    <td class="py-3 px-6 text-center">
+                                        <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                            Éditer
+                                        </a>
+                                    </td>
                                     <td class="py-3 px-6 text-left whitespace-nowrap">{{ $ticket->id_ticket }}</td>
                                     <td class="py-3 px-6 text-left">
                                         <span title="{{ $ticket->titre }}">
@@ -207,11 +212,6 @@
                                         @else
                                             <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Non</span>
                                         @endif
-                                    </td>
-                                    <td class="py-3 px-6 text-center">
-                                        <a href="{{ route('ticket.edit', ['id' => $ticket->id_ticket]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                            Éditer
-                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
