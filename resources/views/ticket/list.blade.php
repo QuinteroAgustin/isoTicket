@@ -197,7 +197,9 @@
                                     @endif
                                     <td class="py-3 px-6 text-center">
                                         @if($riskIcon)
-                                            <svg class="w-12 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">{!! $riskIcon !!}</svg>
+                                        <svg class="w-6 h-6 mx-auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            {!! $riskIcon !!}
+                                        </svg>
                                         @else
                                             NA
                                         @endif

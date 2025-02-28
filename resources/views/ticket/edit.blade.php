@@ -351,7 +351,7 @@
                     </select>
                 </div>
 
-                <!-- impact -->
+                <!-- impact 
                 <div class="max-w-sm mx-auto">
                     <label for="impact" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Impact</label>
                     <select id="impact" name="impact" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" {{ $disabled }}>
@@ -360,7 +360,7 @@
                         <option value="{{ $impact->id_impact }}" {{ ($ticket->id_impact==$impact->id_impact)?'selected':'' }}>{{ $impact->libelle }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div>-->
             </div>
             
         </div>
@@ -1076,7 +1076,7 @@
             const categorie = document.getElementById('categorie').value.trim();
             const fonction = document.getElementById('fonction').value.trim();
             const priorite = document.getElementById('priorite').value.trim();
-            const impact = document.getElementById('impact').value.trim();
+            /*const impact = document.getElementById('impact').value.trim();*/
 
             // Initialiser un message d'erreur vide
             let errorMessage = '';
@@ -1122,9 +1122,9 @@
             if(priorite === ''){
                 errorMessage += 'Le champ Priorité est requis.\n';
             }
-            if(impact === ''){
+            /*if(impact === ''){
                 errorMessage += 'Le champ Impact est requis.\n';
-            }
+            }*/
 
             return errorMessage; // Retourner le message d'erreur
         }

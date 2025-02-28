@@ -279,7 +279,7 @@ class TicketController extends Controller
                 'categorie' => 'required|exists:Categories,id_categorie',
                 'statut' => 'required|exists:Status,id_statut',
                 'priorite' => 'required|exists:priorite,id_priorite',
-                'impact' => 'required|exists:impact,id_impact',
+                'impact' => 'nullable|exists:impact,id_impact',
             ]);
             // Créez un nouvel objet Forfait avec les données validées
             $ticket = new Ticket();
@@ -300,7 +300,7 @@ class TicketController extends Controller
             $ticket->id_categorie = $request->categorie;
             $ticket->id_fonction = $request->fonction;
             $ticket->id_statut = $request->statut;
-            $ticket->id_impact = $request->impact;
+            $ticket->id_impact = $request->impact ? $request->impact : 1;
             $ticket->id_priorite = $request->priorite;
             $ticket->save();
 
@@ -500,7 +500,7 @@ class TicketController extends Controller
                 'categorie' => 'required|exists:Categories,id_categorie',
                 'statut' => 'required|exists:Status,id_statut',
                 'priorite' => 'required|exists:priorite,id_priorite',
-                'impact' => 'required|exists:impact,id_impact',
+                'impact' => 'nullable|exists:impact,id_impact',
             ]);
             $ticket = Ticket::findOrFail($request->id);
             if ($ticket->exists) {
@@ -530,7 +530,7 @@ class TicketController extends Controller
                 $ticket->id_categorie = $request->categorie;
                 $ticket->id_fonction = $request->fonction;
                 $ticket->id_statut = $request->statut;
-                $ticket->id_impact = $request->impact;
+                $ticket->id_impact = $request->impact ? $request->impact : 1;
                 $ticket->id_priorite = $request->priorite;
                 $ticket->save();
             }
