@@ -188,13 +188,17 @@ function getFilterParams() {
 function updateTicketsTable(isAutoRefresh = false) {
     const params = getFilterParams();
     
-    // Si c'est un auto-refresh et que les paramètres n'ont pas changé, utiliser les derniers paramètres
     if (isAutoRefresh && params.toString() === lastSearchParams.toString()) {
         params.append('auto_refresh', '1');
     }
 
     axios.get('{{ route("ticket") }}', { params })
         .then(response => {
+            if (response.data.error) {
+                console.error('Erreur serveur:', response.data.error);
+                return;
+            }
+
             if (!isAutoRefresh || response.data.hasChanges) {
                 document.getElementById('tickets-table-body').innerHTML = response.data.html;
                 document.getElementById('tickets-count').textContent = response.data.count;
@@ -206,14 +210,13 @@ function updateTicketsTable(isAutoRefresh = false) {
                 }
             }
         })
-        .catch(error => console.error('Erreur lors de la mise à jour:', error));
+        .catch(error => {
+            console.error('Erreur lors de la mise à jour:', error);
+            if (error.response) {
+                console.error('Détails:', error.response.data);
+            }
+        });
 }
-
-// Gestionnaire de recherche
-document.getElementById('search-button').addEventListener('click', function() {
-    currentPage = 1;
-    updateTicketsTable();
-});
 
 // Gestionnaire de pagination
 document.addEventListener('click', function(e) {

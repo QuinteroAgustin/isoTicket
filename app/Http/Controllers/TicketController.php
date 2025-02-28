@@ -56,232 +56,256 @@ class TicketController extends Controller
 
     public function ticket(Request $request)
     {
-        $statuts = Status::all();
-        $techniciens = Technicien::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('nom')
-        ->orderBy('prenom')
-        ->get();
-        $services = Service::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('libelle')
-        ->get();
-        $categories = Categorie::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('libelle')
-        ->get();
-        $fonctions = Fonction::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('libelle')
-        ->get();
-        $risques = Risque::orderBy('libelle')->get();
-
-        $tickets = collect();
-
-        // Requête de base pour les tickets
-        $query = Ticket::where('cloture', 0);
-
-        // Appliquer les filtres si présents
-        if ($request->filled('ticket_id')) {
-            $query->where('id_ticket', 'like', $request->input('ticket_id'). '%');
-        }
-
-            // Ajouter le filtre par contact
-        if ($request->filled('contact_id')) {
-            $cbMarq = $request->input('contact_id');
-            $query->whereHas('premiereTicketLigne', function($q) use ($cbMarq) {
-                $q->where('id_contact', $cbMarq);
-            });
-        }
-
-        if ($request->filled('ticket_titre')) {
-            $query->where('titre', 'like', '%' .$request->input('ticket_titre'). '%');
-        }
-
-        if ($request->filled('client_name')) {
-            $query->where('id_client', 'like', '%' .$request->input('client_name'). '%');
-        }
-        if ($request->filled('statut')) {
-            $query->where('id_statut', $request->input('statut'));
-        }
-        if ($request->filled('technicien')) {
-            $query->where('id_technicien', $request->input('technicien'));
-        }
-        if ($request->filled('service')) {
-            $query->where('id_service', $request->input('service'));
-        }
-        if ($request->filled('categorie')) {
-            $query->where('id_categorie', $request->input('categorie'));
-        }
-        if ($request->filled('fonction')) {
-            $query->where('id_fonction', $request->input('fonction'));
-        }
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->input('date'));
-        }
-        if ($request->filled('risque')) {
-            $risque = $request->input('risque');
-            $query->whereHas('impact', function($q) use ($risque) {
-                $q->whereHas('risques', function($q) use ($risque) {
-                    $q->where('id_risque', $risque);
+        try {
+            // Requête de base avec eager loading
+            $query = Ticket::where('cloture', 0)
+                ->with([
+                    'client',
+                    'statut',
+                    'technicien',
+                    'categorie',
+                    'fonction',
+                    'service',
+                    'impact',
+                    'priorite',
+                    'premiereTicketLigne.contactCbmarq'
+                ]);
+    
+            // Application des filtres
+            if ($request->filled('ticket_id')) {
+                $query->where('id_ticket', 'like', $request->input('ticket_id') . '%');
+            }
+    
+            if ($request->filled('contact_id')) {
+                $cbMarq = $request->input('contact_id');
+                $query->whereHas('premiereTicketLigne', function($q) use ($cbMarq) {
+                    $q->where('id_contact', $cbMarq);
                 });
-            });
+            }
+    
+            if ($request->filled('ticket_titre')) {
+                $query->where('titre', 'like', '%' . $request->input('ticket_titre') . '%');
+            }
+    
+            if ($request->filled('client_name')) {
+                $query->where('id_client', 'like', '%' . $request->input('client_name') . '%');
+            }
+    
+            if ($request->filled('statut')) {
+                $query->where('id_statut', $request->input('statut'));
+            }
+    
+            if ($request->filled('technicien')) {
+                $query->where('id_technicien', $request->input('technicien'));
+            }
+    
+            if ($request->filled('service')) {
+                $query->where('id_service', $request->input('service'));
+            }
+    
+            if ($request->filled('categorie')) {
+                $query->where('id_categorie', $request->input('categorie'));
+            }
+    
+            if ($request->filled('fonction')) {
+                $query->where('id_fonction', $request->input('fonction'));
+            }
+    
+            if ($request->filled('date')) {
+                $query->whereDate('created_at', $request->input('date'));
+            }
+    
+            if ($request->filled('risque')) {
+                $risque = $request->input('risque');
+                $query->whereHas('impact', function($q) use ($risque) {
+                    $q->whereHas('risques', function($q) use ($risque) {
+                        $q->where('id_risque', $risque);
+                    });
+                });
+            }
+    
+            // Récupération des données
+            $tickets = $query->orderBy('created_at', 'desc')->paginate(50);
+    
+            // Récupération des données pour les filtres
+            $risques = Risque::where(function($query) {
+                $query->whereNull('masquer')
+                      ->orWhere('masquer', 0);
+            })->orderBy('libelle')->get();
+    
+            // Si c'est une requête AJAX
+            if ($request->ajax()) {
+                try {
+                    $view = view('ticket.partials.tickets_table', compact('tickets', 'risques'))->render();
+                    $pagination = view('ticket.partials.pagination', compact('tickets'))->render();
+    
+                    return response()->json([
+                        'html' => $view,
+                        'count' => $tickets->total(),
+                        'pagination' => $pagination,
+                        'hasChanges' => true
+                    ]);
+                } catch (\Exception $e) {                    
+                    return response()->json([
+                        'error' => 'Erreur lors du rendu des données',
+                        'details' => $e->getMessage()
+                    ], 500);
+                }
+            }
+    
+            // Pour le chargement initial de la page
+            $statuts = Status::where('id_statut', '!=', 4)->orderBy('ordre_tri', 'asc')->get();
+            $techniciens = Technicien::where(function($query) {
+                $query->whereNull('masquer')
+                      ->orWhere('masquer', 0);
+            })->orderBy('nom')->orderBy('prenom')->get();
+            
+            $services = Service::where(function($query) {
+                $query->whereNull('masquer')
+                      ->orWhere('masquer', 0);
+            })->orderBy('libelle')->get();
+            
+            $categories = Categorie::where(function($query) {
+                $query->whereNull('masquer')
+                      ->orWhere('masquer', 0);
+            })->orderBy('libelle')->get();
+            
+            $fonctions = Fonction::where(function($query) {
+                $query->whereNull('masquer')
+                      ->orWhere('masquer', 0);
+            })->orderBy('libelle')->get();
+    
+            return view('ticket.list', compact(
+                'tickets',
+                'statuts',
+                'risques',
+                'techniciens',
+                'categories',
+                'fonctions',
+                'services'
+            ));
+    
+        } catch (\Exception $e) {            
+            if ($request->ajax()) {
+                return response()->json([
+                    'error' => 'Une erreur est survenue lors du chargement des tickets',
+                    'details' => $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Une erreur est survenue lors du chargement des tickets');
         }
-
-        // Tri des tickets par ID décroissant
-        $query->orderBy('id_ticket', 'desc');
-
-        // Pagination des résultats (25 tickets par page)
-        $tickets = $query->paginate(50);
-
-        if ($request->ajax()) {
-            $view = view('ticket.partials.tickets_table', compact('tickets', 'risques'))->render();
-            $count = $tickets->where('cloture', 0)->count();
-            $pagination = view('ticket.partials.pagination', compact('tickets'))->render();
-
-            return response()->json([
-                'html' => $view,
-                'count' => $count,
-                'pagination' => $pagination,
-                'hasChanges' => true // Vous pouvez implémenter une logique pour détecter les changements réels
-            ]);
-        }
-
-        return view('ticket.list', compact('tickets', 'risques', 'statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
 
     public function ticket_clots(Request $request)
     {
-        $statuts = Status::all();
-        $techniciens = Technicien::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('nom')
-        ->orderBy('prenom')
-        ->get();
-        $services = Service::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('libelle')
-        ->get();
-        $categories = Categorie::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('libelle')
-        ->get();
-        $fonctions = Fonction::where(function($query) {
-            $query->whereNull('masquer')
-                  ->orWhere('masquer', 0);
-        })
-        ->orderBy('libelle')
-        ->get();
-        $risques = Risque::orderBy('libelle')->get();
-
-        $tickets = collect();
-
-        // Requête de base pour les tickets
-        $query = Ticket::where('cloture', 1);
-
-        // Appliquer les filtres si présents
-        if ($request->filled('ticket_id')) {
-            $query->where('id_ticket', 'like', $request->input('ticket_id'). '%');
-        }
-        
-        if ($request->filled('contact_id')) {
-            $cbMarq = $request->input('contact_id');
-            $query->whereHas('premiereTicketLigne', function($q) use ($cbMarq) {
-                $q->where('id_contact', $cbMarq);
-            });
-        }
-
-        if ($request->filled('ticket_titre')) {
-            $query->where('titre', 'like', '%' .$request->input('ticket_titre'). '%');
-        }
-
-        if ($request->filled('client_name')) {
-            $query->where('id_client', 'like', '%' .$request->input('client_name'). '%');
-        }
-        if ($request->filled('statut')) {
-            $query->where('id_statut', $request->input('statut'));
-        }
-        if ($request->filled('technicien')) {
-            $query->where('id_technicien', $request->input('technicien'));
-        }
-        if ($request->filled('service')) {
-            $query->where('id_service', $request->input('service'));
-        }
-        if ($request->filled('categorie')) {
-            $query->where('id_categorie', $request->input('categorie'));
-        }
-        if ($request->filled('fonction')) {
-            $query->where('id_fonction', $request->input('fonction'));
-        }
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->input('date'));
-        }
-        if ($request->filled('date_clot')) {
-            $query->whereDate('closed_at', $request->input('date_clot'));
-        }
-        if ($request->filled('risque')) {
-            $risque = $request->input('risque');
-            $query->whereHas('impact', function($q) use ($risque) {
-                $q->whereHas('risques', function($q) use ($risque) {
-                    $q->where('id_risque', $risque);
+        try {
+            $query = Ticket::where('cloture', 1)
+                ->with([
+                    'client',
+                    'technicien',
+                    'categorie',
+                    'fonction',
+                    'service',
+                    'impact',
+                    'priorite',
+                    'premiereTicketLigne.contactCbmarq'
+                ]);
+    
+            // Filtres
+            if ($request->ticket_id) {
+                $query->where('id_ticket', $request->ticket_id);
+            }
+    
+            if ($request->ticket_titre) {
+                $query->where('titre', 'LIKE', '%' . $request->ticket_titre . '%');
+            }
+    
+            if ($request->client_name) {
+                $query->whereHas('client', function($q) use ($request) {
+                    $q->where('CT_Num', 'LIKE', '%' . $request->client_name . '%');
                 });
-            });
-        }
-        if ($request->filled('cri')) {
-            $query->where('cri', $request->input('cri'));
-        }
-
-        // Nouveau filtre par message dans ticket_lignes
-        if ($request->filled('message')) {
-            $query->whereHas('lignes', function ($q) use ($request) {
-                $q->where('text', 'like', '%' . $request->input('message') . '%');
-            });
-        }
-
-        // Tri des tickets par ID décroissant
-        $query->orderBy('closed_at', 'desc')->orderBy('id_ticket', 'desc');
-
-
-        // Récupérer les tickets filtrés
-        $tickets = $query->get();
-
-        // Pagination des résultats (25 tickets par page)
-        $tickets = $query->paginate(50);
-
-        if ($request->ajax()) {
-            $view = view('ticket.partials.tickets_clots_table', compact('tickets', 'risques'))->render();
-            $pagination = view('ticket.partials.pagination', compact('tickets'))->render();
+            }
     
-            return response()->json([
-                'html' => $view,
-                'count' => $tickets->total(),
-                'pagination' => $pagination,
-                'hasChanges' => true
-            ]);
-        }
+            if ($request->contact_id) {
+                $query->whereHas('premiereTicketLigne', function($q) use ($request) {
+                    $q->where('id_contact', $request->contact_id);
+                });
+            }
     
-        return view('ticket.list_clots', compact(
-            'tickets',
-            'risques',
-            'techniciens',
-            'services',
-            'categories',
-            'fonctions'
-        ));
+            if ($request->technicien) {
+                $query->where('id_technicien', $request->technicien);
+            }
+    
+            if ($request->risque) {
+                $query->whereHas('risque', function($q) use ($request) {
+                    $q->where('id_risque', $request->risque);
+                });
+            }
+    
+            if ($request->categorie) {
+                $query->where('id_categorie', $request->categorie);
+            }
+    
+            if ($request->fonction) {
+                $query->where('id_fonction', $request->fonction);
+            }
+    
+            if ($request->service) {
+                $query->where('id_service', $request->service);
+            }
+    
+            if ($request->date) {
+                $query->whereDate('created_at', $request->date);
+            }
+    
+            if ($request->date_clot) {
+                $query->whereDate('closed_at', $request->date_clot);
+            }
+    
+            if ($request->has('cri')) {
+                $query->where('cri', $request->cri);
+            }
+    
+            $tickets = $query->orderBy('created_at', 'desc')->paginate(50);
+            $risques = Risque::all();
+    
+            if ($request->ajax()) {
+                $view = view('ticket.partials.tickets_clots_table', compact('tickets', 'risques'))->render();
+                
+                return response()->json([
+                    'html' => $view,
+                    'count' => $tickets->total(),
+                    'pagination' => view('ticket.partials.pagination', compact('tickets'))->render(),
+                    'hasChanges' => true
+                ]);
+            }
+    
+            // Pour le chargement initial de la page
+            $techniciens = Technicien::orderBy('nom')->get();
+            $services = Service::orderBy('libelle')->get();
+            $categories = Categorie::orderBy('libelle')->get();
+            $fonctions = Fonction::orderBy('libelle')->get();
+    
+            return view('ticket.list_clots', compact(
+                'tickets',
+                'risques',
+                'techniciens',
+                'services',
+                'categories',
+                'fonctions'
+            ));
+    
+        } catch (\Exception $e) {            
+            if ($request->ajax()) {
+                return response()->json([
+                    'error' => 'Une erreur est survenue lors du chargement des tickets',
+                    'details' => $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Une erreur est survenue lors du chargement des tickets');
+        }
     }
 
     public function createVue()
