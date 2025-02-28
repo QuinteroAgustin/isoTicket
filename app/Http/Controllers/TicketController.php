@@ -142,7 +142,20 @@ class TicketController extends Controller
         // Pagination des résultats (25 tickets par page)
         $tickets = $query->paginate(50);
 
-        return view('ticket.list', compact('tickets', 'risques','statuts', 'techniciens', 'services', 'categories', 'fonctions'));
+        if ($request->ajax()) {
+            $view = view('ticket.partials.tickets_table', compact('tickets', 'risques'))->render();
+            $count = $tickets->where('cloture', 0)->count();
+            $pagination = view('ticket.partials.pagination', compact('tickets'))->render();
+
+            return response()->json([
+                'html' => $view,
+                'count' => $count,
+                'pagination' => $pagination,
+                'hasChanges' => true // Vous pouvez implémenter une logique pour détecter les changements réels
+            ]);
+        }
+
+        return view('ticket.list', compact('tickets', 'risques', 'statuts', 'techniciens', 'services', 'categories', 'fonctions'));
     }
 
     public function ticket_clots(Request $request)
