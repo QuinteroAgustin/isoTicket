@@ -5,6 +5,7 @@ use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ApiKeyController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ParamsController;
 use App\Http\Controllers\TicketController;
@@ -205,3 +206,10 @@ Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
 Route::get('/search/contacts', [RechercheController::class, 'searchContacts'])
     ->name('search.contacts')
     ->middleware(Authenticate::class);
+
+// Routes pour la gestion des clés API
+Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
+    Route::get('/params/api', [ApiKeyController::class, 'index'])->name('params.form.api');
+    Route::post('/params/api', [ApiKeyController::class, 'store'])->name('params.api.store');
+    Route::delete('/params/api/{id}', [ApiKeyController::class, 'destroy'])->name('params.api.destroy');
+});

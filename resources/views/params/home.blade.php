@@ -113,6 +113,15 @@
                         </span>
                         <span class="ml-3 font-medium text-gray-700 group-hover:text-purple-600">Techniciens</span>
                     </a>
+
+                    <a href="{{ route('params.form.api') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-purple-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 group-hover:bg-purple-200">
+                            <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-purple-600">Clés API</span>
+                    </a>
                 </div>
             </div>
             @endif
