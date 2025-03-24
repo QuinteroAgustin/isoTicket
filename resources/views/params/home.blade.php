@@ -3,143 +3,148 @@
 @section('title', 'Paramètres')
 
 @section('content')
-    <!-- Your Page Content Here -->
-    <h1 class="text-2xl font-semibold">Paramétrage des interfaces</h1>
-    <p>Panel administrateur d'E-Ticket</p>
-    <div class="grid grid-cols-4 divide-x">
-        @if(session('technicien')->role->id_role <= 2)
-        <div class="border m-5 p-5">
-            <ul class="my-2">
-                <li class="mt-2">
-                    <a href="{{ route('params.form.status') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M6.87988 18.1501V16.0801" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M12 18.15V14.01" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M17.1201 18.1499V11.9299" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M17.1199 5.8501L16.6599 6.3901C14.1099 9.3701 10.6899 11.4801 6.87988 12.4301" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M14.1899 5.8501H17.1199V8.7701" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Statuts
-                    </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.service') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M16 6C14.3432 6 13 7.34315 13 9C13 10.6569 14.3432 12 16 12C17.6569 12 19 10.6569 19 9C19 7.34315 17.6569 6 16 6ZM11 9C11 6.23858 13.2386 4 16 4C18.7614 4 21 6.23858 21 9C21 10.3193 20.489 11.5193 19.6542 12.4128C21.4951 13.0124 22.9176 14.1993 23.8264 15.5329C24.1374 15.9893 24.0195 16.6114 23.5631 16.9224C23.1068 17.2334 22.4846 17.1155 22.1736 16.6591C21.1979 15.2273 19.4178 14 17 14C13.166 14 11 17.0742 11 19C11 19.5523 10.5523 20 10 20C9.44773 20 9.00001 19.5523 9.00001 19C9.00001 18.308 9.15848 17.57 9.46082 16.8425C9.38379 16.7931 9.3123 16.7323 9.24889 16.6602C8.42804 15.7262 7.15417 15 5.50001 15C3.84585 15 2.57199 15.7262 1.75114 16.6602C1.38655 17.075 0.754692 17.1157 0.339855 16.7511C-0.0749807 16.3865 -0.115709 15.7547 0.248886 15.3398C0.809035 14.7025 1.51784 14.1364 2.35725 13.7207C1.51989 12.9035 1.00001 11.7625 1.00001 10.5C1.00001 8.01472 3.01473 6 5.50001 6C7.98529 6 10 8.01472 10 10.5C10 11.7625 9.48013 12.9035 8.64278 13.7207C9.36518 14.0785 9.99085 14.5476 10.5083 15.0777C11.152 14.2659 11.9886 13.5382 12.9922 12.9945C11.7822 12.0819 11 10.6323 11 9ZM3.00001 10.5C3.00001 9.11929 4.1193 8 5.50001 8C6.88072 8 8.00001 9.11929 8.00001 10.5C8.00001 11.8807 6.88072 13 5.50001 13C4.1193 13 3.00001 11.8807 3.00001 10.5Z" fill="#ffffff"/>
-                        </svg>
-                        Services
-                    </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.categorie') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M17 10H19C21 10 22 9 22 7V5C22 3 21 2 19 2H17C15 2 14 3 14 5V7C14 9 15 10 17 10Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M5 22H7C9 22 10 21 10 19V17C10 15 9 14 7 14H5C3 14 2 15 2 17V19C2 21 3 22 5 22Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M6 10C8.20914 10 10 8.20914 10 6C10 3.79086 8.20914 2 6 2C3.79086 2 2 3.79086 2 6C2 8.20914 3.79086 10 6 10Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M18 22C20.2091 22 22 20.2091 22 18C22 15.7909 20.2091 14 18 14C15.7909 14 14 15.7909 14 18C14 20.2091 15.7909 22 18 22Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Paramétrage des interfaces</h1>
+        <p class="text-gray-600 mb-8">Panel administrateur d'E-Ticket</p>
 
-                        </svg>
-                        Categories
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @if(session('technicien')->role->id_role <= 2)
+            <!-- Carte Configuration Tickets -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-5 bg-gradient-to-r from-blue-600 to-blue-700">
+                    <h2 class="text-xl font-semibold text-white">Configuration Tickets</h2>
+                </div>
+                <div class="p-5 space-y-3">
+                    <a href="{{ route('params.form.status') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-blue-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 group-hover:bg-blue-200">
+                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-blue-600">Statuts</span>
                     </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.fonction') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4.92789 6.39814C3.16565 4.88765 4.23386 2 6.55487 2H19C19.5523 2 20 2.44772 20 3C20 3.55228 19.5523 4 19 4H6.55487C6.09067 4 5.87703 4.57753 6.22948 4.87963L12.3221 10.1019C13.4861 11.0996 13.4861 12.9004 12.3221 13.8981L6.22948 19.1204C5.87703 19.4225 6.09067 20 6.55487 20H19C19.5523 20 20 20.4477 20 21C20 21.5523 19.5523 22 19 22H6.55487C4.23386 22 3.16565 19.1124 4.92789 17.6019L11.0205 12.3796C11.2533 12.1801 11.2533 11.8199 11.0205 11.6204L4.92789 6.39814Z" fill="#ffffff"/>
-                        </svg>
-                        Fonctions
-                    </a>
-                </li>
-            </ul>
-        </div>
-        @endif
-        @if(session('technicien')->role->id_role <= 2)
-        <div class="border m-5 p-5">
-            <ul class="my-2">
-                <li class="mt-2">
-                    <a href="{{ route('params.form.priorite') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <polyline id="primary" points="2 8 6 4 10 8" style="fill: none; stroke:#ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></polyline><path id="primary-2" data-name="primary" d="M6,4V19M20,7H15m5,5H13m7,5H10" style="fill: none; stroke:#ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                        </svg>
-                        Priorite
-                    </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.impact') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M4.42602 12.3115L12 19.8854L19.574 12.3115C21.4753 10.4101 21.4753 7.32738 19.574 5.42602C17.6726 3.52466 14.5899 3.52466 12.6885 5.42602L12 6.11456L11.3115 5.42602C9.4101 3.52466 6.32738 3.52466 4.42602 5.42602C2.52466 7.32738 2.52466 10.4101 4.42602 12.3115Z" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
-                            <path d="M12 6L10 9.99995L14 11L12 14" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Impact
-                    </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.risque') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M12 14.75C11.59 14.75 11.25 14.41 11.25 14V9C11.25 8.59 11.59 8.25 12 8.25C12.41 8.25 12.75 8.59 12.75 9V14C12.75 14.41 12.41 14.75 12 14.75Z" fill="#ffffff"/>
-                            <path d="M12 18C11.94 18 11.87 17.99 11.8 17.98C11.74 17.97 11.68 17.95 11.62 17.92C11.56 17.9 11.5 17.87 11.44 17.83C11.39 17.79 11.34 17.75 11.29 17.71C11.11 17.52 11 17.26 11 17C11 16.74 11.11 16.48 11.29 16.29C11.34 16.25 11.39 16.21 11.44 16.17C11.5 16.13 11.56 16.1 11.62 16.08C11.68 16.05 11.74 16.03 11.8 16.02C11.93 15.99 12.07 15.99 12.19 16.02C12.26 16.03 12.32 16.05 12.38 16.08C12.44 16.1 12.5 16.13 12.56 16.17C12.61 16.21 12.66 16.25 12.71 16.29C12.89 16.48 13 16.74 13 17C13 17.26 12.89 17.52 12.71 17.71C12.66 17.75 12.61 17.79 12.56 17.83C12.5 17.87 12.44 17.9 12.38 17.92C12.32 17.95 12.26 17.97 12.19 17.98C12.13 17.99 12.06 18 12 18Z" fill="#ffffff"/>
-                            <path d="M18.06 22.16H5.93998C3.98998 22.16 2.49998 21.45 1.73998 20.17C0.989976 18.89 1.08998 17.24 2.03998 15.53L8.09998 4.63C9.09998 2.83 10.48 1.84 12 1.84C13.52 1.84 14.9 2.83 15.9 4.63L21.96 15.54C22.91 17.25 23.02 18.89 22.26 20.18C21.5 21.45 20.01 22.16 18.06 22.16ZM12 3.34C11.06 3.34 10.14 4.06 9.40998 5.36L3.35998 16.27C2.67998 17.49 2.56998 18.61 3.03998 19.42C3.50998 20.23 4.54998 20.67 5.94998 20.67H18.07C19.47 20.67 20.5 20.23 20.98 19.42C21.46 18.61 21.34 17.5 20.66 16.27L14.59 5.36C13.86 4.06 12.94 3.34 12 3.34Z" fill="#ffffff"/>
-                        </svg>
-                        Risques
-                    </a>
-                </li>
-            </ul>
-        </div>
-        @endif
-        @if(session('technicien')->role->id_role <= 1)
-        <div class="border m-5 p-5">
-            <ul class="my-2">
-                <li class="mt-2">
-                    <a href="{{ route('params.form.role') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.3375 19C5.815 19 5.33219 18.7141 5.07094 18.25C4.80969 17.7859 4.80969 17.2141 5.07094 16.75C5.33219 16.2859 5.815 16 6.3375 16H17.0625C17.8702 16 18.525 16.6716 18.525 17.5C18.525 18.3284 17.8702 19 17.0625 19H6.3375Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4.875 8C6.10837 10.228 8.83837 13.569 11.7 8C14.5616 13.569 17.2916 10.228 18.525 8L17.16 16H6.24L4.875 8Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.7 8C10.8923 8 10.2375 7.32843 10.2375 6.5C10.2375 5.67157 10.8923 5 11.7 5C12.5078 5 13.1625 5.67157 13.1625 6.5C13.1625 6.89782 13.0085 7.27936 12.7342 7.56066C12.4599 7.84196 12.0879 8 11.7 8Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.525 8C17.9866 8 17.55 7.55228 17.55 7C17.55 6.44772 17.9866 6 18.525 6C19.0635 6 19.5 6.44772 19.5 7C19.5 7.26522 19.3973 7.51957 19.2145 7.70711C19.0316 7.89464 18.7836 8 18.525 8Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4.87502 8C4.33655 8 3.90002 7.55228 3.90002 7C3.90002 6.44772 4.33655 6 4.87502 6C5.4135 6 5.85002 6.44772 5.85002 7C5.85002 7.26522 5.7473 7.51957 5.56445 7.70711C5.38161 7.89464 5.13361 8 4.87502 8Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Role
-                    </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.technicien') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M12 15C7.58 15 4 16.79 4 19V21H20V19C20 16.79 16.42 15 12 15ZM8 9C8 10.0609 8.42143 11.0783 9.17157 11.8284C9.92172 12.5786 10.9391 13 12 13C13.0609 13 14.0783 12.5786 14.8284 11.8284C15.5786 11.0783 16 10.0609 16 9H8ZM11.5 2C11.2 2 11 2.21 11 2.5V5.5H10V3C10 3 7.75 3.86 7.75 6.75C7.75 6.75 7 6.89 7 8H17C16.95 6.89 16.25 6.75 16.25 6.75C16.25 3.86 14 3 14 3V5.5H13V2.5C13 2.21 12.81 2 12.5 2H11.5Z"/>
-                        </svg>
-                        Techniciens
-                    </a>
-                </li>
-            </ul>
-        </div>
-        @endif
-        @if(session('technicien')->role->id_role <= 4)
-        <div class="border m-5 p-5">
-            <ul>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.typeForfait') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <circle fill="#ffffff" cx="6" cy="12" r="2"/>
-                            <path fill="#ffffff" d="M8.708 5.717l-1.954 1.96c-.25.243-.61.37-.958.307C5.5 7.93 4.64 7.327 4.458 7.21c-.46-.29-.6-.91-.3-1.383.29-.46.91-.602 1.38-.3l.32.2 1.43-1.435c.39-.39 1.03-.39 1.42 0 .39.392.39 1.034 0 1.425z"/>
-                            <path fill="#ffffff" d="M20 7c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1z"/>
-                            <circle fill="#ffffff" cx="6" cy="18" r="2"/>
-                            <path fill="#ffffff" d="M20 13c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1zM20 19c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1z"/>
-                            <path fill="#ffffff" d="M22 0H2C.9 0 0 .9 0 2v20c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2zm0 21.5c0 .276-.224.5-.5.5h-19c-.276 0-.5-.224-.5-.5v-19c0-.276.224-.5.5-.5h19c.276 0 .5.224.5.5v19z"/>
 
-                        </svg>
-                        Type de forfait
+                    <a href="{{ route('params.form.service') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-blue-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 group-hover:bg-blue-200">
+                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-blue-600">Services</span>
                     </a>
-                </li>
-                <li class="mt-2">
-                    <a href="{{ route('params.form.forfait') }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-colors duration-300 ease-in-out">
-                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path fill="#ffffff" d="M11.998 2l3.092 6.585L22 9.652l-5 5.114L18.184 22l-6.18-3.425-6.18 3.405L7 14.75 2 9.62l6.91-1.044L11.998 2m0-2c-.774 0-1.48.448-1.81 1.15L7.555 6.758 1.7 7.642c-.74.112-1.357.63-1.596 1.34-.24.712-.06 1.497.464 2.034l4.297 4.408L3.85 21.66c-.124.754.195 1.514.82 1.955.344.243.748.366 1.153.366.33 0 .664-.08.965-.247L12 20.86l5.215 2.89c.3.167.635.25.968.25.405 0 .808-.123 1.15-.365.628-.44.947-1.202.824-1.958l-1.02-6.237 4.293-4.39c.524-.537.704-1.32.467-2.032-.237-.71-.852-1.23-1.592-1.344l-5.857-.904-2.64-5.62C13.48.448 12.775 0 12 0z"/>
-                        </svg>
-                        Forfait
+
+                    <a href="{{ route('params.form.categorie') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-blue-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 group-hover:bg-blue-200">
+                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M4 7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V7zm0 8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm8-8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V7zm0 8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-blue-600">Catégories</span>
                     </a>
-                </li>
-            </ul>
+
+                    <a href="{{ route('params.form.fonction') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-blue-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 group-hover:bg-blue-200">
+                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-blue-600">Fonctions</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Carte Évaluation -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-5 bg-gradient-to-r from-orange-600 to-orange-700">
+                    <h2 class="text-xl font-semibold text-white">Évaluation</h2>
+                </div>
+                <div class="p-5 space-y-3">
+                    <a href="{{ route('params.form.priorite') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-orange-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 group-hover:bg-orange-200">
+                            <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M13 7h8m0 4h-8m0 4h8M3 7l4-4 4 4M7 20V4" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-orange-600">Priorité</span>
+                    </a>
+
+                    <a href="{{ route('params.form.impact') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-orange-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 group-hover:bg-orange-200">
+                            <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-orange-600">Impact</span>
+                    </a>
+
+                    <a href="{{ route('params.form.risque') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-orange-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 group-hover:bg-orange-200">
+                            <svg class="w-6 h-6 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-orange-600">Risques</span>
+                    </a>
+                </div>
+            </div>
+            @endif
+
+            @if(session('technicien')->role->id_role <= 1)
+            <!-- Carte Administration -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-5 bg-gradient-to-r from-purple-600 to-purple-700">
+                    <h2 class="text-xl font-semibold text-white">Administration</h2>
+                </div>
+                <div class="p-5 space-y-3">
+                    <a href="{{ route('params.form.role') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-purple-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 group-hover:bg-purple-200">
+                            <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-purple-600">Rôles</span>
+                    </a>
+
+                    <a href="{{ route('params.form.technicien') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-purple-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 group-hover:bg-purple-200">
+                            <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-purple-600">Techniciens</span>
+                    </a>
+                </div>
+            </div>
+            @endif
+
+            @if(session('technicien')->role->id_role <= 4)
+            <!-- Carte Forfaits -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-5 bg-gradient-to-r from-green-600 to-green-700">
+                    <h2 class="text-xl font-semibold text-white">Gestion des forfaits</h2>
+                </div>
+                <div class="p-5 space-y-3">
+                    <a href="{{ route('params.form.typeForfait') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-green-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-green-100 group-hover:bg-green-200">
+                            <svg class="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-green-600">Types de forfait</span>
+                    </a>
+
+                    <a href="{{ route('params.form.forfait') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-green-50 group">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-green-100 group-hover:bg-green-200">
+                            <svg class="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2"/>
+                            </svg>
+                        </span>
+                        <span class="ml-3 font-medium text-gray-700 group-hover:text-green-600">Forfaits</span>
+                    </a>
+                </div>
+            </div>
+            @endif
         </div>
-        @endif
     </div>
+    
 @endsection
