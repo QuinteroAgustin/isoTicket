@@ -50,6 +50,7 @@
                         </span>
                         <span class="ml-3 font-medium text-gray-700 group-hover:text-blue-600">Fonctions</span>
                     </a>
+                    
                 </div>
             </div>
 
@@ -121,6 +122,17 @@
                             </svg>
                         </span>
                         <span class="ml-3 font-medium text-gray-700 group-hover:text-purple-600">Clés API</span>
+                    </a>
+                    <a href="{{ route('params.infos.index') }}" class="flex items-center p-3 rounded-lg transition-all hover:bg-purple-50 group">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 text-purple-600 group-hover:bg-purple-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="font-medium">Informations Utiles</h3>
+                            <p class="text-sm text-gray-500">Gérer les informations utiles</p>
+                        </div>
                     </a>
                 </div>
             </div>

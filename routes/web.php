@@ -9,6 +9,8 @@ use App\Http\Controllers\ApiKeyController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ParamsController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ApiTicketController;
+use App\Http\Controllers\InfoUtileController;
 use App\Http\Controllers\RechercheController;
 use App\Http\Middleware\RememberMeMiddleware;
 use App\Http\Controllers\StatistiqueController;
@@ -164,6 +166,15 @@ Route::get('/params/technicien/modifier/{id}', [ParamsController::class, 'modifi
 Route::post('/params/technicien/modifier/{id}', [ParamsController::class, 'updateTechnicien'])->name('params.technicien.update')->middleware([Authenticate::class, 'CheckRole:1']);
 Route::delete('/params/technicien/supprimer/{id}', [ParamsController::class, 'supprimerTechnicien'])->name('params.technicien.supprimer')->middleware([Authenticate::class, 'CheckRole:1']);
 
+// Route pour afficher le formulaire d'ajout des informations utiles
+Route::middleware([Authenticate::class, 'CheckRole:2'])->group(function () {
+    Route::get('/params/infos', [InfoUtileController::class, 'index'])->name('params.infos.index');
+    Route::post('/params/infos', [InfoUtileController::class, 'store'])->name('params.infos.store');
+    Route::get('/params/infos/{id}/edit', [InfoUtileController::class, 'edit'])->name('params.infos.edit');
+    Route::post('/params/infos/{id}', [InfoUtileController::class, 'update'])->name('params.infos.update');
+    Route::post('/params/infos/{id}/delete', [InfoUtileController::class, 'destroy'])->name('params.infos.destroy');
+    Route::post('/params/infos/{id}/toggle', [InfoUtileController::class, 'toggleActive'])->name('params.infos.toggle');
+});
 
 //recherches
 Route::get('/recherche', [RechercheController::class, 'home'])->name('recherche')->middleware(Authenticate::class);
@@ -212,4 +223,10 @@ Route::middleware([Authenticate::class, 'CheckRole:1'])->group(function () {
     Route::get('/params/api', [ApiKeyController::class, 'index'])->name('params.form.api');
     Route::post('/params/api', [ApiKeyController::class, 'store'])->name('params.api.store');
     Route::delete('/params/api/{id}', [ApiKeyController::class, 'destroy'])->name('params.api.destroy');
+});
+
+
+// Routes pour l'API
+Route::prefix('api')->group(function () {
+    Route::post('/tickets', [ApiTicketController::class, 'getTicketsByClient']);
 });

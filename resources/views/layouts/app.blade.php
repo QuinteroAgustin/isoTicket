@@ -73,8 +73,8 @@
         <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 hidden z-[80]"></div>
         
         <!-- Sidebar avec nouvelle classe pour la transition -->
-        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-[90] overflow-y-auto">
-            <div class="pt-16">
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out z-[90] overflow-y-auto flex flex-col">
+            <div class="pt-16 flex-1">
                 <ul class="p-4 space-y-2">
                 <li>
                         <a href="{{ route('home') }}" class="flex items-center py-2 px-4 text-white hover:bg-gray-700 rounded-lg transition duration-300">
@@ -154,6 +154,15 @@
                     @endif
                 </ul>
             </div>
+            <!-- Bouton informations utiles en bas -->
+            <div class="p-4 border-t border-gray-700">
+                <button id="info-button" class="w-full flex items-center py-2 px-4 text-white hover:bg-gray-700 rounded-lg transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Informations
+                </button>
+            </div>
         </div>
 
         <!-- Main content avec transition -->
@@ -165,6 +174,34 @@
         </div>
     </div>
 
+    <div id="info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[200]">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Informations utiles</h3>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-4 space-y-3">
+                    @foreach(App\Models\InfoUtile::where('active', true)->orderBy('ordre')->get() as $info)
+                        <div class="flex items-center space-x-2">
+                            @if($info->icon)
+                                {!! $info->icon !!}
+                            @endif
+                            <div>
+                                <p class="font-medium">{{ $info->libelle }}</p>
+                                <p class="text-gray-600">{{ $info->description }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const menuToggle = document.getElementById('menu-toggle');
@@ -172,6 +209,11 @@
         const mainContent = document.getElementById('main-content');
         const overlay = document.getElementById('sidebar-overlay');
         let sidebarOpen = window.innerWidth >= 768; // État initial basé sur la largeur de l'écran
+
+        //btn info
+        const modal = document.getElementById('info-modal');
+        const openButton = document.getElementById('info-button');
+        const closeButton = document.getElementById('close-modal');
 
         function toggleSidebar() {
             sidebarOpen = !sidebarOpen;
@@ -237,6 +279,22 @@
         document.addEventListener('click', function(event) {
             if (!userMenu.contains(event.target)) {
                 userDropdown.classList.add('hidden');
+            }
+        });
+
+        //btn info
+        openButton.addEventListener('click', function() {
+            modal.classList.remove('hidden');
+        });
+
+        closeButton.addEventListener('click', function() {
+            modal.classList.add('hidden');
+        });
+
+        // Ferme la popup si on clique en dehors
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
             }
         });
     });
